@@ -1,0 +1,30 @@
+@import "../../style/var.scss";
+
+.header {
+  height: auto;
+  background-color: transparent;
+}
+
+.headerContent {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.logoWrapper {
+  width: 90px;
+  height: 90px;
+  display: inline-block;
+  background-color: $primary-color;
+  line-height: 90px;
+  text-align: center;
+}
+
+.title {
+  display: inline-block;
+  padding-left: 30px;
+  font-size: 22px;
+  h1 {
+    color: inherit;
+    font-size: 1em;
+  }
+}

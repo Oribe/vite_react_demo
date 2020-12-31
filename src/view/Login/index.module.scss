@@ -1,0 +1,33 @@
+@import "../../style/var.scss";
+
+.formWrapper {
+  width: 100%;
+  height: 100%;
+  max-width: 352px;
+  max-height: 350px;
+  padding: 20px;
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.15);
+}
+
+.formTitle {
+  text-align: center;
+}
+
+.loginFormButtonHover {
+  background-color: rgba($primary-color, 0.8);
+}
+
+.loginFormButton {
+  margin-top: 20px;
+  width: 100%;
+  background-color: $primary-color;
+  &:hover {
+    @extend .loginFormButtonHover;
+  }
+  &:focus {
+    @extend .loginFormButtonHover;
+  }
+  &:active {
+    @extend .loginFormButtonHover;
+  }
+}
