@@ -21,9 +21,6 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "/@/*": [
-        "src/*"
-      ],
       "/@component/*": [
         "src/component/*"
       ],
@@ -38,7 +35,16 @@
       ],
       "/@route/*": [
         "src/route/*"
-      ]
+      ],
+      "/@store/*": [
+        "src/store/*"
+      ],
+      "/@utils/*":[
+        "src/utils/*"
+      ],
+      "/@/*": [
+        "src/*"
+      ],
     }
   },
   "include": [

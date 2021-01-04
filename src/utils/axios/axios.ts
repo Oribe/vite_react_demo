@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import { AxiosOptions, RequestOptions } from "./type";
+import { AxiosOptions, RequestOptions, ResponseOk } from "./type";
 import { isFunction, cloneDeep, after } from "lodash-es";
 import CancelToken from "./cancelToken";
 
@@ -122,11 +122,11 @@ export default class Axios {
   /**
    * 接口请求
    */
-  request<T = any>(config: AxiosRequestConfig, options: RequestOptions) {
+  request<T = any>(config: AxiosRequestConfig, options?: RequestOptions) {
     let conf = cloneDeep(config);
 
     const { requestOptions } = this.options;
-    const opt = Object.assign({}, requestOptions, options);
+    const opt = Object.assign({}, requestOptions, options || {});
 
     const interceptors = this.getInterceptors();
     const { beforeRequestHook, afterResponseHook, responseCatchHook } =
@@ -138,10 +138,11 @@ export default class Axios {
 
     return new Promise<T>((resolve, reject) => {
       this.axiosInstance
-        .request<T>(config)
+        .request<ResponseOk<T>>(config)
         .then((response) => {
+          console.log("请求成功", response);
           if (afterResponseHook && isFunction(afterResponseHook)) {
-            const resp = afterResponseHook(response, options);
+            const resp = afterResponseHook<T>(response, opt);
             if (resp) {
               resolve(resp);
             } else {
@@ -149,15 +150,38 @@ export default class Axios {
             }
             return;
           }
-          resolve<T>(response);
+          resolve(response.data.data);
         })
         .catch((error) => {
+          console.log("请求失败", error.response);
           if (responseCatchHook && isFunction(responseCatchHook)) {
             reject(responseCatchHook(error));
             return;
           }
-          reject(error);
+          reject();
         });
     });
+  }
+
+  /**
+   * @description Post请求
+   */
+  post<T = any>(
+    url: string,
+    data: Record<string, any>,
+    options?: RequestOptions
+  ) {
+    return this.request<T>({ url, data, method: "POST" }, options);
+  }
+
+  /**
+   * @description Get请求
+   */
+  get<T = any>(
+    url: string,
+    params: Record<string, any> | string,
+    options?: RequestOptions
+  ) {
+    return this.request<T>({ url, params, method: "GET" }, options);
   }
 }

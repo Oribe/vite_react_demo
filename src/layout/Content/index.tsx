@@ -18,7 +18,7 @@ const Content: FC<any> = () => {
               exact={r.exact ?? true}
             />
           ))}
-          <Redirect path="/" to="/login" />
+          <Redirect to="/login" />
         </Switch>
       </BrowserRouter>
     </Wrapper>

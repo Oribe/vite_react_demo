@@ -30,10 +30,19 @@ const config: UserConfig = {
     "/@style/": pathResolve("src/style"),
     "/@view/": pathResolve("src/view"),
     "/@route/": pathResolve("src/route"),
+    "/@store/": pathResolve("src/store"),
+    "/@utils/": pathResolve("src/utils"),
   },
   open: false,
   optimizeDeps: {
     // include: ["@ant-design/icons"],
+  },
+  proxy: {
+    "/api": {
+      target: "http://localhost:3030",
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/\/api/, ""),
+    },
   },
 };
 

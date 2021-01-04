@@ -1,0 +1,22 @@
+export interface LoginBody {
+  username: string;
+  password: string;
+}
+
+export interface UserInfo {
+  contact: string;
+  email: string;
+  id: number;
+  mobile: string;
+  remark: string;
+  supplier: string;
+  supplierId: string;
+  userName: string;
+}
+
+export interface UserState {
+  userInfo?: UserInfo;
+  uuid?: string;
+}
+
+export type LoginRespData = UserState;

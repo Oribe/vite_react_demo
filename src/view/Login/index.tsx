@@ -1,15 +1,27 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Checkbox, Row, Col } from "antd";
-import React, { FC, useState } from "react";
+import { Button, Col, Form, Input, Row } from "antd";
+import React, { FC } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createSelector } from "reselect";
 import style from "./index.module.scss";
+import {
+  loginAction,
+  UserInfo,
+  UserState,
+  LoginBody,
+} from "/@store/modules/user";
+import { RootReducer } from "/@store/store";
+
 const { Item } = Form;
 
-const Login: FC<any> = () => {
-  const [formAction] = useState("/tool/interface/login");
+const Login: FC = () => {
+  const dispatch = useDispatch();
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: LoginBody) => {
     console.log("Received values of form: ", values);
+    dispatch(loginAction(values));
   };
+
   return (
     <Row justify="center" align="middle">
       <Col className={style.formWrapper}>
@@ -18,13 +30,12 @@ const Login: FC<any> = () => {
           className="login-form"
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          action={formAction}
         >
           <Item>
             <h2 className={style.formTitle}>登录</h2>
           </Item>
           <Item
-            name="userName"
+            name="username"
             rules={[{ required: true, message: "请输入手机号!" }]}
           >
             <Input
@@ -50,15 +61,6 @@ const Login: FC<any> = () => {
             >
               登录
             </Button>
-          </Item>
-          <Item>
-            <Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
-            </Item>
-
-            <a className="login-form-forgot" href="">
-              Forgot password
-            </a>
           </Item>
         </Form>
       </Col>

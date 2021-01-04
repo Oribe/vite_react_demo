@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 import Interceptors from "./interceptors";
 
 export interface RequestOptions {
@@ -21,4 +21,19 @@ export interface RequestOptions {
 export interface AxiosOptions extends AxiosRequestConfig {
   interceptors?: Interceptors;
   requestOptions?: RequestOptions;
+}
+
+export interface ResponseOk<T = any> {
+  code: number;
+  data: T;
+}
+
+export interface ResponseError {
+  detail: string;
+  message: string;
+  statusCode: number;
+}
+
+export interface AxiosError extends Error {
+  response: AxiosResponse<ResponseError>;
 }
