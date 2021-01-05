@@ -6,7 +6,9 @@
       "DOM.Iterable",
       "ESNext"
     ],
-    "types": [],
+    "types": [
+      "node"
+    ],
     "allowJs": false,
     "skipLibCheck": false,
     "esModuleInterop": false,
@@ -21,28 +23,28 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "/@component/*": [
+      "component/*": [
         "src/component/*"
       ],
-      "/@assets/*": [
+      "assets/*": [
         "src/assets/*"
       ],
-      "/@style/*": [
+      "style/*": [
         "src/style/*"
       ],
-      "/@view/*": [
+      "view/*": [
         "src/view/*"
       ],
-      "/@route/*": [
+      "route/*": [
         "src/route/*"
       ],
-      "/@store/*": [
+      "store/*": [
         "src/store/*"
       ],
-      "/@utils/*":[
+      "utils/*": [
         "src/utils/*"
       ],
-      "/@/*": [
+      "/~": [
         "src/*"
       ],
     }

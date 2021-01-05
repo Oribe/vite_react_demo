@@ -15,8 +15,9 @@ export interface UserInfo {
 }
 
 export interface UserState {
-  userInfo?: UserInfo;
-  uuid?: string;
+  userInfo: UserInfo;
+  uuid: string;
+  isLogin: boolean;
 }
 
 export type LoginRespData = UserState;

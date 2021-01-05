@@ -1,25 +1,18 @@
-import { Record } from "immutable";
+import { UserState } from "./type";
 
-// /**
-//  * @description 用户信息
-//  */
-// export const UserInfo = {
-//   contact: "",
-//   email: "",
-//   id: 0,
-//   mobile: "",
-//   remark: "",
-//   supplier: "",
-//   supplierId: "",
-//   userName: "",
-// };
+const initialState: UserState = {
+  userInfo: {
+    id: 0,
+    userName: "",
+    email: "",
+    contact: "",
+    mobile: "",
+    remark: "",
+    supplier: "",
+    supplierId: "",
+  },
+  uuid: "",
+  isLogin: false,
+};
 
-// /**
-//  * @description 用户store
-//  */
-// export class UserState extends Record({
-//   userInfo: new UserInfo(),
-//   uuid: "",
-// }) {}
-
-// export const userState = new UserState();
+export default initialState;

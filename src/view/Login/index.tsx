@@ -1,16 +1,9 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row } from "antd";
 import React, { FC } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { createSelector } from "reselect";
+import { useDispatch } from "react-redux";
 import style from "./index.module.scss";
-import {
-  loginAction,
-  UserInfo,
-  UserState,
-  LoginBody,
-} from "/@store/modules/user";
-import { RootReducer } from "/@store/store";
+import { LoginBody, userLogin } from "store/modules/user";
 
 const { Item } = Form;
 
@@ -19,7 +12,7 @@ const Login: FC = () => {
 
   const onFinish = (values: LoginBody) => {
     console.log("Received values of form: ", values);
-    dispatch(loginAction(values));
+    dispatch(userLogin(values));
   };
 
   return (

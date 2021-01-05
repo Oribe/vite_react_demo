@@ -3,27 +3,41 @@ import React, { FC, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { createSelector } from "reselect";
+import Logo from "assets/logo.png";
+import { RootReducer } from "store/index";
+import { UserState } from "store/modules/user";
 import style from "./index.module.scss";
-import Logo from "/@assets/logo.png";
-import { RootReducer } from "/@store/index";
-import { UserInfo, UserState } from "/@store/modules/user";
+import LoginStatus from "./LoginStatus";
 
 const Wrapper = Layout.Header;
 
-const userStore = createSelector<RootReducer, UserState, UserInfo>(
+const userState = createSelector<RootReducer, UserState, UserState>(
   (store) => store.user,
-  (userState) => userState.get("userInfo")
+  (user) => user
 );
 
+/**
+ * 头部
+ */
 const Header: FC = () => {
-  const userInfo = useSelector(userStore);
+  const userStore = useSelector(userState);
   const history = useHistory();
 
+  const { isLogin, userInfo } = userStore;
   useEffect(() => {
-    if (userInfo.id) {
-      history.push("http://localhost:4000/");
+    if (isLogin) {
+      /**
+       * 登陆直接跳转
+       */
+      // window.location.href = "http://localhost:4000/tool/order";
+      history.push("/");
+    } else {
+      /**
+       * 未登录跳转到登陆页面
+       */
+      history.push("/login");
     }
-  }, [history, userInfo.id]);
+  }, [history, isLogin, userStore]);
 
   return (
     <Wrapper className={style.header}>
@@ -40,7 +54,9 @@ const Header: FC = () => {
             <h1>订单二维码管理工具</h1>
           </div>
         </Col>
-        <Col span={4}>登陆状态</Col>
+        <Col span={4}>
+          <LoginStatus isLogin={isLogin} userInfo={userInfo} />
+        </Col>
       </Row>
     </Wrapper>
   );
