@@ -45,7 +45,6 @@
         ]
       }
     ],
-    // "import/no-extraneous-dependencies": ["error", {"packageDir": "./src/"}],
-    // "import/no-extraneous-dependencies": ["error", {"devDependencies": false, "optionalDependencies": false, "peerDependencies": false}]
+    "react/prop-types": "off"
   }
 }

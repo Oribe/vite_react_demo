@@ -1,0 +1,41 @@
+.page {
+  max-width: 1200px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+// 进入前
+.fade-enter {
+  opacity: 0;
+  transform: translateX(-70%);
+}
+
+// 离开前
+.fade-exit {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+
+// 进入后
+.fade-enter-active {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+
+// 离开后
+.fade-exit-active {
+  opacity: 0;
+  transform: translateX(-30%);
+}
+
+.fade-enter-active {
+  transition: opacity 500ms ease, transform 500ms ease;
+  // transition-delay: 100ms;
+}
+.fade-exit-active {
+  transition: opacity 300ms ease, transform 300ms ease;
+}

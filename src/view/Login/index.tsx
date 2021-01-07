@@ -11,12 +11,11 @@ const Login: FC = () => {
   const dispatch = useDispatch();
 
   const onFinish = (values: LoginBody) => {
-    console.log("Received values of form: ", values);
     dispatch(userLogin(values));
   };
 
   return (
-    <Row justify="center" align="middle">
+    <Row justify="center" align="middle" className={style.login}>
       <Col className={style.formWrapper}>
         <Form
           name="normal_login"
