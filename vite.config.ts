@@ -30,6 +30,7 @@ const config: UserConfig = {
     { find: /^route/, replacement: resolve(rootDir, "src/route") },
     { find: /^store/, replacement: resolve(rootDir, "src/store") },
     { find: /^utils/, replacement: resolve(rootDir, "src/utils") },
+    { find: /^layout/, replacement: resolve(rootDir, "src/layout") },
     { find: /^\/~/, replacement: resolve(rootDir, "src") },
   ],
   optimizeDeps: {

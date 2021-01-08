@@ -1,31 +1,40 @@
 import { Layout } from "antd";
 import Transition from "component/Transition";
-import React, { FC } from "react";
-import { Redirect, Route, Switch, useLocation } from "react-router-dom";
-import { router } from "../../route";
+import React, { FC, useMemo } from "react";
+import SwitchRouter from "route/Switch";
+import { NavRouter } from "../../route";
 
 const Wrapper = Layout.Content;
 
-const Content: FC = () => {
-  const location = useLocation();
+const Content: FC<Props> = ({ routers }) => {
+  const pathnames = useMemo(() => {
+    return routers.reduce((paths, current) => {
+      const { path } = current;
+      if (!path) {
+        return paths;
+      }
+      if (Array.isArray(path)) {
+        paths.concat(path);
+      }
+      if (typeof path === "string" || typeof path === "number") {
+        paths.push(path);
+      }
+      return paths;
+    }, [] as (string | number)[]);
+  }, [routers]);
+
+  console.log(pathnames);
 
   return (
     <Wrapper style={{ position: "relative" }}>
-      <Transition>
-        <Switch location={location}>
-          {router.map((r) => (
-            <Route
-              key={r.path as string}
-              path={r.path}
-              exact={r.exact ?? true}
-              component={r.component}
-            />
-          ))}
-          <Redirect to="/" />
-        </Switch>
+      <Transition pathnames={pathnames}>
+        <SwitchRouter routers={routers} />
       </Transition>
     </Wrapper>
   );
 };
 
 export default Content;
+interface Props {
+  routers: NavRouter[];
+}

@@ -3,12 +3,7 @@ import asyncLoader from "./asyncLoader";
 
 export const basename = "/tool";
 
-export const router: RouteProps[] = [
-  {
-    path: "/",
-    component: asyncLoader(() => import("view/Order")),
-    exact: true,
-  },
+export const router: NavRouter[] = [
   {
     path: "/login",
     component: asyncLoader(() => import("view/Login")),
@@ -19,6 +14,11 @@ export const router: RouteProps[] = [
     component: asyncLoader(() => import("view/User")),
     exact: true,
   },
+  {
+    path: "/",
+    component: asyncLoader(() => import("view/Navigation")),
+    exact: true,
+  },
 ];
 
 export { beforeRouterEnter, beforeRouterLeave } from "./guard";
@@ -27,7 +27,7 @@ export const navRouter: NavRouter[] = [
   {
     label: "新建订单",
     path: "/order",
-    component: asyncLoader(() => import("view/Order")),
+    component: asyncLoader(() => import("view/Navigation")),
   },
   {
     label: "未完成订单",
@@ -49,9 +49,12 @@ export const navRouter: NavRouter[] = [
 export interface NavRouter extends RouteProps {
   label?: string;
   icon?: React.ReactNode;
-  image?: {
-    url: string;
-    alt?: string;
-  };
+  image?: ImageProps;
   children?: NavRouter[];
+  path?: string;
 }
+
+export type ImageProps = React.DetailedHTMLProps<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  HTMLImageElement
+>;
