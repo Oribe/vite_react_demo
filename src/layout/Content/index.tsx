@@ -1,8 +1,7 @@
 import { Layout } from "antd";
-import Transition from "component/Transition";
 import React, { FC, useMemo } from "react";
 import SwitchRouter from "route/Switch";
-import { NavRouter } from "../../route";
+import { NavRouter, redirctRouter } from "../../route";
 
 const Wrapper = Layout.Content;
 
@@ -27,9 +26,7 @@ const Content: FC<Props> = ({ routers }) => {
 
   return (
     <Wrapper style={{ position: "relative" }}>
-      <Transition pathnames={pathnames}>
-        <SwitchRouter routers={routers} />
-      </Transition>
+      <SwitchRouter routers={routers} redirect={redirctRouter} />
     </Wrapper>
   );
 };

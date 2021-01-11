@@ -1,93 +1,116 @@
 import { Menu } from "antd";
-import { cloneDeep } from "lodash-es";
-import React, { FC, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { CSSProperties, FC } from "react";
+import { NavLink } from "react-router-dom";
 import { ImageProps, NavRouter } from "route/index";
-import style from "./index.module.scss";
+import styles from "./index.module.scss";
 
-const { SubMenu, Item } = Menu;
+const { SubMenu: SubMenuComp, Item } = Menu;
 
 const MenuImage: FC<ImageProps> = (props) => {
   if (!props.src) {
     return null;
   }
   return (
-    <div className={style.menuImageWrapper}>
+    <div className={styles.menuImageWrapper}>
       <img {...props} />
     </div>
   );
 };
 
-const MenuItem: FC<MenuItemProps> = (props) => {
-  const { path, image, label } = props;
-
-  const itemContent = useMemo(() => {
-    console.log(path);
-    return path ? (
-      <Link to={path}>
-        {image ? <MenuImage {...image} /> : null}
-        {label ? <span className={style.menuLableContent}>{label}</span> : null}
-      </Link>
-    ) : (
-      <>
-        {image ? <MenuImage {...image} /> : null}
-        {label ? <span className={style.menuLableContent}>{label}</span> : null}
-      </>
-    );
-  }, [image, label, path]);
-
-  const itemProps = useMemo(() => {
-    const pr = cloneDeep(props);
-    delete pr.path;
-    delete pr.image;
-    delete pr.label;
-    return pr;
-  }, [props]);
-
+export const MenuItem: FC<MenuItemProps> = ({
+  path,
+  image,
+  label,
+  icon,
+  className,
+  style,
+  activeClassName,
+  activeStyle,
+  ...props
+}) => {
   return (
-    <Item {...itemProps}>
+    <Item className={className} style={style} icon={icon} key={path} {...props}>
       {path ? (
-        <Link to={path}>
+        <NavLink
+          className={styles.navbarLink}
+          activeStyle={activeStyle}
+          activeClassName={activeClassName}
+          strict
+          to={path}
+        >
           {image ? <MenuImage {...image} /> : null}
-          {label ? (
-            <span className={style.menuLableContent}>{label}</span>
-          ) : null}
-        </Link>
+          {label ? <span className={styles.navbarLabel}>{label}</span> : null}
+        </NavLink>
       ) : (
         <>
           {image ? <MenuImage {...image} /> : null}
-          {label ? (
-            <span className={style.menuLableContent}>{label}</span>
-          ) : null}
+          {label ? <span className={styles.navbarLabel}>{label}</span> : null}
         </>
       )}
     </Item>
   );
 };
 
-const SubMenuComp: FC<Props> = (props) => {
-  const { menus } = props;
+export const SubMenu: FC<Props> = ({
+  menus,
+  className,
+  style,
+  itemClassName,
+  itemStyle,
+  activeClassName,
+  activeStyle,
+  ...props
+}) => {
   return (
     <>
       {menus.map((menu) => {
         const { path, label, icon, children } = menu;
         if (children) {
           return (
-            <SubMenu key={path as string} icon={icon} title={label} {...props}>
-              <SubMenuComp menus={children} />
-            </SubMenu>
+            <SubMenuComp
+              className={className}
+              style={style}
+              key={path}
+              icon={icon}
+              title={label}
+              {...props}
+            >
+              <SubMenu
+                className={className}
+                style={style}
+                itemClassName={itemClassName}
+                itemStyle={itemStyle}
+                activeClassName={activeClassName}
+                activeStyle={activeStyle}
+                menus={children}
+              />
+            </SubMenuComp>
           );
         }
-        return <MenuItem key={label} {...props} {...menu} />;
+        return (
+          <MenuItem
+            className={itemClassName}
+            style={itemStyle}
+            activeClassName={activeClassName}
+            activeStyle={activeStyle}
+            key={path}
+            {...props}
+            {...menu}
+          />
+        );
       })}
     </>
   );
 };
 
-export default SubMenuComp;
-
 type Props = {
   menus: NavRouter[];
+  style?: CSSProperties;
+  className?: string;
+  activeStyle?: CSSProperties;
+  activeClassName?: string;
+  itemClassName?: string;
+  itemStyle?: CSSProperties;
 };
 
 type MenuItemProps = {
@@ -95,4 +118,8 @@ type MenuItemProps = {
   icon?: React.ReactNode;
   image?: ImageProps;
   path?: string;
+  className?: string;
+  style?: CSSProperties;
+  activeStyle?: CSSProperties;
+  activeClassName?: string;
 };

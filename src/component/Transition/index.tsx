@@ -1,27 +1,17 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import * as H from "history";
+import React, { FC, useRef } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 import "./index.scss";
 
-const Transition: FC<Props> = ({ pathnames, children }) => {
-  const location = useLocation();
-  const [prePathname, setPrePathname] = useState(location.pathname);
+const Transition: FC<Props> = ({ location, children }) => {
   const nodeRef = useRef(null);
-
-  useEffect(() => {
-    const { pathname } = location;
-    if (pathnames?.includes(pathname)) {
-      console.log("pathname", pathname);
-      setPrePathname(pathname);
-    }
-  }, [location, pathnames]);
 
   return children ? (
     <SwitchTransition mode="out-in">
       <CSSTransition
         nodeRef={nodeRef}
-        key={prePathname}
-        timeout={500}
+        key={location.pathname}
+        timeout={300}
         classNames="fade"
         unmountOnExit
       >
@@ -36,5 +26,6 @@ const Transition: FC<Props> = ({ pathnames, children }) => {
 export default Transition;
 
 interface Props {
-  pathnames: (string | number)[];
+  location: H.Location;
+  pathnames?: (string | number)[];
 }

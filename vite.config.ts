@@ -37,6 +37,7 @@ const config: UserConfig = {
     include: [
       "redux-persist/lib/storage/session",
       "redux-persist/integration/react",
+      "antd/lib/button/button-group",
     ],
   },
 };

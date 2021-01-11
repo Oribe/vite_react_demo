@@ -1,0 +1,34 @@
+@import "../../style/var.scss";
+.orderTable {
+  .tableColumns {
+    background-color: $primary-color;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.btnGroup {
+  margin-top: 68px;
+  .submitBut {
+    color: $primary-color;
+    background-color: transparent;
+    border: 1px solid $primary-color;
+
+    &:hover {
+      color: rgba($color: $primary-color, $alpha: 0.8);
+      background-color: transparent;
+      border: 1px solid rgba($color: $primary-color, $alpha: 0.8);
+    }
+  }
+
+  .downloadBut {
+    color: $primary-color;
+    background-color: transparent;
+    &:hover {
+      background-color: transparent;
+      color: rgba($color: $primary-color, $alpha: 0.8);
+      box-shadow: none;
+    }
+  }
+}

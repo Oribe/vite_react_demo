@@ -1,13 +1,12 @@
+import * as H from "history";
 import React, { FC } from "react";
-import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+import { Redirect, RedirectProps, Route, Switch } from "react-router-dom";
 import { NavRouter } from ".";
 
-const SwitchRouter: FC<Props> = (props) => {
-  const location = useLocation();
-
+const SwitchRouter: FC<Props> = ({ location, routers, redirect }) => {
   return (
     <Switch location={location}>
-      {props.routers.map((r) => (
+      {routers.map((r) => (
         <Route
           key={r.path as string}
           path={r.path}
@@ -15,7 +14,14 @@ const SwitchRouter: FC<Props> = (props) => {
           component={r.component}
         />
       ))}
-      {/* <Redirect to="/" /> */}
+      {redirect?.map((r) => (
+        <Redirect
+          key={r.path}
+          path={r.path}
+          to={r.to}
+          exact={r.exact ?? true}
+        />
+      ))}
     </Switch>
   );
 };
@@ -23,5 +29,7 @@ const SwitchRouter: FC<Props> = (props) => {
 export default SwitchRouter;
 
 interface Props {
+  location: H.Location;
   routers: NavRouter[];
+  redirect?: RedirectProps[];
 }

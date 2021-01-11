@@ -1,5 +1,7 @@
+@import "../../style/var.scss";
+
 .page {
-  max-width: 1200px;
+  max-width: $max-width;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -32,9 +34,30 @@
 }
 
 .fade-enter-active {
-  transition: opacity 500ms ease, transform 500ms ease;
+  transition: opacity 300ms ease, transform 300ms ease;
   // transition-delay: 100ms;
 }
 .fade-exit-active {
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+/* 向上动画 */
+
+// 进入前
+.top-enter,
+.top-exit-active {
+  opacity: 0;
+  transform: translate(-50%, 10%);
+}
+
+// 进入后和离开前
+.top-exit,
+.top-enter-active {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.top-enter-active,
+.top-exit-active {
   transition: opacity 300ms ease, transform 300ms ease;
 }

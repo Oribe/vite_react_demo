@@ -1,13 +1,17 @@
-import { RouteProps } from "react-router-dom";
+import { RedirectProps, RouteProps } from "react-router-dom";
 import asyncLoader from "./asyncLoader";
 
 export const basename = "/tool";
 
+/**
+ * 主路由
+ */
 export const router: NavRouter[] = [
   {
     path: "/login",
     component: asyncLoader(() => import("view/Login")),
     exact: true,
+    transition: "top",
   },
   {
     path: "/user",
@@ -15,9 +19,19 @@ export const router: NavRouter[] = [
     exact: true,
   },
   {
-    path: "/",
+    path: "/:model",
     component: asyncLoader(() => import("view/Navigation")),
     exact: true,
+  },
+];
+
+/**
+ * 重定向
+ */
+export const redirctRouter: RedirectProps[] = [
+  {
+    path: "/",
+    to: "/order",
   },
 ];
 
@@ -27,7 +41,7 @@ export const navRouter: NavRouter[] = [
   {
     label: "新建订单",
     path: "/order",
-    component: asyncLoader(() => import("view/Navigation")),
+    component: asyncLoader(() => import("view/Order")),
   },
   {
     label: "未完成订单",
@@ -52,6 +66,7 @@ export interface NavRouter extends RouteProps {
   image?: ImageProps;
   children?: NavRouter[];
   path?: string;
+  transition?: string;
 }
 
 export type ImageProps = React.DetailedHTMLProps<

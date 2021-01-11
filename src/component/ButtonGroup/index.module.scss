@@ -1,0 +1,20 @@
+@import "../../style/var.scss";
+
+.buttonGroup {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  .but {
+    width: 132px;
+    background-color: $primary-color;
+    color: #fff;
+    margin-right: 13px;
+    &:hover {
+      color: rgba($color: #fff, $alpha: 0.9);
+      background-color: rgba($primary-color, 0.9);
+      border-radius: 4px;
+      box-shadow: 0px 4px 10px #ccc;
+    }
+  }
+}

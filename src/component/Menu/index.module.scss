@@ -1,2 +1,14 @@
-.menuImageWrapper {
+.navbarLink {
+  color: inherit;
+
+  &:hover {
+    color: inherit !important;
+  }
 }
+
+.navbarLabel {
+  color: inherit;
+}
+
+
+

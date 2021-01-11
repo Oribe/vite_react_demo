@@ -1,33 +1,25 @@
 import Navbar from "component/Menu";
 import Transition from "component/Transition";
-import React, { FC, useMemo } from "react";
+import React, { FC } from "react";
+import { useLocation } from "react-router-dom";
 import { navRouter } from "route/index";
 import SwitchRouter from "route/Switch";
+import style from "./index.module.scss";
 
 const Navigation: FC = () => {
-  const pathnames = useMemo(() => {
-    return navRouter.reduce((paths, current) => {
-      const { path } = current;
-      if (path) {
-        if (typeof path === "string" && typeof path === "number") {
-          paths.push(path);
-        }
-        if (Array.isArray(path)) {
-          paths.concat(path);
-        }
-      }
-      return paths;
-    }, [] as (string | number)[]);
-  }, []);
+  const location = useLocation();
 
   return (
     <>
-      <Navbar menus={navRouter} />
-      <section>
-        <Transition pathnames={pathnames}>
-          <SwitchRouter routers={navRouter} />
-        </Transition>
-      </section>
+      <Navbar
+        className={style.navbar}
+        menus={navRouter}
+        itemClassName={style.menuItem}
+        activeClassName={style.navbarActive}
+      />
+      <Transition location={location}>
+        <SwitchRouter location={location} routers={navRouter} />
+      </Transition>
     </>
   );
 };
