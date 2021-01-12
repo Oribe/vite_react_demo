@@ -4,6 +4,7 @@
   height: auto;
   background-color: transparent;
   border-bottom: 1px solid #ccc;
+  padding: 0;
 }
 
 .headerContent {
@@ -28,4 +29,8 @@
     color: inherit;
     font-size: 1em;
   }
+}
+
+.userWrapper {
+  text-align: right;
 }

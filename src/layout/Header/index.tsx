@@ -46,7 +46,7 @@ const Header: FC = () => {
         justify="space-between"
         className={style.headerContent}
       >
-        <Col span={20} className={style.titleWrapper}>
+        <Col className={style.titleWrapper}>
           <div className={style.logoWrapper}>
             <img src={Logo} alt="logo" />
           </div>
@@ -54,9 +54,10 @@ const Header: FC = () => {
             <h1>订单二维码管理工具</h1>
           </div>
         </Col>
-        <Col span={4}>
+        <Col xs={0} md={6} className={style.userWrapper}>
           <LoginStatus isLogin={isLogin} userInfo={userInfo} />
         </Col>
+        <Col md={0}>头像</Col>
       </Row>
     </Wrapper>
   );
