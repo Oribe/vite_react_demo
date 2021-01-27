@@ -12,14 +12,14 @@ const publicColumnsType: ColumnType<any> = {
 };
 
 const buttonConfig: ButtonGroupProps = {
-  size: "large",
+  // size: "large",
   className: style.btnGroup,
 };
 
 const buttons: ButtonTypes[] = [
   {
     label: "添加",
-    href: "/tool/order/add",
+    href: "/order/add/257",
   },
   {
     label: "收藏夹导入",

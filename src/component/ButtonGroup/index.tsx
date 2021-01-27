@@ -1,3 +1,7 @@
+/***
+ * 按钮组
+ */
+
 import { Button } from "antd";
 import { ButtonProps } from "antd/lib/button";
 import React from "react";
@@ -5,6 +9,7 @@ import { FC } from "react";
 import { debounce } from "lodash-es";
 import ButtonGroup, { ButtonGroupProps } from "antd/lib/button/button-group";
 import style from "./index.module.scss";
+import { Link } from "react-router-dom";
 
 const ButtonGroups: FC<Props> = ({
   config: { className, ...arg } = {},
@@ -12,7 +17,7 @@ const ButtonGroups: FC<Props> = ({
 }) => {
   return (
     <ButtonGroup className={`${style.buttonGroup} ${className}`} {...arg}>
-      {buttons.map(({ label, onClick, className, ...props }) => {
+      {buttons.map(({ label, onClick, className, href, ...props }) => {
         return (
           <Button
             className={`${style.but} ${className}`}
@@ -22,7 +27,7 @@ const ButtonGroups: FC<Props> = ({
             }, 500)}
             {...props}
           >
-            {label}
+            {href ? <Link to={href}>{label}</Link> : label}
           </Button>
         );
       })}

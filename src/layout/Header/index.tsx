@@ -54,10 +54,9 @@ const Header: FC = () => {
             <h1>订单二维码管理工具</h1>
           </div>
         </Col>
-        <Col xs={0} md={6} className={style.userWrapper}>
+        <Col className={style.userWrapper}>
           <LoginStatus isLogin={isLogin} userInfo={userInfo} />
         </Col>
-        <Col md={0}>头像</Col>
       </Row>
     </Wrapper>
   );

@@ -1,14 +1,18 @@
 import { Menu } from "antd";
+import { MenuMode } from "antd/lib/menu";
 import { MenuInfo } from "rc-menu/lib/interface";
 import React, { CSSProperties, FC } from "react";
 import { useLocation } from "react-router-dom";
 import { NavRouter } from "route/index";
-import { MenuItem, SubMenu } from "./SubMenu";
+import { MenuImage, MenuItem, SubMenu } from "./SubMenu";
+
+const { SubMenu: SubMenuComp } = Menu;
 
 const Navbar: FC<Props> = (props) => {
   const location = useLocation();
   const {
     menus,
+    mode,
     className,
     style,
     itemClassName,
@@ -31,7 +35,7 @@ const Navbar: FC<Props> = (props) => {
     <Menu
       className={className}
       style={style}
-      mode="horizontal"
+      mode={mode ? mode : "horizontal"}
       selectedKeys={[location.pathname]}
       onClick={handleMenuClick}
     >
@@ -39,16 +43,21 @@ const Navbar: FC<Props> = (props) => {
         const { path, label, image, icon, children } = menu;
         if (children) {
           return (
-            <SubMenu
+            <SubMenuComp
               key={path}
-              menus={children}
-              className={subClassName}
-              style={subStyle}
-              itemClassName={itemClassName}
-              itemStyle={itemStyle}
-              activeClassName={activeClassName}
-              activeStyle={activeStyle}
-            />
+              title={label}
+              icon={<MenuImage {...image} />}
+            >
+              <SubMenu
+                menus={children}
+                className={subClassName}
+                style={subStyle}
+                itemClassName={itemClassName}
+                itemStyle={itemStyle}
+                activeClassName={activeClassName}
+                activeStyle={activeStyle}
+              />
+            </SubMenuComp>
           );
         }
         return (
@@ -81,4 +90,5 @@ interface Props {
   subStyle?: CSSProperties;
   activeStyle?: CSSProperties;
   activeClassName?: string;
+  mode?: MenuMode;
 }

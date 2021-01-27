@@ -19,6 +19,11 @@ export const router: NavRouter[] = [
     exact: true,
   },
   {
+    path: "/:model/add/:subCategory",
+    component: asyncLoader(() => import("view/Form")),
+    exact: true,
+  },
+  {
     path: "/:model",
     component: asyncLoader(() => import("view/Navigation")),
     exact: true,

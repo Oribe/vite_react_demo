@@ -179,7 +179,7 @@ export default class Axios {
    */
   get<T = any>(
     url: string,
-    params: Record<string, any> | string,
+    params?: Record<string, any> | string,
     options?: RequestOptions
   ) {
     return this.request<T>({ url, params, method: "GET" }, options);

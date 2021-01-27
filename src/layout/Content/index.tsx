@@ -2,6 +2,7 @@ import { Layout } from "antd";
 import React, { FC, useMemo } from "react";
 import SwitchRouter from "route/Switch";
 import { NavRouter, redirctRouter } from "../../route";
+import style from "./index.module.scss";
 
 const Wrapper = Layout.Content;
 
@@ -25,7 +26,7 @@ const Content: FC<Props> = ({ routers }) => {
   console.log(pathnames);
 
   return (
-    <Wrapper style={{ position: "relative" }}>
+    <Wrapper className={style.main} style={{ position: "relative" }}>
       <SwitchRouter routers={routers} redirect={redirctRouter} />
     </Wrapper>
   );

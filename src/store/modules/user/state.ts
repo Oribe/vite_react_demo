@@ -1,4 +1,4 @@
-import { UserState } from "./type";
+import { UserState } from "./interface";
 
 const initialState: UserState = {
   userInfo: {

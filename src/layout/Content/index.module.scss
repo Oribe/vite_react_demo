@@ -1,0 +1,7 @@
+@import "../../style/var.scss";
+
+@media screen and (max-width: $xl-width) {
+  .main {
+    margin: 0 10px;
+  }
+}

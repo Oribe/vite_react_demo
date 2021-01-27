@@ -1,3 +1,7 @@
+/**
+ * 路由组件（复用）
+ */
+
 import * as H from "history";
 import React, { FC } from "react";
 import { Redirect, RedirectProps, Route, Switch } from "react-router-dom";
@@ -29,7 +33,7 @@ const SwitchRouter: FC<Props> = ({ location, routers, redirect }) => {
 export default SwitchRouter;
 
 interface Props {
-  location: H.Location;
+  location?: H.Location;
   routers: NavRouter[];
   redirect?: RedirectProps[];
 }

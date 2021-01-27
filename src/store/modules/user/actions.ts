@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { LoginBody, LoginRespData } from "./type";
-import TypePrefix from "./typePrefix";
+import { LoginBody, LoginRespData } from "./interface";
+import TypePrefix from "./actionTypes";
 import axios from "utils/axios";
 
 /**

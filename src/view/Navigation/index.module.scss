@@ -1,8 +1,9 @@
 @import "../../style/var.scss";
 .navbar {
+  width: 100%;
   max-width: $max-width;
   margin: 16px auto;
-  font-size: 20px;
+  font-size: 16px;
 
   .menuItem {
     margin: 0 32px 0 0 !important;
@@ -12,12 +13,22 @@
   .navbarActive {
     color: $primary-color !important;
   }
-}
 
-:global {
-  .ant-menu-item-selected,
-  .ant-menu-item-active {
-    color: $primary-color !important;
-    border-bottom: 2px solid $primary-color !important;
+  :global {
+    .ant-menu-item-selected,
+    .ant-menu-item-active {
+      color: $primary-color !important;
+      border-bottom: 2px solid $primary-color !important;
+    }
   }
 }
+
+@media screen and (max-width: $xs-width) {
+  .navbar {
+    font-size: 14px;
+
+    .menuItem {
+      margin: 0 16px 0 0 !important;
+    }
+  }
+} ;

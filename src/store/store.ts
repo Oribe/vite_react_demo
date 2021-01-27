@@ -1,10 +1,12 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import user from "store/modules/user";
+import { user } from "store/modules/user";
+import { form } from "store/modules/Form";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage/session";
 
 const reducers = {
   user,
+  form,
 };
 
 const rootReducer = combineReducers(reducers);

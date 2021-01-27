@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { userLogin } from "./asyncThunk";
+import { userLogin } from "./actions";
 import initialState from "./state";
 
-const user = createSlice({
+const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {},
@@ -16,8 +16,7 @@ const user = createSlice({
   },
 });
 
-export default user.reducer;
-
-export * from "./asyncThunk";
+export const user = userSlice.reducer;
+export * from "./actions";
 export * from "./state";
-export * from "./type";
+export * from "./interface";

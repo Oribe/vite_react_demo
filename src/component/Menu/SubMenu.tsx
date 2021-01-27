@@ -6,7 +6,7 @@ import styles from "./index.module.scss";
 
 const { SubMenu: SubMenuComp, Item } = Menu;
 
-const MenuImage: FC<ImageProps> = (props) => {
+export const MenuImage: FC<ImageProps> = (props) => {
   if (!props.src) {
     return null;
   }
