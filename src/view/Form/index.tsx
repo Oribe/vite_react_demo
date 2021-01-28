@@ -65,7 +65,12 @@ const CutterForm: FC = () => {
       <h3>刀具选择与编辑</h3>
       <Row>
         <Col>
-          <Menu mode="vertical" menus={menus} />
+          <Menu
+            mode="vertical"
+            menus={menus}
+            className={styles.formMenu}
+            subMenuClassName={styles.formMenuItem}
+          />
         </Col>
         <Col>表单内容</Col>
       </Row>

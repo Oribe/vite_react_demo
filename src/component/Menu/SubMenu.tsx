@@ -11,9 +11,9 @@ export const MenuImage: FC<ImageProps> = (props) => {
     return null;
   }
   return (
-    <div className={styles.menuImageWrapper}>
+    <span className={styles.menuImageWrapper}>
       <img {...props} />
-    </div>
+    </span>
   );
 };
 

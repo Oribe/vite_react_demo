@@ -21,6 +21,7 @@ const Navbar: FC<Props> = (props) => {
     subStyle,
     activeClassName,
     activeStyle,
+    subMenuClassName,
   } = props;
 
   if (!menus) {
@@ -47,6 +48,7 @@ const Navbar: FC<Props> = (props) => {
               key={path}
               title={label}
               icon={<MenuImage {...image} />}
+              className={subMenuClassName}
             >
               <SubMenu
                 menus={children}
@@ -91,4 +93,5 @@ interface Props {
   activeStyle?: CSSProperties;
   activeClassName?: string;
   mode?: MenuMode;
+  subMenuClassName?: string;
 }

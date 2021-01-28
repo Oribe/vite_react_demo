@@ -1,4 +1,29 @@
 .formWrapper {
   display: flex;
   flex-direction: column;
+
+  .formMenu {
+    img {
+      width: auto;
+      max-width: 60px;
+      height: auto;
+      max-height: 100%;
+    }
+
+    .formMenuItem {
+      width: 100%;
+      max-width: 200px;
+      border: 1px solid #e0e0ed;
+      :global {
+        .ant-menu-submenu-title {
+          height: auto;
+          min-height: 40px;
+          display: flex;
+          align-items: center;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+  }
 }
