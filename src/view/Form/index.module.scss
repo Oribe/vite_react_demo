@@ -1,29 +1,49 @@
 .formWrapper {
   display: flex;
   flex-direction: column;
+}
 
-  .formMenu {
-    img {
-      width: auto;
-      max-width: 60px;
-      height: auto;
-      max-height: 100%;
-    }
+// 标题
+.formTitle {
+  color: #666;
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
 
-    .formMenuItem {
-      width: 100%;
-      max-width: 200px;
-      border: 1px solid #e0e0ed;
-      :global {
-        .ant-menu-submenu-title {
-          height: auto;
-          min-height: 40px;
-          display: flex;
-          align-items: center;
-          margin: 0;
-          padding: 0;
+// 左侧测单
+.formMenu {
+  img {
+    width: auto;
+    max-width: 60px;
+    height: auto;
+    max-height: 100%;
+  }
+
+  .formMenuSub {
+    width: 100%;
+    max-width: 200px;
+    border: 1px solid #e0e0ed;
+    font-size: 16px;
+
+    :global {
+      .ant-menu-submenu-title {
+        height: auto;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding-left: 0;
+
+        span {
+          padding: 0 10px;
         }
       }
     }
+  }
+
+  .formMenuItem {
+    font-size: 16px;
+    padding: 0 10px;
   }
 }

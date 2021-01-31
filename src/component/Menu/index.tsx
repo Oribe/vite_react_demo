@@ -1,7 +1,7 @@
 import { Menu } from "antd";
 import { MenuMode } from "antd/lib/menu";
 import { MenuInfo } from "rc-menu/lib/interface";
-import React, { CSSProperties, FC } from "react";
+import React, { CSSProperties, FC, memo } from "react";
 import { useLocation } from "react-router-dom";
 import { NavRouter } from "route/index";
 import { MenuImage, MenuItem, SubMenu } from "./SubMenu";
@@ -41,11 +41,12 @@ const Navbar: FC<Props> = (props) => {
       onClick={handleMenuClick}
     >
       {menus.map((menu) => {
-        const { path, label, image, icon, children } = menu;
+        const { path, label, image, icon, children, isMenu } = menu;
+        if (isMenu === false) return; // 非菜单
         if (children) {
           return (
             <SubMenuComp
-              key={path}
+              key={label}
               title={label}
               icon={<MenuImage {...image} />}
               className={subMenuClassName}
@@ -64,7 +65,7 @@ const Navbar: FC<Props> = (props) => {
         }
         return (
           <MenuItem
-            key={path}
+            key={label}
             path={path}
             label={label}
             image={image}
@@ -80,7 +81,7 @@ const Navbar: FC<Props> = (props) => {
   );
 };
 
-export default Navbar;
+export default memo(Navbar);
 
 interface Props {
   menus: NavRouter[];

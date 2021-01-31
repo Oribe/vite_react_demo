@@ -19,16 +19,17 @@ export const router: NavRouter[] = [
     exact: true,
   },
   {
-    path: "/:model/add/:subCategory",
-    component: asyncLoader(() => import("view/Form")),
-    exact: true,
-  },
-  {
-    path: "/:model",
+    path: ["/:model", "/:model/add/:subCategory"],
     component: asyncLoader(() => import("view/Navigation")),
     exact: true,
   },
 ];
+
+/**
+ * 动画黑名单
+ * 添加后当切换到匹配的路由时将不会产生过度动画
+ */
+export const animateBlackList = [/\/(\w)+\/add\/(\d)+/];
 
 /**
  * 重定向
@@ -63,6 +64,11 @@ export const navRouter: NavRouter[] = [
     path: "/collection",
     component: asyncLoader(() => import("view/Collection")),
   },
+  {
+    path: "/order/add/:subCategory",
+    component: asyncLoader(() => import("view/Form")),
+    isMenu: false,
+  },
 ];
 
 export interface NavRouter extends RouteProps {
@@ -70,8 +76,9 @@ export interface NavRouter extends RouteProps {
   icon?: React.ReactNode;
   image?: ImageProps;
   children?: NavRouter[];
-  path?: string;
+  path?: string | string[];
   transition?: string;
+  isMenu?: boolean;
 }
 
 export type ImageProps = React.DetailedHTMLProps<

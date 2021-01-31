@@ -11,9 +11,9 @@ export const MenuImage: FC<ImageProps> = (props) => {
     return null;
   }
   return (
-    <span className={styles.menuImageWrapper}>
+    <div className={styles.menuImageWrapper}>
       <img {...props} />
-    </span>
+    </div>
   );
 };
 
@@ -28,6 +28,10 @@ export const MenuItem: FC<MenuItemProps> = ({
   activeStyle,
   ...props
 }) => {
+  if (Array.isArray(path)) {
+    return null;
+  }
+
   return (
     <Item className={className} style={style} icon={icon} key={path} {...props}>
       {path ? (
@@ -70,7 +74,7 @@ export const SubMenu: FC<Props> = ({
             <SubMenuComp
               className={className}
               style={style}
-              key={path}
+              key={label}
               icon={icon}
               title={label}
               {...props}
@@ -93,7 +97,7 @@ export const SubMenu: FC<Props> = ({
             style={itemStyle}
             activeClassName={activeClassName}
             activeStyle={activeStyle}
-            key={path}
+            key={label}
             {...props}
             {...menu}
           />
@@ -117,7 +121,7 @@ type MenuItemProps = {
   label?: string;
   icon?: React.ReactNode;
   image?: ImageProps;
-  path?: string;
+  path?: string | string[];
   className?: string;
   style?: CSSProperties;
   activeStyle?: CSSProperties;

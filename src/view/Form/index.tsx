@@ -1,7 +1,9 @@
 import { Col, Row } from "antd";
+import Form from "component/Form";
 import Menu from "component/Menu";
 import React, { FC, useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 import { NavRouter } from "route/index";
 import { RootReducer } from "store/index";
@@ -9,6 +11,7 @@ import {
   FormMenu,
   FormState,
   FormSubMenu,
+  getFormConfig,
   getFormMenu,
 } from "store/modules/Form";
 import styles from "./index.module.scss";
@@ -21,11 +24,27 @@ const formProps = createSelector<RootReducer, FormState, FormState>(
 const CutterForm: FC = () => {
   const state = useSelector(formProps);
   const dispatch = useDispatch();
+  const params = useParams<UrlParam>();
 
+  /**
+   * api请求获取数据
+   */
   useEffect(() => {
     dispatch(getFormMenu());
   }, [dispatch]);
 
+  /**
+   * 获取form配置
+   */
+  useEffect(() => {
+    if (+params.subCategory > 0) {
+      dispatch(getFormConfig(+params.subCategory));
+    }
+  }, [dispatch, params]);
+
+  /**
+   * 菜单列表转换成router配置
+   */
   const menuToRouter = useCallback((menus: (FormMenu | FormSubMenu)[]) => {
     return menus.reduce((routers, menu) => {
       const { name, imgUrl, subCategory } = menu;
@@ -62,20 +81,27 @@ const CutterForm: FC = () => {
 
   return (
     <div className={styles.formWrapper}>
-      <h3>刀具选择与编辑</h3>
+      <h3 className={styles.formTitle}>刀具选择与编辑</h3>
       <Row>
         <Col>
           <Menu
             mode="vertical"
             menus={menus}
             className={styles.formMenu}
-            subMenuClassName={styles.formMenuItem}
+            subMenuClassName={styles.formMenuSub}
+            itemClassName={styles.formMenuItem}
           />
         </Col>
-        <Col>表单内容</Col>
+        <Col>
+          <Form config={state.form[+params.subCategory]} />
+        </Col>
       </Row>
     </div>
   );
 };
 
 export default CutterForm;
+
+interface UrlParam {
+  subCategory: string;
+}
