@@ -9,6 +9,9 @@ let pathname = "";
 const Transition: FC<Props> = ({ location, children }) => {
   const nodeRef = useRef(null);
 
+  /**
+   * 过渡动画过滤
+   */
   const testPathname = (pn: string) => {
     return animateBlackList?.some((item) => {
       if (item.test(pn)) {

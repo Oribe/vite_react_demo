@@ -23,10 +23,11 @@ export interface FormState {
 }
 
 export interface FormConfig {
+  title: string;
   body: FormItem[];
 }
 
-interface FormItem {
+export interface FormItem {
   label?: string;
   dataIndex?: string;
   hintImgUrl?: string;
