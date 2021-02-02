@@ -1,14 +1,13 @@
-import "antd/dist/antd.css";
+import "./style/index.scss";
+import "./style/antd.less";
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./layout/App";
-import "./style/index.css";
 import { Provider } from "react-redux";
-import store, { persistor } from "./store";
 import { BrowserRouter } from "react-router-dom";
-import { basename } from "./route";
 import { PersistGate } from "redux-persist/integration/react";
-import "antd/dist/antd.less";
+import App from "./layout/App";
+import { basename } from "./route";
+import store, { persistor } from "./store";
 
 ReactDOM.render(
   <React.StrictMode>

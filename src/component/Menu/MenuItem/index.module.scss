@@ -1,13 +1,14 @@
-.navbarLink {
-  color: inherit !important;
-  padding-left: 10px;
-  &:hover {
-    color: inherit !important;
-  }
-}
+.menuItem {
+  color: #666;
 
-.navbarLabel {
-  color: inherit !important;
-  // display: inline-block;
-  // padding: 0 10px;
+  .navbarLink {
+    color: inherit;
+    padding: 0 10px;
+  }
+
+  .navbarLabel {
+    color: inherit;
+    // display: inline-block;
+    // padding: 0 10px;
+  }
 }

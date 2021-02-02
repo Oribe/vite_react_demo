@@ -1,16 +1,24 @@
 import { Menu } from "antd";
 import { MenuMode } from "antd/lib/menu";
 import { MenuInfo } from "rc-menu/lib/interface";
-import React, { CSSProperties, FC, memo, useState } from "react";
+import React, {
+  CSSProperties,
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useLocation } from "react-router-dom";
 import { NavRouter } from "route/index";
 import MenuImage from "./MenuImage";
 import MenuItem from "./MenuItem";
-import { SubMenu } from "./SubMenu";
+import styles from "./index.module.scss";
 
 const { SubMenu: SubMenuComp } = Menu;
 
 const Navbar: FC<Props> = (props) => {
+  const location = useLocation();
   const [selectedKeys, setSelecteKeys] = useState<string[]>([]);
   const {
     menus,
@@ -19,38 +27,66 @@ const Navbar: FC<Props> = (props) => {
     style,
     itemClassName,
     itemStyle,
-    subClassName,
-    subStyle,
     activeClassName,
     activeStyle,
     subMenuClassName,
   } = props;
 
+  /**
+   * 当页面刷新时，匹配当前菜单key
+   */
+  const matchRouterKey = useCallback(
+    (menuList: NavRouter[]) => {
+      return menuList.reduce((keyList, menu) => {
+        const { label, path, children } = menu;
+        if (Array.isArray(path)) return keyList;
+        if (children) {
+          const childrenKeyList = matchRouterKey(children);
+          if (childrenKeyList.length > 0) {
+            /**
+             * 子类中有匹配
+             */
+            keyList = [...childrenKeyList, path ?? label ?? "", ...keyList];
+          }
+        } else {
+          /**
+           * 无子类
+           */
+          if (typeof path === "string" && location.pathname.includes(path)) {
+            keyList.push(path ?? label ?? "");
+          }
+        }
+        return keyList;
+      }, [] as string[]);
+    },
+    [location.pathname]
+  );
+
+  useEffect(() => {
+    const keys = matchRouterKey(menus);
+    setSelecteKeys(keys);
+  }, [matchRouterKey, menus]);
+
   if (!menus) {
     return null;
   }
 
-  const handleMenuClick = (e: MenuInfo) => {
-    console.log("点击", e.keyPath);
-    setSelecteKeys(e.keyPath as string[]);
-  };
-
   return (
     <Menu
-      className={className}
+      className={`${className} ${styles.antdMenu}`}
       style={style}
       mode={mode ? mode : "horizontal"}
       selectedKeys={selectedKeys}
-      onClick={handleMenuClick}
       triggerSubMenuAction="click"
     >
       {menus.map((menu) => {
         const { path, label, image, icon, children, isMenu } = menu;
         if (isMenu === false) return; // 非菜单
+        if (Array.isArray(path)) return null;
         if (children) {
           return (
             <SubMenuComp
-              key={label}
+              key={path ?? label}
               title={label}
               icon={
                 <>
@@ -58,27 +94,32 @@ const Navbar: FC<Props> = (props) => {
                   <MenuImage {...image} />
                 </>
               }
-              className={subMenuClassName}
+              className={`${subMenuClassName} ${
+                selectedKeys.includes(path ?? label ?? "") ? styles.active : ""
+              }`}
             >
-              {children.map((child) => (
-                <MenuItem
-                  key={child.label}
-                  path={child.path}
-                  label={child.label}
-                  image={child.image}
-                  icon={child.icon}
-                  className={itemClassName}
-                  style={itemStyle}
-                  activeClassName={activeClassName}
-                  activeStyle={activeStyle}
-                />
-              ))}
+              {children.map((child) => {
+                if (Array.isArray(child.path)) return null;
+                return (
+                  <MenuItem
+                    key={child.path}
+                    path={child.path}
+                    label={child.label}
+                    image={child.image}
+                    icon={child.icon}
+                    className={itemClassName}
+                    style={itemStyle}
+                    activeClassName={activeClassName}
+                    activeStyle={activeStyle}
+                  />
+                );
+              })}
             </SubMenuComp>
           );
         }
         return (
           <MenuItem
-            key={label}
+            key={path}
             path={path}
             label={label}
             image={image}

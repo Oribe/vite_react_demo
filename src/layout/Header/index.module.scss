@@ -1,4 +1,4 @@
-@import "../../style/var.scss";
+// @import "../../style/var.scss";
 
 .header {
   height: 90px;
@@ -19,7 +19,7 @@
   width: 90px;
   height: 90px;
   display: inline-flex;
-  background-color: $primary-color;
+  background-color: #002060;
   transition: 0.3s ease;
   img {
     width: 51%;
@@ -63,7 +63,8 @@
   }
 }
 
-@media screen and (max-width: $xs-width) {
+// @media screen and (max-width: $xs-width) {
+@media screen and (max-width: 375px) {
   .header {
     height: 60px;
     line-height: 60px;

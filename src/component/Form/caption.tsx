@@ -3,12 +3,25 @@
  * 固定参数
  */
 
-import React, { FC } from "react";
+import React, { FC, useCallback } from "react";
 import { AutoComplete, Input, Row } from "antd";
 import FormItem from "./formItem";
 
-const Caption: FC = () => {
-  const onSearch = (value: string) => {};
+const Caption: FC<Props> = (props) => {
+  const { handleSearch } = props;
+  /**
+   * 远端查询订货号
+   * 模糊查询
+   * 返回对应的订货号列表
+   */
+  const onSearch = useCallback(
+    (value: string) => {
+      if (handleSearch) {
+        handleSearch(value);
+      }
+    },
+    [handleSearch]
+  );
 
   return (
     <Row>
@@ -25,5 +38,5 @@ const Caption: FC = () => {
 export default Caption;
 
 interface Props {
-  handleSearch: () => {};
+  handleSearch?: (orderNumber: string) => void;
 }

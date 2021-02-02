@@ -24,7 +24,7 @@ const MenuItem: FC<MenuItemProps> = ({
 
   return (
     <Item
-      className={className}
+      className={`${className} ${styles.menuItem}`}
       style={style}
       icon={
         <>

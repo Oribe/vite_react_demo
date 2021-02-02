@@ -40,7 +40,7 @@ const Header: FC = () => {
   }, [history, isLogin, userStore]);
 
   return (
-    <Wrapper className={style.header}>
+    <Wrapper className={style.header} style={{ height: 90 }}>
       <Row
         align="middle"
         justify="space-between"

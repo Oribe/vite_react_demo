@@ -1,13 +1,11 @@
+@import "./var.scss";
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-html {
-  --antd-wave-shadow-color: #002060;
 }
 
 #root {
@@ -32,3 +30,14 @@ h3,
 h4 {
   margin: 0;
 }
+
+a {
+  &.active{
+    color: $primary-color !important;
+  }
+  &:hover {
+    color: $primary-color !important;
+  }
+}
+
+
