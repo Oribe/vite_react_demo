@@ -5,8 +5,8 @@
 import { Form as AForm } from "antd";
 import React, { FC } from "react";
 import { FormConfig } from "store/modules/Form";
-import Caption from "./caption";
-import FormBody from "./formBody";
+import Caption from "./Caption";
+import FormBody from "./FormBody";
 
 const Form: FC<Props> = (props) => {
   const { config } = props;
@@ -31,5 +31,6 @@ const Form: FC<Props> = (props) => {
 export default Form;
 
 interface Props {
+  handleSearch: (orderNumber?: string) => void;
   config?: FormConfig;
 }

@@ -6,7 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
-import { FormState, getFormConfig, getFormMenu } from "store/modules/Form";
+import {
+  FormState,
+  getFormConfig,
+  getFormMenu,
+  searchOrderNumber,
+} from "store/modules/Form";
 import styles from "./index.module.scss";
 
 const formProps = createSelector<RootReducer, FormState, FormState>(
@@ -35,6 +40,17 @@ const CutterForm: FC = () => {
     }
   }, [dispatch, params]);
 
+  /**
+   * 订货号搜索
+   */
+  const handleSearch = async (orderNumber = "") => {
+    const response = await dispatch(
+      searchOrderNumber({ orderNumber, subCategory: +params.subCategory })
+    );
+    if (searchOrderNumber.fulfilled.match(response)) {
+    }
+  };
+
   return (
     <div className={styles.formWrapper}>
       <h3 className={styles.formTitle}>刀具选择与编辑</h3>
@@ -50,7 +66,10 @@ const CutterForm: FC = () => {
           />
         </Col>
         <Col>
-          <Form config={state.form[+params.subCategory]} />
+          <Form
+            config={state.form[+params.subCategory]}
+            handleSearch={handleSearch}
+          />
         </Col>
       </Row>
     </div>

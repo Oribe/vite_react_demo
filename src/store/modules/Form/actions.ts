@@ -65,3 +65,22 @@ export const getFormConfig = createAsyncThunk(
     return { subCategory, config: response };
   }
 );
+
+interface SearchOrderNumberQuery {
+  orderNumber: string;
+  subCategory: number;
+}
+/**
+ * 订货号搜索
+ */
+export const searchOrderNumber = createAsyncThunk<
+  any,
+  SearchOrderNumberQuery,
+  ThunkApiConfig
+>("form/searchOrderNumber", async ({ orderNumber, subCategory }) => {
+  const response = await axios.get("/cutter", {
+    orderNumber,
+    subCategory,
+  });
+  return response;
+});

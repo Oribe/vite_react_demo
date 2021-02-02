@@ -5,7 +5,7 @@
 
 import React, { FC, useCallback } from "react";
 import { AutoComplete, Input, Row } from "antd";
-import FormItem from "./formItem";
+import FormItem from "../FormItem";
 
 const Caption: FC<Props> = (props) => {
   const { handleSearch } = props;
