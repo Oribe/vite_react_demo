@@ -6,6 +6,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  --antd-wave-shadow-color: #002060;
+}
+
 #root {
   width: 100%;
   height: 100%;

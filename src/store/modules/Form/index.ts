@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { NavRouter } from "route/index";
 import { Act } from "store/type";
 import { getFormConfig, getFormMenu } from "./actions";
-import { FormConfig, FormMenu } from "./interface";
+import { FormConfig } from "./interface";
 import formState from "./state";
 
 const formSlice = createSlice({
@@ -9,8 +10,10 @@ const formSlice = createSlice({
   initialState: formState,
   reducers: {},
   extraReducers: ({ addCase }) => {
-    addCase(getFormMenu.fulfilled, (state, action: Act<FormMenu[]>) => {
-      state.menu = action.payload || [];
+    addCase(getFormMenu.fulfilled, (state, action: Act<Array<NavRouter>>) => {
+      if (action.payload) {
+        return { ...state, menu: action.payload };
+      }
     });
     addCase(
       getFormConfig.fulfilled,

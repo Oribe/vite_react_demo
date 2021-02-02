@@ -1,3 +1,5 @@
+@import "../../style/var.scss";
+
 .formWrapper {
   display: flex;
   flex-direction: column;
@@ -45,5 +47,9 @@
   .formMenuItem {
     font-size: 16px;
     padding: 0 10px;
+  }
+
+  .activeClassName {
+    color: $primary-color !important;
   }
 }

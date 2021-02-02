@@ -21,6 +21,17 @@ const config: UserConfig = {
       },
     },
   },
+  css: {
+    preprocessorOptions: {
+      less: {
+        additionalData: `
+          @primary-color: #002060;
+          @link-color: #002060;
+        `,
+        javascriptEnabled: true,
+      },
+    },
+  },
   root: rootDir,
   alias: [
     { find: /^component/, replacement: resolve(rootDir, "src/component") },

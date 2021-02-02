@@ -71,17 +71,14 @@ export const navRouter: NavRouter[] = [
   },
 ];
 
-export interface NavRouter extends RouteProps {
+export type NavRouter = {
   label?: string;
   icon?: React.ReactNode;
   image?: ImageProps;
-  children?: NavRouter[];
   path?: string | string[];
   transition?: string;
   isMenu?: boolean;
-}
+  children?: NavRouter[];
+} & RouteProps;
 
-export type ImageProps = React.DetailedHTMLProps<
-  React.ImgHTMLAttributes<HTMLImageElement>,
-  HTMLImageElement
->;
+export type ImageProps = React.ImgHTMLAttributes<HTMLImageElement>;

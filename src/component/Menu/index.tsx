@@ -1,15 +1,17 @@
 import { Menu } from "antd";
 import { MenuMode } from "antd/lib/menu";
 import { MenuInfo } from "rc-menu/lib/interface";
-import React, { CSSProperties, FC, memo } from "react";
+import React, { CSSProperties, FC, memo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { NavRouter } from "route/index";
-import { MenuImage, MenuItem, SubMenu } from "./SubMenu";
+import MenuImage from "./MenuImage";
+import MenuItem from "./MenuItem";
+import { SubMenu } from "./SubMenu";
 
 const { SubMenu: SubMenuComp } = Menu;
 
 const Navbar: FC<Props> = (props) => {
-  const location = useLocation();
+  const [selectedKeys, setSelecteKeys] = useState<string[]>([]);
   const {
     menus,
     mode,
@@ -29,7 +31,8 @@ const Navbar: FC<Props> = (props) => {
   }
 
   const handleMenuClick = (e: MenuInfo) => {
-    console.log("点击", e.key);
+    console.log("点击", e.keyPath);
+    setSelecteKeys(e.keyPath as string[]);
   };
 
   return (
@@ -37,8 +40,9 @@ const Navbar: FC<Props> = (props) => {
       className={className}
       style={style}
       mode={mode ? mode : "horizontal"}
-      selectedKeys={[location.pathname]}
+      selectedKeys={selectedKeys}
       onClick={handleMenuClick}
+      triggerSubMenuAction="click"
     >
       {menus.map((menu) => {
         const { path, label, image, icon, children, isMenu } = menu;
@@ -48,18 +52,27 @@ const Navbar: FC<Props> = (props) => {
             <SubMenuComp
               key={label}
               title={label}
-              icon={<MenuImage {...image} />}
+              icon={
+                <>
+                  {icon ? { icon } : null}
+                  <MenuImage {...image} />
+                </>
+              }
               className={subMenuClassName}
             >
-              <SubMenu
-                menus={children}
-                className={subClassName}
-                style={subStyle}
-                itemClassName={itemClassName}
-                itemStyle={itemStyle}
-                activeClassName={activeClassName}
-                activeStyle={activeStyle}
-              />
+              {children.map((child) => (
+                <MenuItem
+                  key={child.label}
+                  path={child.path}
+                  label={child.label}
+                  image={child.image}
+                  icon={child.icon}
+                  className={itemClassName}
+                  style={itemStyle}
+                  activeClassName={activeClassName}
+                  activeStyle={activeStyle}
+                />
+              ))}
             </SubMenuComp>
           );
         }

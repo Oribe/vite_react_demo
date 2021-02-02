@@ -1,5 +1,6 @@
 import { Rule } from "antd/lib/form";
 import { CSSProperties } from "react";
+import { NavRouter } from "route/index";
 
 export interface FormMenu {
   category: number;
@@ -16,7 +17,8 @@ export interface FormSubMenu {
 }
 
 export interface FormState {
-  menu: FormMenu[];
+  menu: Array<NavRouter>;
+  // menu: any[];
   form: {
     [key: number]: FormConfig | undefined;
   };
