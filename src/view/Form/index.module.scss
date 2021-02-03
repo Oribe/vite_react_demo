@@ -3,6 +3,7 @@
 .formWrapper {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 // 标题
@@ -48,4 +49,9 @@
     font-size: 16px;
     padding: 0 10px;
   }
+}
+
+.fromWrapper {
+  width: 100%;
+  max-width: 1000px;
 }

@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { NavRouter } from "route/index";
 import { ThunkApiConfig } from "store/type";
 import axios from "utils/axios";
-import { FormMenu, FormSubMenu } from "./interface";
+import { Cutter, FormMenu, FormSubMenu } from "./interface";
 
 /**
  * 获取表侧边栏
@@ -74,7 +74,7 @@ interface SearchOrderNumberQuery {
  * 订货号搜索
  */
 export const searchOrderNumber = createAsyncThunk<
-  any,
+  Cutter,
   SearchOrderNumberQuery,
   ThunkApiConfig
 >("form/searchOrderNumber", async ({ orderNumber, subCategory }) => {

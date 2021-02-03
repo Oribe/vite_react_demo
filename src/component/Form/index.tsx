@@ -2,14 +2,14 @@
  * 自定义表单
  */
 
-import { Form as AForm } from "antd";
+import { Form as AForm, Row } from "antd";
 import React, { FC } from "react";
 import { FormConfig } from "store/modules/Form";
 import Caption from "./Caption";
 import FormBody from "./FormBody";
 
 const Form: FC<Props> = (props) => {
-  const { config } = props;
+  const { config, handleSearch } = props;
 
   if (!config) {
     return <div>暂无数据</div>;
@@ -20,10 +20,15 @@ const Form: FC<Props> = (props) => {
   console.log("config", config);
 
   return (
-    <AForm>
+    <AForm
+      labelCol={{ span: 10, offset: 1 }}
+      wrapperCol={{ span: 12, offset: 0 }}
+    >
       <h3>{title}</h3>
-      <Caption />
-      <FormBody body={body} />
+      <Row>
+        <Caption handleSearch={handleSearch} />
+        <FormBody body={body} />
+      </Row>
     </AForm>
   );
 };

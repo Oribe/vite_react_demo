@@ -1,6 +1,7 @@
 @import "../../style/var.scss";
 .antdMenu {
   color: #666;
+  border-right: none;
   .active {
     color: $primary-color;
   }

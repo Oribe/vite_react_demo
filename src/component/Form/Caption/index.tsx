@@ -4,8 +4,9 @@
  */
 
 import React, { FC, useCallback } from "react";
-import { AutoComplete, Input, Row } from "antd";
+import { AutoComplete, Col, Input } from "antd";
 import FormItem from "../FormItem";
+import { debounce } from "lodash-es";
 
 const Caption: FC<Props> = (props) => {
   const { handleSearch } = props;
@@ -24,14 +25,21 @@ const Caption: FC<Props> = (props) => {
   );
 
   return (
-    <Row>
-      <FormItem label="制造商" dataIndex="manufacturer" required>
-        <Input placeholder="请选择制造商" />
-      </FormItem>
-      <FormItem label="订货号" dataIndex="orderNumber" required>
-        <AutoComplete placeholder="请输入订货号" onSearch={onSearch} />
-      </FormItem>
-    </Row>
+    <>
+      <Col xs={24} sm={12} md={12}>
+        <FormItem label="制造商" dataIndex="manufacturer" required>
+          <Input placeholder="请选择制造商" />
+        </FormItem>
+      </Col>
+      <Col xs={24} sm={12} md={12}>
+        <FormItem label="订货号" dataIndex="orderNumber" required>
+          <AutoComplete
+            placeholder="请输入订货号"
+            onSearch={debounce(onSearch, 1000)}
+          />
+        </FormItem>
+      </Col>
+    </>
   );
 };
 

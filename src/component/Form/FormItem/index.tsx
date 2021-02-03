@@ -10,7 +10,7 @@ const { Item } = Form;
 const FormItem: FC<Props> = (props) => {
   const { label, dataIndex, ...formItemProps } = props;
   return (
-    <Item label={label} name={dataIndex} {...formItemProps}>
+    <Item label={label} name={dataIndex} required {...formItemProps}>
       {props.children}
     </Item>
   );

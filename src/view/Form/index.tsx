@@ -1,3 +1,4 @@
+import { isFulfilled } from "@reduxjs/toolkit";
 import { Col, Row } from "antd";
 import Form from "component/Form";
 import Menu from "component/Menu";
@@ -47,15 +48,17 @@ const CutterForm: FC = () => {
     const response = await dispatch(
       searchOrderNumber({ orderNumber, subCategory: +params.subCategory })
     );
-    if (searchOrderNumber.fulfilled.match(response)) {
+    if (isFulfilled(response)) {
+      const resData = response.payload;
+      console.log("resData", resData);
     }
   };
 
   return (
     <div className={styles.formWrapper}>
       <h3 className={styles.formTitle}>刀具选择与编辑</h3>
-      <Row>
-        <Col>
+      <Row wrap={false}>
+        <Col xs={0} md={6}>
           <Menu
             mode="vertical"
             menus={state.menu}
@@ -65,7 +68,7 @@ const CutterForm: FC = () => {
             activeClassName={styles.activeClassName}
           />
         </Col>
-        <Col>
+        <Col xs={24} md={18} className={styles.fromWrapper}>
           <Form
             config={state.form[+params.subCategory]}
             handleSearch={handleSearch}

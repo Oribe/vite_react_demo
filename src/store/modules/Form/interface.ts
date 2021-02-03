@@ -1,3 +1,4 @@
+import { ColProps } from "antd";
 import { Rule } from "antd/lib/form";
 import { CSSProperties } from "react";
 import { NavRouter } from "route/index";
@@ -16,14 +17,6 @@ export interface FormSubMenu {
   subCategory: number;
 }
 
-export interface FormState {
-  menu: Array<NavRouter>;
-  // menu: any[];
-  form: {
-    [key: number]: FormConfig | undefined;
-  };
-}
-
 export interface FormConfig {
   title: string;
   body: FormItem[];
@@ -37,5 +30,25 @@ export interface FormItem {
     rules?: Rule[];
     style?: CSSProperties;
     noStyle?: boolean;
+  };
+  formItemColProps?: ColProps;
+  component: {
+    type: string;
+    props: Record<string, unknown>;
+  };
+}
+
+export interface Cutter {
+  orderNumber: string;
+  category: number;
+  subCategory: number;
+  [key: string]: unknown;
+}
+
+export interface FormState {
+  menu: Array<NavRouter>;
+  // menu: any[];
+  form: {
+    [key: number]: FormConfig | undefined;
   };
 }
