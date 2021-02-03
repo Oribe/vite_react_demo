@@ -4,9 +4,10 @@
 
 import { Col, Input, Select } from "antd";
 import { Rule } from "antd/lib/form";
+import ImgSelect from "component/ImgSelect";
 import { isFunction } from "lodash-es";
 import React, { FC, useCallback } from "react";
-import { FormItem as FormItemConfig } from "store/modules/Form";
+import { FormItem as FormItemConfig, isImageOptions } from "store/modules/Form";
 import FormCol from "../FormCol";
 import FormItem from "../FormItem";
 
@@ -18,11 +19,22 @@ const FormBody: FC<Props> = (props) => {
    */
   const renderComponent = useCallback((comp: FormItemConfig["component"]) => {
     const { type, props: componentProps } = comp;
-    switch (type) {
-      case "input":
+    const { options } = componentProps || {};
+
+    switch (type.toUpperCase()) {
+      case "input".toUpperCase():
         return <Input {...componentProps} />;
-      case "select":
-        return <Select {...componentProps} />;
+      case "select".toUpperCase():
+        if (options && !isImageOptions(options)) {
+          return <Select {...componentProps} options={options} />;
+        }
+        return <Select {...componentProps} options={[]} />;
+      case "imgSelect".toUpperCase():
+        if (options && isImageOptions(options)) {
+          console.log(options);
+          return <ImgSelect options={options} />;
+        }
+        return null;
       default:
         return null;
     }

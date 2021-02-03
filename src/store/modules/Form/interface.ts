@@ -34,7 +34,9 @@ export interface FormItem {
   formItemColProps?: ColProps;
   component: {
     type: string;
-    props: Record<string, unknown>;
+    props?: {
+      options?: SelectProps;
+    };
   };
 }
 
@@ -45,10 +47,34 @@ export interface Cutter {
   [key: string]: unknown;
 }
 
+export interface Options {
+  label: string;
+  value: string | number;
+}
+
+export interface ImageOptions {
+  label: string;
+  dataIndex: string;
+  src: string;
+}
+
+export type SelectProps = Options[] | ImageOptions[];
+
 export interface FormState {
   menu: Array<NavRouter>;
-  // menu: any[];
   form: {
     [key: number]: FormConfig | undefined;
   };
+}
+
+/**
+ * 类型判断
+ */
+export function isImageOptions(
+  option: Options[] | ImageOptions[]
+): option is ImageOptions[] {
+  return (
+    (option as ImageOptions[])[0] &&
+    (option as ImageOptions[])[0].src !== undefined
+  );
 }
