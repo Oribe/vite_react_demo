@@ -28,7 +28,7 @@ const ImgSelect: FC<Props> = (props) => {
   const { options } = props;
 
   return (
-    <Row>
+    <Row justify="space-around">
       {options.map((option) => {
         return <Image key={option.label} {...option} />;
       })}
