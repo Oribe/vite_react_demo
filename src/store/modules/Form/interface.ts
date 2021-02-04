@@ -26,11 +26,7 @@ export interface FormItem {
   label?: string;
   dataIndex?: string;
   hintImgUrl?: string;
-  formItemProps?: {
-    rules?: Rule[];
-    style?: CSSProperties;
-    noStyle?: boolean;
-  };
+  formItemProps?: FormItemProps;
   formItemColProps?: ColProps;
   component: {
     type: string;
@@ -38,6 +34,12 @@ export interface FormItem {
       options?: SelectProps;
     };
   };
+}
+
+export interface FormItemProps {
+  rules?: Rule[];
+  style?: CSSProperties;
+  noStyle?: boolean;
 }
 
 export interface Cutter {

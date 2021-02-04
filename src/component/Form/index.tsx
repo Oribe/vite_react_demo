@@ -17,8 +17,6 @@ const Form: FC<Props> = (props) => {
 
   const { title, body } = config;
 
-  console.log("config", config);
-
   return (
     <AForm
       labelCol={{ span: 10, offset: 1 }}

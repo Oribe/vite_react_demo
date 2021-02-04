@@ -8,9 +8,9 @@ import { Form, FormItemProps } from "antd";
 const { Item } = Form;
 
 const FormItem: FC<Props> = (props) => {
-  const { label, dataIndex, ...formItemProps } = props;
+  const { label, ...formItemProps } = props;
   return (
-    <Item label={label} name={dataIndex} required {...formItemProps}>
+    <Item label={label} required {...formItemProps}>
       {props.children}
     </Item>
   );
@@ -20,5 +20,5 @@ export default FormItem;
 
 type Props = {
   label?: string;
-  dataIndex?: string;
+  name?: string;
 } & FormItemProps;
