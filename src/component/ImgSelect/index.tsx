@@ -34,7 +34,7 @@ const Image: FC<ImageProps> = (props) => {
 const ImgSelect: FC<Props> = (props) => {
   const { options } = props;
   return (
-    <Row>
+    <Row justify="space-around">
       {options.map((option) => {
         return (
           <Item key={option.dataIndex} name={option.dataIndex} noStyle={true}>
