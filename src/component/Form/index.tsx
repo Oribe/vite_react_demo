@@ -5,8 +5,8 @@
 import { Form as AForm, Row } from "antd";
 import React, { FC } from "react";
 import { FormConfig } from "store/modules/Form";
-import Caption from "./Caption";
-import FormBody from "./FormBody";
+import Caption from "../FormCaption";
+import FormBody from "../FormBody";
 
 const Form: FC<Props> = (props) => {
   const { config, handleSearch } = props;

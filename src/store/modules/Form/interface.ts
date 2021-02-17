@@ -34,6 +34,7 @@ export interface FormItem {
       options?: SelectProps;
     };
   };
+  complexConfig?: FormItem[];
 }
 
 export interface FormItemProps {

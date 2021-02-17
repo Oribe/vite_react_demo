@@ -27,12 +27,12 @@ const Caption: FC<Props> = (props) => {
   return (
     <>
       <Col xs={24} sm={12} md={12}>
-        <FormItem label="制造商" dataIndex="manufacturer" required>
+        <FormItem label="制造商" name="manufacturer" required>
           <Input placeholder="请选择制造商" />
         </FormItem>
       </Col>
       <Col xs={24} sm={12} md={12}>
-        <FormItem label="订货号" dataIndex="orderNumber" required>
+        <FormItem label="订货号" name="orderNumber" required>
           <AutoComplete
             placeholder="请输入订货号"
             onSearch={debounce(onSearch, 1000)}

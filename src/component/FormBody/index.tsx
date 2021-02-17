@@ -2,43 +2,16 @@
  * 表单内容
  */
 
-import { Col, Input, Select } from "antd";
 import { Rule } from "antd/lib/form";
-import ImgSelect from "component/ImgSelect";
 import { isFunction } from "lodash-es";
 import React, { FC, useCallback } from "react";
-import { FormItem as FormItemConfig, isImageOptions } from "store/modules/Form";
+import { FormItem as FormItemConfig } from "store/modules/Form";
 import { switchTypeToMessage } from "utils/index";
 import FormCol from "../FormCol";
 import FormItem from "../FormItem";
 
 const FormBody: FC<Props> = (props) => {
   const { body } = props;
-
-  /**
-   * 组件筛选
-   */
-  const renderComponent = useCallback((comp: FormItemConfig["component"]) => {
-    const { type, props: componentProps } = comp;
-    const { options } = componentProps || {};
-
-    switch (type.toUpperCase()) {
-      case "input".toUpperCase():
-        return <Input {...componentProps} />;
-      case "select".toUpperCase():
-        if (options && !isImageOptions(options)) {
-          return <Select {...componentProps} options={options} />;
-        }
-        return <Select {...componentProps} options={[]} />;
-      case "imgSelect".toUpperCase():
-        if (options && isImageOptions(options)) {
-          return <ImgSelect options={options} />;
-        }
-        return null;
-      default:
-        return null;
-    }
-  }, []);
 
   /**
    * rule检验调整
@@ -88,14 +61,31 @@ const FormBody: FC<Props> = (props) => {
           formItemProps,
           component,
           formItemColProps,
+          complexConfig,
         } = item;
+        /**
+         * 将检验规则信息补全完整
+         */
         const rules = addRuleMessage(
           formItemProps?.rules || [],
           label,
           component.type
         );
+        /**
+         * 重新组合新的传递参数
+         */
         let newFormItemProps;
-        if (dataIndex) {
+        if (dataIndex && component.type !== "complex") {
+          /**
+           * 如果组件类型不等于复合组件
+           * 删除name字段
+           */
+          newFormItemProps = {
+            ...formItemProps,
+            // name: dataIndex,
+            rules,
+          };
+        } else if (dataIndex) {
           newFormItemProps = {
             ...formItemProps,
             name: dataIndex,
@@ -109,9 +99,12 @@ const FormBody: FC<Props> = (props) => {
         }
         return (
           <FormCol key={item.label} {...formItemColProps}>
-            <FormItem label={label} {...newFormItemProps}>
-              {renderComponent(component)}
-            </FormItem>
+            <FormItem
+              label={label}
+              component={component}
+              complexConfig={complexConfig}
+              {...newFormItemProps}
+            />
           </FormCol>
         );
       })}
