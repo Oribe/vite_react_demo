@@ -13,42 +13,6 @@ import FormItem from "../FormItem";
 const FormBody: FC<Props> = (props) => {
   const { body } = props;
 
-  /**
-   * rule检验调整
-   */
-  const addRuleMessage = useCallback(
-    (ruleList: Rule[], label?: string, componentType?: string) => {
-      return ruleList.map((rule) => {
-        if (isFunction(rule)) {
-          /**
-           * 如果当前规则为函数
-           * 则直接返回这个函数
-           */
-          return rule;
-        }
-        const { type, message } = rule;
-        if (message) {
-          // 如果存在消息提示
-          return rule;
-        }
-        if (type) {
-          /**
-           * 如果存在类型
-           */
-          return { ...rule, message: switchTypeToMessage(type) };
-        }
-        if ("required" in rule) {
-          if (componentType === "select") {
-            return { ...rule, message: "请选择" + label };
-          }
-          return { ...rule, message: "请输入" + label };
-        }
-        return rule;
-      });
-    },
-    []
-  );
-
   return (
     <>
       <FormCol xs={24} sm={24}>
@@ -63,47 +27,15 @@ const FormBody: FC<Props> = (props) => {
           formItemColProps,
           complexConfig,
         } = item;
-        /**
-         * 将检验规则信息补全完整
-         */
-        const rules = addRuleMessage(
-          formItemProps?.rules || [],
-          label,
-          component.type
-        );
-        /**
-         * 重新组合新的传递参数
-         */
-        let newFormItemProps;
-        if (dataIndex && component.type !== "complex") {
-          /**
-           * 如果组件类型不等于复合组件
-           * 删除name字段
-           */
-          newFormItemProps = {
-            ...formItemProps,
-            // name: dataIndex,
-            rules,
-          };
-        } else if (dataIndex) {
-          newFormItemProps = {
-            ...formItemProps,
-            name: dataIndex,
-            rules,
-          };
-        } else {
-          newFormItemProps = {
-            ...formItemProps,
-            rules,
-          };
-        }
+
         return (
           <FormCol key={item.label} {...formItemColProps}>
             <FormItem
               label={label}
+              dataIndex={dataIndex}
               component={component}
               complexConfig={complexConfig}
-              {...newFormItemProps}
+              {...formItemProps}
             />
           </FormCol>
         );

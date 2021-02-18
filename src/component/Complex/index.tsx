@@ -15,12 +15,13 @@ const Complex: FC<Props> = (props) => {
   return (
     <>
       {config.map((item) => {
-        const { label, dataIndex, formItemProps } = item;
+        const { label, dataIndex, formItemProps, component } = item;
         return (
           <FormItem
             key={dataIndex}
             label={label}
             name={dataIndex}
+            component={component}
             {...formItemProps}
           />
         );
