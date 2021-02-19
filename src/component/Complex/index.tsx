@@ -2,8 +2,9 @@
  * 复合组件
  */
 
+import FormCol from "component/FormCol";
 import FormItem from "component/FormItem";
-import React from "react";
+import React, { memo } from "react";
 import { FC } from "react";
 import { FormItem as FormItemConfig } from "store/modules/Form";
 
@@ -15,25 +16,33 @@ const Complex: FC<Props> = (props) => {
   return (
     <>
       {config.map((item) => {
-        const { label, dataIndex, formItemProps, component } = item;
+        const {
+          label,
+          dataIndex,
+          formItemProps,
+          component,
+          formItemColProps,
+        } = item;
         return (
-          <FormItem
-            key={dataIndex}
-            label={label}
-            name={dataIndex}
-            component={component}
-            {...formItemProps}
-          />
+          <FormCol key={item.dataIndex} {...formItemColProps}>
+            <FormItem
+              key={dataIndex}
+              label={label}
+              dataIndex={dataIndex}
+              component={component}
+              {...formItemProps}
+            />
+          </FormCol>
         );
       })}
     </>
   );
 };
 
-export default Complex;
+export default memo(Complex);
 
 interface Props {
-  value?: any;
-  onChange?: (value?: any) => void;
+  value?: unknown;
+  onChange?: (value?: unknown) => void;
   config?: FormItemConfig["complexConfig"];
 }

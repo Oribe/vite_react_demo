@@ -2,10 +2,14 @@
 
 .main {
   width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.content {
   max-width: 1200px;
   margin: 0 auto;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  position: relative;
 }
 
 @media screen and (max-width: $xl-width) {

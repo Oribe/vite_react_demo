@@ -27,7 +27,9 @@ const Content: FC<Props> = ({ routers }) => {
 
   return (
     <Wrapper className={style.main} style={{ position: "relative" }}>
-      <SwitchRouter routers={routers} redirect={redirctRouter} />
+      <div className={style.content}>
+        <SwitchRouter routers={routers} redirect={redirctRouter} />
+      </div>
     </Wrapper>
   );
 };

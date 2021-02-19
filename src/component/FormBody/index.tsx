@@ -2,11 +2,8 @@
  * 表单内容
  */
 
-import { Rule } from "antd/lib/form";
-import { isFunction } from "lodash-es";
-import React, { FC, useCallback } from "react";
+import React, { FC, memo } from "react";
 import { FormItem as FormItemConfig } from "store/modules/Form";
-import { switchTypeToMessage } from "utils/index";
 import FormCol from "../FormCol";
 import FormItem from "../FormItem";
 
@@ -44,7 +41,7 @@ const FormBody: FC<Props> = (props) => {
   );
 };
 
-export default FormBody;
+export default memo(FormBody);
 
 interface Props {
   body: FormItemConfig[];

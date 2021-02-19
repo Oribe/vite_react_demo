@@ -1,4 +1,4 @@
-import { Row } from "antd";
+import { Space } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { ImageOptions } from "store/modules/Form";
 import { Form } from "antd";
@@ -22,7 +22,16 @@ const Image: FC<ImageProps> = (props) => {
 
   return (
     <div className={styles.imageSelect} onClick={handleClick}>
-      <img src={src ? "http://localhost:3030/static" + src : src} alt={label} />
+      <div
+        className={`${styles.imageContainer} ${
+          value === 1 ? styles.active : ""
+        }`}
+      >
+        <img
+          src={src ? "http://localhost:3030/static" + src : src}
+          alt={label}
+        />
+      </div>
       <span>{label}</span>
     </div>
   );
@@ -34,7 +43,7 @@ const Image: FC<ImageProps> = (props) => {
 const ImgSelect: FC<Props> = (props) => {
   const { options } = props;
   return (
-    <Row justify="space-around">
+    <Space className={styles.imgSelectRow} align="start" wrap size="middle">
       {options.map((option) => {
         return (
           <Item key={option.dataIndex} name={option.dataIndex} noStyle={true}>
@@ -42,7 +51,7 @@ const ImgSelect: FC<Props> = (props) => {
           </Item>
         );
       })}
-    </Row>
+    </Space>
   );
 };
 

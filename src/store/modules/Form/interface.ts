@@ -19,6 +19,7 @@ export interface FormSubMenu {
 
 export interface FormConfig {
   title: string;
+  caption: FormItem[];
   body: FormItem[];
 }
 

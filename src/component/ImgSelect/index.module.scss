@@ -1,9 +1,43 @@
+@import "../../style/var.scss";
 .imageSelect {
   display: flex;
   flex-direction: column;
   align-items: center;
-  img {
-    width: 100%;
-    max-width: 100px;
+  cursor: pointer;
+  box-sizing: border-box;
+  .imageContainer {
+    box-sizing: border-box;
+    border-radius: 6px;
+    border: 1px solid $primary-color;
+    transition: border ease 0.5s;
+    overflow: hidden;
+    position: relative;
+    img {
+      width: 100%;
+      max-width: 100px;
+    }
   }
+  &:hover {
+    .imageContainer {
+      border: 1px solid white;
+    }
+  }
+}
+
+.active {
+  &::before {
+    content: "";
+    width: 5px;
+    height: 10px;
+    background-color: transparent;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    transform: rotateZ(45deg);
+  }
+}
+
+.imgSelectRow {
 }
