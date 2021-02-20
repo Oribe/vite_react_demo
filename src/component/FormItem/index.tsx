@@ -45,8 +45,6 @@ const FormItem: FC<Props> = (props) => {
   //   delete _formItemProps.name;
   // }
 
-  console.log(_formItemProps);
-
   return (
     <Item label={label} required {..._formItemProps}>
       {comp || props.children}

@@ -57,6 +57,8 @@ const useRenderComponent = (
        * 自动完成
        */
       case "autoComplete".toLocaleUpperCase():
+        console.log("options", options);
+
         if (options && !isImageOptions(options)) {
           return <AutoComplete {...componentProps} options={options} />;
         }
