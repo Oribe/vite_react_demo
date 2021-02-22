@@ -49,7 +49,10 @@ const FormItem: FC<Props> = (props) => {
     const { style, ...otherFormItemProps } = _formItemProps;
     return (
       <Item noStyle style={style} dependencies={associatedDataIndex}>
-        {({ getFieldValue }) => {
+        {({ getFieldValue, resetFields }) => {
+          if (otherFormItemProps.name) {
+            resetFields([otherFormItemProps.name]);
+          }
           let associatedValues: (string | number)[] | undefined;
           if (associatedDataIndex) {
             associatedValues = associatedDataIndex.map((field) =>
