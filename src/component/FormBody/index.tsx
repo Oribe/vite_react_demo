@@ -19,6 +19,7 @@ const FormBody: FC<Props> = (props) => {
         const {
           label,
           dataIndex,
+          associatedDataIndex,
           formItemProps,
           component,
           formItemColProps,
@@ -30,6 +31,7 @@ const FormBody: FC<Props> = (props) => {
             <FormItem
               label={label}
               dataIndex={dataIndex}
+              associatedDataIndex={associatedDataIndex}
               component={component}
               complexConfig={complexConfig}
               {...formItemProps}

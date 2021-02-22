@@ -19,6 +19,7 @@ const Complex: FC<Props> = (props) => {
         const {
           label,
           dataIndex,
+          associatedDataIndex,
           formItemProps,
           component,
           formItemColProps,
@@ -29,6 +30,7 @@ const Complex: FC<Props> = (props) => {
               key={dataIndex}
               label={label}
               dataIndex={dataIndex}
+              associatedDataIndex={associatedDataIndex}
               component={component}
               {...formItemProps}
             />

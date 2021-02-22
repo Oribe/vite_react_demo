@@ -26,16 +26,19 @@ export interface FormConfig {
 export interface FormItem {
   label?: string;
   dataIndex?: string;
+  associatedDataIndex?: string[];
   hintImgUrl?: string;
   formItemProps?: FormItemProps;
   formItemColProps?: ColProps;
-  component: {
-    type: string;
-    props?: {
-      options?: SelectProps;
-    };
-  };
+  component: Component;
   complexConfig?: FormItem[];
+}
+
+export interface Component {
+  type: string;
+  props?: {
+    options?: SelectProps;
+  };
 }
 
 export interface FormItemProps {
@@ -52,7 +55,7 @@ export interface Cutter {
 }
 
 export interface Options {
-  label: string;
+  label: string | number;
   value: string | number;
 }
 
@@ -62,7 +65,9 @@ export interface ImageOptions {
   src: string;
 }
 
-export type SelectProps = Options[] | ImageOptions[];
+export type MapOptions = Map<string, (string | number)[] | MapOptions>;
+
+export type SelectProps = Options[] | ImageOptions[] | MapOptions;
 
 export interface FormState {
   menu: Array<NavRouter>;
@@ -73,12 +78,25 @@ export interface FormState {
 
 /**
  * 类型判断
+ * 返回图片选项
  */
-export function isImageOptions(
-  option: Options[] | ImageOptions[]
-): option is ImageOptions[] {
+export function isImageOptions(option: SelectProps): option is ImageOptions[] {
   return (
     (option as ImageOptions[])[0] &&
     (option as ImageOptions[])[0].src !== undefined
   );
+}
+
+/**
+ *  类型判断
+ *  Options
+ */
+export function isOptions(options: SelectProps): options is Options[] {
+  if (isImageOptions(options)) {
+    return false;
+  }
+  if ((options as Options[])?.[0]?.label) {
+    return true;
+  }
+  return false;
 }

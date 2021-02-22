@@ -1,19 +1,28 @@
-import { Input, Select, AutoComplete } from "antd";
+import { AutoComplete, Input, Select } from "antd";
 import Complex from "component/Complex";
 import ImgSelect from "component/ImgSelect";
-import React, { useCallback, useEffect, useState } from "react";
-import { FormItem as FormItemConfig, isImageOptions } from "store/modules/Form";
+import React from "react";
+import {
+  Component,
+  FormItem as FormItemConfig,
+  isImageOptions,
+  isOptions,
+  SelectProps,
+} from "store/modules/Form";
+import initialOptions from "./initialOptions";
 
-const useRenderComponent = (
-  comp?: FormItemConfig["component"],
-  complexConfig?: FormItemConfig["complexConfig"]
+const renderComponent = (
+  comp?: Component,
+  { complexConfig, associatedValues }: Options = {}
 ) => {
-  const [component, setComponent] = useState<JSX.Element | null>(null);
+  const { type, props: componentProps } = comp || {};
+  const { options } = componentProps || {};
+  let opts: SelectProps | undefined = options;
+  if (associatedValues && associatedValues.length > 0) {
+    opts = initialOptions(options, associatedValues, true);
+  }
 
-  const switchComponent = useCallback(() => {
-    const { type, props: componentProps } = comp || {};
-    const { options } = componentProps || {};
-
+  const switchComponent = () => {
     switch (type?.toUpperCase()) {
       /**
        * 输入框
@@ -24,11 +33,11 @@ const useRenderComponent = (
        * 下拉框
        */
       case "select".toUpperCase():
-        if (options && !isImageOptions(options)) {
+        if (opts && isOptions(opts)) {
           return (
             <Select
               {...componentProps}
-              options={options}
+              options={opts}
               dropdownMatchSelectWidth={false}
             />
           );
@@ -57,10 +66,8 @@ const useRenderComponent = (
        * 自动完成
        */
       case "autoComplete".toLocaleUpperCase():
-        console.log("options", options);
-
-        if (options && !isImageOptions(options)) {
-          return <AutoComplete {...componentProps} options={options} />;
+        if (opts && isOptions(opts)) {
+          return <AutoComplete {...componentProps} options={opts} />;
         }
         return <AutoComplete {...componentProps} options={[]} />;
       /**
@@ -69,14 +76,14 @@ const useRenderComponent = (
       default:
         return <Input {...componentProps} />;
     }
-  }, [comp, complexConfig]);
+  };
 
-  useEffect(() => {
-    const comp = switchComponent();
-    setComponent(comp);
-  }, [switchComponent]);
-
-  return [component];
+  return switchComponent();
 };
 
-export default useRenderComponent;
+export default renderComponent;
+
+interface Options {
+  complexConfig?: FormItemConfig[];
+  associatedValues?: (string | number)[];
+}

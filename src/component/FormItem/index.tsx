@@ -4,9 +4,9 @@
 
 import { Form, FormItemProps } from "antd";
 import React, { FC, memo } from "react";
-import { FormItem as FormItemConfig } from "store/modules/Form";
+import { Component, FormItem as FormItemConfig } from "store/modules/Form";
 import useFormItemProps from "./hooks/formItemProps";
-import useRenderComponent from "./hooks/renderComp";
+import renderComponent from "./hooks/renderComp";
 
 const { Item } = Form;
 
@@ -14,12 +14,12 @@ const FormItem: FC<Props> = (props) => {
   const {
     label,
     dataIndex,
+    associatedDataIndex,
     component,
     complexConfig,
     ...formItemProps
   } = props;
 
-  const [comp] = useRenderComponent(component, complexConfig);
   const [_formItemProps] = useFormItemProps({
     label,
     dataIndex,
@@ -45,9 +45,33 @@ const FormItem: FC<Props> = (props) => {
   //   delete _formItemProps.name;
   // }
 
+  if (associatedDataIndex) {
+    const { style, ...otherFormItemProps } = _formItemProps;
+    return (
+      <Item noStyle style={style} dependencies={associatedDataIndex}>
+        {({ getFieldValue }) => {
+          let associatedValues: (string | number)[] | undefined;
+          if (associatedDataIndex) {
+            associatedValues = associatedDataIndex.map((field) =>
+              getFieldValue(field)
+            );
+          }
+          return (
+            <Item label={label} required {...otherFormItemProps}>
+              {renderComponent(component, {
+                complexConfig,
+                associatedValues: associatedValues,
+              }) || props.children}
+            </Item>
+          );
+        }}
+      </Item>
+    );
+  }
+
   return (
     <Item label={label} required {..._formItemProps}>
-      {comp || props.children}
+      {renderComponent(component, { complexConfig }) || props.children}
     </Item>
   );
 };
@@ -58,6 +82,7 @@ type Props = {
   label?: string;
   name?: string;
   dataIndex?: string;
-  component?: FormItemConfig["component"];
-  complexConfig?: FormItemConfig["complexConfig"];
+  associatedDataIndex?: string[];
+  component?: Component;
+  complexConfig?: FormItemConfig[];
 } & FormItemProps;
