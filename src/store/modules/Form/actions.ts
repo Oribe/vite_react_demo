@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { NavRouter } from "route/index";
 import { ThunkApiConfig } from "store/type";
 import axios from "utils/axios";
-import { Cutter, FormMenu, FormSubMenu } from "./interface";
+import { FormConfig, FormMenu, FormSubMenu } from "./interface";
 
 /**
  * 获取表侧边栏
@@ -61,7 +61,7 @@ export const getFormMenu = createAsyncThunk<NavRouter[], void, ThunkApiConfig>(
 export const getFormConfig = createAsyncThunk(
   "form/getFormConfig",
   async (subCategory: number) => {
-    const response = await axios.get(`/form/${+subCategory}`);
+    const response = await axios.get<FormConfig>(`/form/${+subCategory}`);
     return { subCategory, config: response };
   }
 );
@@ -73,14 +73,13 @@ interface SearchOrderNumberQuery {
 /**
  * 订货号搜索
  */
-export const searchOrderNumber = createAsyncThunk<
-  Cutter,
-  SearchOrderNumberQuery,
-  ThunkApiConfig
->("form/searchOrderNumber", async ({ orderNumber, subCategory }) => {
-  const response = await axios.get("/cutter", {
-    orderNumber,
-    subCategory,
-  });
-  return response;
-});
+export const searchOrderNumber = createAsyncThunk(
+  "form/searchOrderNumber",
+  async ({ orderNumber, subCategory }: SearchOrderNumberQuery) => {
+    const response = await axios.get("/cutter", {
+      orderNumber,
+      subCategory,
+    });
+    return response;
+  }
+);

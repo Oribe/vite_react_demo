@@ -3,54 +3,69 @@
  * 固定参数
  */
 
-import React, { FC, useCallback } from "react";
-import { AutoComplete, Col, Input } from "antd";
-import FormItem from "../FormItem";
+import { Button } from "antd";
+import FormCol from "component/FormCol";
 import { debounce } from "lodash-es";
+import React, { FC } from "react";
 import { FormItem as FormItemConfig } from "store/modules/Form";
+import FormItem from "../FormItem";
 
 const Caption: FC<Props> = (props) => {
-  const { handleSearch } = props;
-
-  /**
-   * 远端查询订货号
-   * 模糊查询
-   * 返回对应的订货号列表
-   */
-  const onSearch = useCallback(
-    (value: string) => {
-      if (handleSearch) {
-        handleSearch(value);
-      }
-    },
-    [handleSearch]
-  );
+  const { config, onFormReset, ...funcProps } = props;
 
   return (
     <>
-      <Col xs={24} sm={12} md={12}>
-        <FormItem
-          label="制造商"
-          name="manufacturer"
-          required
-          rules={[{ required: true, message: "请选择制造商" }]}
-        >
-          <Input placeholder="请选择制造商" />
-        </FormItem>
-      </Col>
-      <Col xs={24} sm={12} md={12}>
-        <FormItem
-          label="订货号"
-          name="orderNumber"
-          required
-          rules={[{ required: true, message: "请输入订货号" }]}
-        >
-          <AutoComplete
-            placeholder="请输入订货号"
-            onSearch={debounce(onSearch, 1000)}
-          />
-        </FormItem>
-      </Col>
+      {config?.map((item) => {
+        const {
+          label,
+          dataIndex,
+          associatedDataIndex,
+          formItemProps,
+          component,
+          formItemColProps,
+          complexConfig,
+        } = item;
+        const { func } = component;
+        const newFunc: Record<string, unknown> = {};
+        if (func) {
+          for (const key in func) {
+            const value = func[key];
+            if (!value) continue; // false跳过
+            let f;
+            if (typeof value === "boolean") {
+              /**
+               * 为布尔值
+               */
+              f = Object.getOwnPropertyDescriptor(funcProps, key)?.value;
+            }
+            if (typeof value === "string") {
+              /**
+               * 为字符串
+               * 指定了函数名
+               */
+              f = Object.getOwnPropertyDescriptor(funcProps, value)?.value;
+            }
+            if (typeof f === "function") {
+              newFunc[key] = debounce(f, 500);
+            }
+          }
+        }
+        return (
+          <FormCol key={item.label} {...formItemColProps}>
+            <FormItem
+              label={label}
+              dataIndex={dataIndex}
+              associatedDataIndex={associatedDataIndex}
+              component={{ ...component, func: newFunc }}
+              complexConfig={complexConfig}
+              {...formItemProps}
+            />
+          </FormCol>
+        );
+      })}
+      <div>
+        <Button onClick={onFormReset}>重置</Button>
+      </div>
     </>
   );
 };
@@ -59,5 +74,6 @@ export default Caption;
 
 interface Props {
   config?: FormItemConfig[];
-  handleSearch?: (orderNumber: string) => void;
+  onFormReset?: () => void;
+  onSearchOrderNumber?: (orderNumber: string) => void;
 }

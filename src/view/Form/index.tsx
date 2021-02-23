@@ -1,5 +1,5 @@
 import { isFulfilled } from "@reduxjs/toolkit";
-import { Col, Row } from "antd";
+import { Col, message, Row } from "antd";
 import Form from "component/Form";
 import Menu from "component/Menu";
 import React, { FC, useEffect } from "react";
@@ -13,6 +13,7 @@ import {
   getFormMenu,
   searchOrderNumber,
 } from "store/modules/Form";
+import { addToOrderList, Cutter } from "store/modules/order";
 import styles from "./index.module.scss";
 
 const formProps = createSelector<RootReducer, FormState, FormState>(
@@ -44,7 +45,7 @@ const CutterForm: FC = () => {
   /**
    * 订货号搜索
    */
-  const handleSearch = async (orderNumber = "") => {
+  const onSearchOrderNumber = async (orderNumber = "") => {
     const response = await dispatch(
       searchOrderNumber({ orderNumber, subCategory: +params.subCategory })
     );
@@ -52,6 +53,15 @@ const CutterForm: FC = () => {
       const resData = response.payload;
       console.log("resData", resData);
     }
+  };
+
+  /**
+   * 添加到订单列表
+   */
+  const onAdd = (order: Cutter) => {
+    dispatch({ type: addToOrderList.type, payload: order }); // 可以成功运行，且能通过ts校验
+    // dispatch(addToOrderList(order)); // 可以成功运行，但是无法通过ts校验
+    message.success("添加成功");
   };
 
   return (
@@ -71,7 +81,8 @@ const CutterForm: FC = () => {
         <Col xs={24} md={18} className={styles.fromWrapper}>
           <Form
             config={state.form[+params.subCategory]}
-            handleSearch={handleSearch}
+            onAdd={onAdd}
+            onSearchOrderNumber={onSearchOrderNumber}
           />
         </Col>
       </Row>

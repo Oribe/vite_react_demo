@@ -5,10 +5,10 @@ export interface Act<T = unknown> extends Action {
   payload?: T;
 }
 
-export interface ThunkApiConfig {
+export interface ThunkApiConfig<T = unknown> {
   state: RootReducer;
   dispatch?: Dispatch;
   extra?: unknown;
-  rejectValue?: unknown;
+  rejectValue?: T;
   serializedErrorType?: unknown;
 }

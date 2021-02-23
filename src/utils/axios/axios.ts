@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { AxiosOptions, RequestOptions, ResponseOk } from "./type";
-import { isFunction, cloneDeep, after } from "lodash-es";
+import { isFunction, cloneDeep } from "lodash-es";
 import CancelToken from "./cancelToken";
 
 export default class Axios {
@@ -39,7 +39,7 @@ export default class Axios {
   /**
    * @description 设置请求头
    */
-  setHeader(headers: any) {
+  setHeader(headers: unknown) {
     if (!this.axiosInstance) {
       return;
     }
@@ -122,7 +122,7 @@ export default class Axios {
   /**
    * 接口请求
    */
-  request<T = any>(config: AxiosRequestConfig, options?: RequestOptions) {
+  request<T = unknown>(config: AxiosRequestConfig, options?: RequestOptions) {
     let conf = cloneDeep(config);
 
     const { requestOptions } = this.options;
@@ -138,9 +138,9 @@ export default class Axios {
 
     return new Promise<T>((resolve, reject) => {
       this.axiosInstance
-        .request<ResponseOk<T>>(config)
+        .request<ResponseOk<T>>(conf)
         .then((response) => {
-          console.log("请求成功", response);
+          console.log("请求成功", response.data?.data);
           if (afterResponseHook && isFunction(afterResponseHook)) {
             const resp = afterResponseHook<T>(response, opt);
             if (resp) {
@@ -166,9 +166,9 @@ export default class Axios {
   /**
    * @description Post请求
    */
-  post<T = any>(
+  post<T = unknown>(
     url: string,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     options?: RequestOptions
   ) {
     return this.request<T>({ url, data, method: "POST" }, options);
@@ -177,9 +177,9 @@ export default class Axios {
   /**
    * @description Get请求
    */
-  get<T = any>(
+  get<T = unknown>(
     url: string,
-    params?: Record<string, any> | string,
+    params?: Record<string, unknown> | string,
     options?: RequestOptions
   ) {
     return this.request<T>({ url, params, method: "GET" }, options);

@@ -15,7 +15,7 @@ const renderComponent = (
   comp?: Component,
   { complexConfig, associatedValues }: Options = {}
 ) => {
-  const { type, props: componentProps } = comp || {};
+  const { type, props: componentProps, func } = comp || {};
   const { options } = componentProps || {};
   let opts: SelectProps | undefined = options;
   if (associatedValues && associatedValues.length > 0) {
@@ -28,7 +28,7 @@ const renderComponent = (
        * 输入框
        */
       case "input".toUpperCase():
-        return <Input {...componentProps} />;
+        return <Input {...componentProps} {...func} />;
       /**
        * 下拉框
        */
@@ -39,6 +39,7 @@ const renderComponent = (
               {...componentProps}
               options={opts}
               dropdownMatchSelectWidth={false}
+              {...func}
             />
           );
         }
@@ -47,6 +48,7 @@ const renderComponent = (
             {...componentProps}
             options={[]}
             dropdownMatchSelectWidth={false}
+            {...func}
           />
         );
       /**
@@ -67,14 +69,14 @@ const renderComponent = (
        */
       case "autoComplete".toLocaleUpperCase():
         if (opts && isOptions(opts)) {
-          return <AutoComplete {...componentProps} options={opts} />;
+          return <AutoComplete {...componentProps} options={opts} {...func} />;
         }
-        return <AutoComplete {...componentProps} options={[]} />;
+        return <AutoComplete {...componentProps} options={[]} {...func} />;
       /**
        * 默认
        */
       default:
-        return <Input {...componentProps} />;
+        return <Input {...componentProps} {...func} />;
     }
   };
 
@@ -86,4 +88,5 @@ export default renderComponent;
 interface Options {
   complexConfig?: FormItemConfig[];
   associatedValues?: (string | number)[];
+  // onSearch?: (query?: string) => void;
 }

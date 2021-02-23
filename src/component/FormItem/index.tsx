@@ -3,7 +3,7 @@
  */
 
 import { Form, FormItemProps } from "antd";
-import React, { FC, memo } from "react";
+import React, { FC, memo, useRef, useState } from "react";
 import { Component, FormItem as FormItemConfig } from "store/modules/Form";
 import useFormItemProps from "./hooks/formItemProps";
 import renderComponent from "./hooks/renderComp";
@@ -19,7 +19,8 @@ const FormItem: FC<Props> = (props) => {
     complexConfig,
     ...formItemProps
   } = props;
-
+  const [associatedValue, setAssociatedValue] = useState();
+  const timerRef = useRef<number>();
   const [_formItemProps] = useFormItemProps({
     label,
     dataIndex,
@@ -46,13 +47,26 @@ const FormItem: FC<Props> = (props) => {
   // }
 
   if (associatedDataIndex) {
+    /**
+     * 当有关联字段时
+     */
     const { style, ...otherFormItemProps } = _formItemProps;
     return (
       <Item noStyle style={style} dependencies={associatedDataIndex}>
         {({ getFieldValue, resetFields }) => {
-          if (otherFormItemProps.name) {
-            resetFields([otherFormItemProps.name]);
-          }
+          timerRef.current = setTimeout(() => {
+            const _associatedValue = getFieldValue(
+              associatedDataIndex[associatedDataIndex.length - 1]
+            );
+            if (
+              otherFormItemProps.name &&
+              associatedValue !== _associatedValue
+            ) {
+              setAssociatedValue(_associatedValue);
+              resetFields([otherFormItemProps.name]);
+            }
+            clearTimeout(timerRef.current);
+          });
           let associatedValues: (string | number)[] | undefined;
           if (associatedDataIndex) {
             associatedValues = associatedDataIndex.map((field) =>
@@ -72,6 +86,9 @@ const FormItem: FC<Props> = (props) => {
     );
   }
 
+  /**
+   * 无关联字段
+   */
   return (
     <Item label={label} required {..._formItemProps}>
       {renderComponent(component, { complexConfig }) || props.children}

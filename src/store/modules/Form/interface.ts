@@ -1,8 +1,11 @@
-import { ColProps } from "antd";
+import { ColProps as AColProps } from "antd";
 import { Rule } from "antd/lib/form";
 import { CSSProperties } from "react";
 import { NavRouter } from "route/index";
 
+/**
+ * 侧边栏 start
+ */
 export interface FormMenu {
   category: number;
   name: string;
@@ -16,7 +19,11 @@ export interface FormSubMenu {
   imgUrl: string;
   subCategory: number;
 }
+/* 侧边栏 end */
 
+/**
+ * 表单配置 start
+ */
 export interface FormConfig {
   title: string;
   caption: FormItem[];
@@ -39,6 +46,7 @@ export interface Component {
   props?: {
     options?: SelectProps;
   };
+  func?: Record<string, unknown>;
 }
 
 export interface FormItemProps {
@@ -47,12 +55,26 @@ export interface FormItemProps {
   noStyle?: boolean;
 }
 
-export interface Cutter {
-  orderNumber: string;
-  category: number;
-  subCategory: number;
-  [key: string]: unknown;
+/**
+ * 单独写一个
+ * 因为直接引用第三方类型typescript无法检验通过
+ */
+export interface ColProps {
+  flex?: AColProps["flex"];
+  span?: AColProps["span"];
+  order?: AColProps["order"];
+  offset?: AColProps["offset"];
+  push?: AColProps["push"];
+  pull?: AColProps["pull"];
+  xs?: AColProps["xs"];
+  sm?: AColProps["sm"];
+  md?: AColProps["md"];
+  lg?: AColProps["lg"];
+  xl?: AColProps["xl"];
+  xxl?: AColProps["xxl"];
+  prefixCls?: AColProps["prefixCls"];
 }
+/* 表单配置 end */
 
 export interface Options {
   label: string | number;
@@ -69,6 +91,9 @@ export type MapOptions = Map<string, (string | number)[] | MapOptions>;
 
 export type SelectProps = Options[] | ImageOptions[] | MapOptions;
 
+/**
+ * state类型结构
+ */
 export interface FormState {
   menu: Array<NavRouter>;
   form: {

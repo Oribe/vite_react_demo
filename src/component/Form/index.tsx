@@ -9,10 +9,11 @@ import Caption from "../FormCaption";
 import FormBody from "../FormBody";
 import styles from "./index.module.scss";
 import { isEmpty } from "lodash-es";
+import { Cutter } from "store/modules/order";
 
 const Form: FC<Props> = (props) => {
-  const { config, handleSearch } = props;
-  // const [form] = AForm.useForm();
+  const { config, onSearchOrderNumber, onAdd } = props;
+  const [form] = AForm.useForm();
 
   if (!config || isEmpty(config)) {
     console.log("暂无数据");
@@ -24,16 +25,27 @@ const Form: FC<Props> = (props) => {
   /**
    * 确认添加
    */
-  const handleFinish = (values: unknown) => {
-    console.log("values", values);
+  const handleFinish = (values: Cutter) => {
+    if (onAdd) {
+      onAdd(values);
+      form.resetFields();
+    }
   };
 
   const handleFinishFailed = (errorInfo: unknown) => {
     console.error("errorInfo", errorInfo);
   };
 
+  /**
+   * 表单重置
+   */
+  const onFormReset = () => {
+    form.resetFields();
+  };
+
   return (
     <AForm
+      form={form}
       labelCol={{ span: 10, offset: 1 }}
       wrapperCol={{ span: 12, offset: 0 }}
       onFinish={handleFinish}
@@ -41,7 +53,11 @@ const Form: FC<Props> = (props) => {
     >
       <h3>{title}</h3>
       <Row>
-        <Caption config={caption} handleSearch={handleSearch} />
+        <Caption
+          config={caption}
+          onFormReset={onFormReset}
+          onSearchOrderNumber={onSearchOrderNumber}
+        />
         <FormBody body={body} />
       </Row>
       <Row className={styles.btnGroup} justify="center" wrap>
@@ -67,6 +83,7 @@ const Form: FC<Props> = (props) => {
 export default memo(Form);
 
 interface Props {
-  handleSearch: (orderNumber?: string) => void;
   config?: FormConfig;
+  onAdd?: (order: Cutter) => void;
+  onSearchOrderNumber?: (orderNumber?: string) => void;
 }
