@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { NavRouter } from "route/index";
 import { Act } from "store/type";
-import { getFormConfig, getFormMenu } from "./actions";
+import { getFormConfig, getFormMenu, getManufacturer } from "./actions";
 import formState from "./state";
 
 const formSlice = createSlice({
@@ -19,6 +19,9 @@ const formSlice = createSlice({
       if (subCategory) {
         state.form[subCategory] = config;
       }
+    });
+    addCase(getManufacturer.fulfilled, (state, action) => {
+      state.manufacturer = (action.payload as any) || [];
     });
   },
 });

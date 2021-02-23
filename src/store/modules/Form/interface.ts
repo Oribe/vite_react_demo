@@ -99,6 +99,7 @@ export interface FormState {
   form: {
     [key: number]: FormConfig | undefined;
   };
+  manufacturer: Options[];
 }
 
 /**

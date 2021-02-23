@@ -1,6 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { isEmpty } from "lodash-es";
 import { NavRouter } from "route/index";
+import { RootReducer } from "store/store";
 import { ThunkApiConfig } from "store/type";
+import { formApi } from "utils/api";
 import axios from "utils/axios";
 import { FormConfig, FormMenu, FormSubMenu } from "./interface";
 
@@ -60,7 +63,12 @@ export const getFormMenu = createAsyncThunk<NavRouter[], void, ThunkApiConfig>(
  */
 export const getFormConfig = createAsyncThunk(
   "form/getFormConfig",
-  async (subCategory: number) => {
+  async (subCategory: number, { getState }) => {
+    const state = getState() as RootReducer;
+    const config = state.form.form[subCategory];
+    if (config && !isEmpty(config)) {
+      return { subCategory, config };
+    }
     const response = await axios.get<FormConfig>(`/form/${+subCategory}`);
     return { subCategory, config: response };
   }
@@ -81,5 +89,20 @@ export const searchOrderNumber = createAsyncThunk(
       subCategory,
     });
     return response;
+  }
+);
+
+/**
+ * 制造商列表
+ */
+export const getManufacturer = createAsyncThunk(
+  "form/getManufacturer",
+  async (_, { getState }) => {
+    const { manufacturer } = (getState() as RootReducer).form;
+    if (isEmpty(manufacturer)) {
+      const response = await formApi.getManufacturer();
+      return response;
+    }
+    return manufacturer;
   }
 );

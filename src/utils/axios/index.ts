@@ -1,9 +1,10 @@
 import { message } from "antd";
+import { AxiosRequestConfig, Method } from "axios";
 import { merge } from "lodash-es";
 import Axios from "./axios";
 import { RESPONSE_OK } from "./const";
 import Interceptors from "./interceptors";
-import { AxiosError, AxiosOptions } from "./type";
+import { AxiosError, AxiosOptions, RequestOptions } from "./type";
 
 const interceptors: Interceptors = {
   afterResponseHook(response, options) {
@@ -40,7 +41,46 @@ function createAxios(options?: AxiosOptions) {
     )
   );
 }
-
 const axios = createAxios();
+
+function createPreAxios(url: string, method: Method, options?: RequestOptions) {
+  return <T = unknown>(
+    data?: Record<string, unknown>,
+    config?: AxiosRequestConfig
+  ) => {
+    return axios.request<T>(
+      {
+        ...config,
+        url,
+        method,
+        data,
+      },
+      options
+    );
+  };
+}
+
+interface AxiosGroups {
+  [key: string]: { url: string; method: Method; options?: RequestOptions };
+}
+
+type PreAxiosGroups<T extends string | number | symbol> = {
+  [key in T]: (
+    data?: Record<string, unknown>,
+    config?: AxiosRequestConfig
+  ) => Axios["request"];
+};
+
+export function createAxiosGroup<T extends AxiosGroups, U extends keyof T>(
+  axiosGroups: T
+): PreAxiosGroups<U> {
+  const group = {} as PreAxiosGroups<U>;
+  for (const key in axiosGroups) {
+    const { method, url, options } = axiosGroups[key];
+    Reflect.set(group, key, createPreAxios(url, method, options));
+  }
+
+  return group;
+}
 
 export default axios;

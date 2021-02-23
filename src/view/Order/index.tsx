@@ -2,8 +2,13 @@ import { Table } from "antd";
 import { ButtonGroupProps } from "antd/lib/button";
 import { ColumnsType, ColumnType } from "antd/lib/table";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
-import React, { FC, useMemo } from "react";
+import React, { FC, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { createSelector } from "reselect";
+import { RootReducer } from "store/index";
+import { getManufacturer } from "store/modules/Form";
+import { OrderState } from "store/modules/order";
 import style from "./index.module.scss";
 
 const publicColumnsType: ColumnType<any> = {
@@ -48,7 +53,14 @@ const buttons: ButtonTypes[] = [
   },
 ];
 
+const orderStore = createSelector<RootReducer, OrderState, OrderState>(
+  (store) => store.order,
+  (order) => order
+);
+
 const Order: FC = () => {
+  const orderState = useSelector(orderStore);
+  const dispatch = useDispatch();
   const columns = useMemo<ColumnsType<any>>(() => {
     const cols: ColumnsType<any> = [
       {
@@ -86,10 +98,18 @@ const Order: FC = () => {
     return cols.map((item) => ({ ...item, ...publicColumnsType }));
   }, []);
 
+  useEffect(() => {
+    dispatch(getManufacturer());
+  }, [dispatch]);
+
   return (
     <>
       <h3>订单编辑列表</h3>
-      <Table className={style.orderTable} columns={columns} />
+      <Table
+        className={style.orderTable}
+        columns={columns}
+        dataSource={orderState.orderList || []}
+      />
       <ButtonGroups config={buttonConfig} buttons={buttons} />
     </>
   );
