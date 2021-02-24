@@ -7,7 +7,17 @@ import formState from "./state";
 const formSlice = createSlice({
   name: "form",
   initialState: formState,
-  reducers: {},
+  reducers: {
+    getCategoryWithSub(state, action: Act<number>) {
+      const subCategory = action.payload;
+      const { menu } = state;
+      menu.find((subMenu) => {
+        if (subMenu.children) {
+          // return subMenu.children.find((child) => );
+        }
+      });
+    },
+  },
   extraReducers: ({ addCase }) => {
     addCase(getFormMenu.fulfilled, (state, action: Act<Array<NavRouter>>) => {
       if (action.payload) {

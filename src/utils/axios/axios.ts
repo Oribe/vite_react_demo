@@ -153,7 +153,7 @@ export default class Axios {
           resolve(response.data.data);
         })
         .catch((error) => {
-          console.log("请求失败", error.response);
+          console.log("请求失败", error.response.data);
           if (responseCatchHook && isFunction(responseCatchHook)) {
             reject(responseCatchHook(error));
             return;

@@ -28,6 +28,7 @@ export interface FormSubMenu {
  */
 export interface FormConfig {
   title: string;
+  decodeHintImgUrl?: string;
   caption: FormItem[];
   body: FormItem[];
   others?: OtherConfig;

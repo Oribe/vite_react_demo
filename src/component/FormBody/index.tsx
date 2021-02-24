@@ -20,6 +20,7 @@ const FormBody: FC<Props> = (props) => {
           label,
           dataIndex,
           associatedDataIndex,
+          hintImgUrl,
           formItemProps,
           component,
           formItemColProps,
@@ -34,6 +35,7 @@ const FormBody: FC<Props> = (props) => {
               associatedDataIndex={associatedDataIndex}
               component={component}
               complexConfig={complexConfig}
+              hintImgUrl={hintImgUrl}
               {...formItemProps}
             />
           </FormCol>

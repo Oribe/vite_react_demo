@@ -3,10 +3,12 @@
  */
 
 import { Form, FormItemProps } from "antd";
+import ImageHint from "component/ImageHint";
 import React, { FC, memo, useRef, useState } from "react";
 import { Component, FormItem as FormItemConfig } from "store/modules/Form";
 import useFormItemProps from "./hooks/formItemProps";
 import renderComponent from "./hooks/renderComp";
+import styles from "./index.module.scss";
 
 const { Item } = Form;
 
@@ -15,6 +17,7 @@ const FormItem: FC<Props> = (props) => {
     label,
     dataIndex,
     associatedDataIndex,
+    hintImgUrl,
     component,
     complexConfig,
     ...formItemProps
@@ -72,9 +75,16 @@ const FormItem: FC<Props> = (props) => {
    * 无关联字段
    */
   return (
-    <Item label={label} required {..._formItemProps}>
-      {renderComponent(component, { complexConfig }) || props.children}
-    </Item>
+    <>
+      <Item label={label} required {..._formItemProps}>
+        {renderComponent(component, { complexConfig }) || props.children}
+      </Item>
+      {hintImgUrl ? (
+        <ImageHint className={styles.hintImage} url={hintImgUrl} />
+      ) : (
+        ""
+      )}
+    </>
   );
 };
 
@@ -84,6 +94,7 @@ type Props = {
   label?: string;
   name?: string;
   dataIndex?: string;
+  hintImgUrl?: string;
   associatedDataIndex?: string[];
   component?: Component;
   complexConfig?: FormItemConfig[];

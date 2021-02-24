@@ -5,6 +5,7 @@
 
 import { Button, Col, Row } from "antd";
 import FormCol from "component/FormCol";
+import ImageHint from "component/ImageHint";
 import React, { FC, useCallback } from "react";
 import {
   ComponentFunc,
@@ -17,7 +18,7 @@ import FormItem from "../FormItem";
 import styles from "./index.module.scss";
 
 const Caption: FC<Props> = (props) => {
-  const { config, onFormReset, ...funcProps } = props;
+  const { config, decodeHintImgUrl, onFormReset, ...funcProps } = props;
 
   const handleReCreateFunc = useCallback(
     (funcObj?: ComponentFuncConfig) => {
@@ -36,6 +37,7 @@ const Caption: FC<Props> = (props) => {
           label,
           dataIndex,
           associatedDataIndex,
+          hintImgUrl,
           formItemProps,
           component,
           formItemColProps,
@@ -54,6 +56,7 @@ const Caption: FC<Props> = (props) => {
               associatedDataIndex={associatedDataIndex}
               component={{ ...component, func: newFuncObj }}
               complexConfig={complexConfig}
+              hintImgUrl={hintImgUrl}
               {...formItemProps}
             />
           </FormCol>
@@ -69,6 +72,12 @@ const Caption: FC<Props> = (props) => {
             >
               自动解码输入
             </Button>
+            {decodeHintImgUrl ? (
+              <ImageHint
+                className={styles.hintImageClassName}
+                url={decodeHintImgUrl}
+              />
+            ) : null}
           </Col>
           <Col offset={1}>
             <Button
@@ -89,6 +98,7 @@ export default Caption;
 
 interface Props {
   config?: FormItemConfig[];
+  decodeHintImgUrl?: string;
   onFormReset?: () => void;
   onSearchOrderNumber?: (orderNumber: string) => void;
 }

@@ -71,7 +71,7 @@ export const navRouter: NavRouter[] = [
   },
 ];
 
-export type NavRouter = {
+export type NavRouter = RouteProps & {
   label?: string;
   icon?: React.ReactNode;
   image?: ImageProps;
@@ -79,6 +79,6 @@ export type NavRouter = {
   transition?: string;
   isMenu?: boolean;
   children?: NavRouter[];
-} & RouteProps;
+};
 
 export type ImageProps = React.ImgHTMLAttributes<HTMLImageElement>;

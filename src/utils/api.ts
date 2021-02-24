@@ -22,4 +22,5 @@ export const formApi = createAxiosGroup({
  */
 export const orderApi = createAxiosGroup({
   searchOrderNumber: { url: "/cutter", method: "GET" },
+  collection: { url: "/collection", method: "POST" },
 });

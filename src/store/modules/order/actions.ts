@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { orderApi } from "utils/api";
+import { Cutter } from "./interface";
 
 interface SearchOrderNumberQuery {
   orderNumber: string;
@@ -9,7 +10,7 @@ interface SearchOrderNumberQuery {
  * 订货号搜索
  */
 export const searchOrderNumber = createAsyncThunk(
-  "form/searchOrderNumber",
+  "order/searchOrderNumber",
   async ({ orderNumber, subCategory }: SearchOrderNumberQuery) => {
     console.log(orderNumber, subCategory);
     const response = await orderApi.searchOrderNumber({
@@ -17,5 +18,16 @@ export const searchOrderNumber = createAsyncThunk(
       subCategory,
     });
     return response;
+  }
+);
+
+/**
+ * 添加收藏
+ */
+export const collection = createAsyncThunk(
+  "order/collection",
+  async (cutter: Cutter) => {
+    const result = await orderApi.collection(cutter);
+    return result;
   }
 );
