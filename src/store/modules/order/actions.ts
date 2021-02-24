@@ -1,29 +1,21 @@
-// import { CaseReducer } from "@reduxjs/toolkit";
-// import { Act } from "store/type";
-// import { Cutter, OrderState } from "./interface";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { orderApi } from "utils/api";
 
-// export const addToOrderList: CaseReducer<OrderState, Act<Cutter>> = (
-//   state,
-//   action
-// ) => {
-//   if (action.payload) {
-//     const { category, orderNumber, subCategory } = action.payload;
-//     const index = state.orderList.findIndex((order) => {
-//       if (
-//         order.category === category &&
-//         order.orderNumber === orderNumber &&
-//         order.subCategory === subCategory
-//       ) {
-//         return true;
-//       }
-//       return false;
-//     });
-//     if (index > -1) {
-//       // 存在， 覆盖
-//       state.orderList[index] = action.payload;
-//     } else {
-//       state.orderList.push(action?.payload);
-//     }
-//   }
-//   return state;
-// };
+interface SearchOrderNumberQuery {
+  orderNumber: string;
+  subCategory: number;
+}
+/**
+ * 订货号搜索
+ */
+export const searchOrderNumber = createAsyncThunk(
+  "form/searchOrderNumber",
+  async ({ orderNumber, subCategory }: SearchOrderNumberQuery) => {
+    console.log(orderNumber, subCategory);
+    const response = await orderApi.searchOrderNumber({
+      orderNumber: orderNumber.toUpperCase(),
+      subCategory,
+    });
+    return response;
+  }
+);

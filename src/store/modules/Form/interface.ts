@@ -1,5 +1,7 @@
 import { ColProps as AColProps } from "antd";
+import { Components } from "antd/lib/date-picker/generatePicker";
 import { Rule } from "antd/lib/form";
+import { isObject } from "lodash-es";
 import { CSSProperties } from "react";
 import { NavRouter } from "route/index";
 
@@ -28,6 +30,7 @@ export interface FormConfig {
   title: string;
   caption: FormItem[];
   body: FormItem[];
+  others?: OtherConfig;
 }
 
 export interface FormItem {
@@ -46,13 +49,36 @@ export interface Component {
   props?: {
     options?: SelectProps;
   };
-  func?: Record<string, unknown>;
+  func?: ComponentFunc | ComponentFuncConfig;
 }
 
 export interface FormItemProps {
   rules?: Rule[];
   style?: CSSProperties;
   noStyle?: boolean;
+  func?: ComponentFunc | ComponentFuncConfig;
+}
+
+export type ComponentFuncConfig = Record<string, string | boolean>;
+export type ComponentFunc = Record<string, (...arg: unknown[]) => void>;
+
+/**
+ * 类型保护
+ */
+export function isComponentFuncConfig(
+  param?: Component["func"]
+): param is ComponentFuncConfig {
+  if (!param || !isObject(param)) return false;
+  return Object.keys(param).some((key) => {
+    if (typeof param[key] === "string" || typeof param[key] === "boolean") {
+      return true;
+    }
+    return false;
+  });
+}
+
+export interface OtherConfig {
+  matchCutter?: number;
 }
 
 /**

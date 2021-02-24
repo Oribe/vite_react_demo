@@ -3,15 +3,31 @@
  * 固定参数
  */
 
-import { Button } from "antd";
+import { Button, Col, Row } from "antd";
 import FormCol from "component/FormCol";
-import { debounce } from "lodash-es";
-import React, { FC } from "react";
-import { FormItem as FormItemConfig } from "store/modules/Form";
+import React, { FC, useCallback } from "react";
+import {
+  ComponentFunc,
+  ComponentFuncConfig,
+  FormItem as FormItemConfig,
+  isComponentFuncConfig,
+} from "store/modules/Form";
+import { reCreateFunc } from "utils/index";
 import FormItem from "../FormItem";
+import styles from "./index.module.scss";
 
 const Caption: FC<Props> = (props) => {
   const { config, onFormReset, ...funcProps } = props;
+
+  const handleReCreateFunc = useCallback(
+    (funcObj?: ComponentFuncConfig) => {
+      if (funcObj) {
+        return reCreateFunc(funcObj, funcProps, true);
+      }
+      return {};
+    },
+    [funcProps]
+  );
 
   return (
     <>
@@ -26,29 +42,9 @@ const Caption: FC<Props> = (props) => {
           complexConfig,
         } = item;
         const { func } = component;
-        const newFunc: Record<string, unknown> = {};
-        if (func) {
-          for (const key in func) {
-            const value = func[key];
-            if (!value) continue; // false跳过
-            let f;
-            if (typeof value === "boolean") {
-              /**
-               * 为布尔值
-               */
-              f = Object.getOwnPropertyDescriptor(funcProps, key)?.value;
-            }
-            if (typeof value === "string") {
-              /**
-               * 为字符串
-               * 指定了函数名
-               */
-              f = Object.getOwnPropertyDescriptor(funcProps, value)?.value;
-            }
-            if (typeof f === "function") {
-              newFunc[key] = debounce(f, 500);
-            }
-          }
+        let newFuncObj: ComponentFunc = {};
+        if (isComponentFuncConfig(func)) {
+          newFuncObj = handleReCreateFunc(func);
         }
         return (
           <FormCol key={item.label} {...formItemColProps}>
@@ -56,16 +52,35 @@ const Caption: FC<Props> = (props) => {
               label={label}
               dataIndex={dataIndex}
               associatedDataIndex={associatedDataIndex}
-              component={{ ...component, func: newFunc }}
+              component={{ ...component, func: newFuncObj }}
               complexConfig={complexConfig}
               {...formItemProps}
             />
           </FormCol>
         );
       })}
-      <div>
-        <Button onClick={onFormReset}>重置</Button>
-      </div>
+      <Col span={24} className={styles.btnGroupWrapper}>
+        <Row justify="center">
+          <Col>
+            <Button
+              className={styles.formResetBtn}
+              size="middle"
+              onClick={onFormReset}
+            >
+              自动解码输入
+            </Button>
+          </Col>
+          <Col offset={1}>
+            <Button
+              className={styles.formResetBtn}
+              size="middle"
+              onClick={onFormReset}
+            >
+              一键清空
+            </Button>
+          </Col>
+        </Row>
+      </Col>
     </>
   );
 };

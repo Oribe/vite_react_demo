@@ -61,11 +61,17 @@ function createPreAxios(url: string, method: Method, options?: RequestOptions) {
     data?: Record<string, unknown>,
     config?: AxiosRequestConfig
   ) => {
+    const _data: Record<string, unknown> = {};
+    if (method.toUpperCase() === "GET") {
+      _data.params = data;
+    } else {
+      _data.data = data;
+    }
     return axios.request<T>(
       {
         url,
         method,
-        data,
+        ..._data,
         ...config,
       },
       options

@@ -28,24 +28,6 @@ const FormItem: FC<Props> = (props) => {
     formItemProps,
   });
 
-  // if (component?.type === "imgSelect") {
-  //   /**
-  //    * 单独处理图片选择
-  //    * 至少选择一种
-  //    */
-  //   console.log("newFormItemProps", newFormItemProps);
-  // }
-
-  // if (component?.type === "imgSelect") {
-  //   console.log("imgSelect", _formItemProps);
-  //   delete _formItemProps.name;
-  // }
-
-  // if (component?.type === "complex") {
-  //   console.log("complex", _formItemProps);
-  //   delete _formItemProps.name;
-  // }
-
   if (associatedDataIndex) {
     /**
      * 当有关联字段时
@@ -59,7 +41,7 @@ const FormItem: FC<Props> = (props) => {
               associatedDataIndex[associatedDataIndex.length - 1]
             );
             if (
-              otherFormItemProps.name &&
+              otherFormItemProps?.name &&
               associatedValue !== _associatedValue
             ) {
               setAssociatedValue(_associatedValue);

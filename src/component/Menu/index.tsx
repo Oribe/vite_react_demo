@@ -1,6 +1,5 @@
 import { Menu } from "antd";
 import { MenuMode } from "antd/lib/menu";
-import { MenuInfo } from "rc-menu/lib/interface";
 import React, {
   CSSProperties,
   FC,
@@ -11,9 +10,9 @@ import React, {
 } from "react";
 import { useLocation } from "react-router-dom";
 import { NavRouter } from "route/index";
+import styles from "./index.module.scss";
 import MenuImage from "./MenuImage";
 import MenuItem from "./MenuItem";
-import styles from "./index.module.scss";
 
 const { SubMenu: SubMenuComp } = Menu;
 

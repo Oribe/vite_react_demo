@@ -1,4 +1,5 @@
-import { MapOptions } from "store/modules/Form";
+import { debounce } from "lodash-es";
+import { ComponentFunc, ComponentFuncConfig } from "store/modules/Form";
 
 /**
  * 类型
@@ -55,3 +56,47 @@ export function switchToMap(list: unknown): MapList | (string | number)[] {
 type MapArrayList = [string | number, (string | number)[] | MapArrayList[]];
 
 export type MapList = Map<string | number, (string | number)[] | MapList>;
+
+export const formItemNormalize = {
+  toUpperCase: (value: string | number) =>
+    typeof value === "string" ? value.toUpperCase() : value,
+};
+
+/**
+ * 将函数配置转换成函数对象？
+ */
+export function reCreateFunc(
+  funcObj: ComponentFuncConfig,
+  funcProps = {},
+  needDelay = false
+) {
+  const newFuncObj: ComponentFunc = {};
+  if (funcObj) {
+    for (const key in funcObj) {
+      const value = funcObj[key];
+      if (!value) continue; // false跳过
+      let f;
+      if (typeof value === "boolean") {
+        /**
+         * 为布尔值
+         */
+        f = Object.getOwnPropertyDescriptor(funcProps, key)?.value;
+      }
+      if (typeof value === "string") {
+        /**
+         * 为字符串
+         * 指定了函数名
+         */
+        f = Object.getOwnPropertyDescriptor(funcProps, value)?.value;
+      }
+      if (typeof f === "function") {
+        if (needDelay) {
+          newFuncObj[key] = debounce(f, 500);
+        } else {
+          newFuncObj[key] = f;
+        }
+      }
+    }
+  }
+  return newFuncObj;
+}

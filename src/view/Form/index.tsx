@@ -7,13 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
-import {
-  FormState,
-  getFormConfig,
-  getFormMenu,
-  searchOrderNumber,
-} from "store/modules/Form";
-import { addToOrderList, Cutter } from "store/modules/order";
+import { FormState, getFormConfig, getFormMenu } from "store/modules/Form";
+import { addToOrderList, Cutter, searchOrderNumber } from "store/modules/order";
 import styles from "./index.module.scss";
 
 const formProps = createSelector<RootReducer, FormState, FormState>(

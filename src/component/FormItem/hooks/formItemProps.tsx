@@ -1,16 +1,29 @@
-import { FormItemProps, Rule } from "antd/lib/form";
+import { Rule } from "antd/lib/form";
 import { isFunction } from "lodash-es";
 import { useCallback, useMemo } from "react";
-import { FormItem as FormItemConfig } from "store/modules/Form";
-import { switchTypeToMessage } from "utils/index";
+import {
+  ComponentFunc,
+  FormItem as FormItemConfig,
+  FormItemProps,
+  isComponentFuncConfig,
+} from "store/modules/Form";
+import {
+  formItemNormalize,
+  reCreateFunc,
+  switchTypeToMessage,
+} from "utils/index";
 
 const useFormItemProps = (param: Param) => {
-  const { label, type, dataIndex, formItemProps } = param;
-
+  const {
+    label,
+    type,
+    dataIndex,
+    formItemProps: { func, ...formItemProps } = {},
+  } = param;
   /**
    * rule检验调整
    */
-  const addRuleMessage = useCallback(
+  const resetRuleMessage = useCallback(
     (ruleList: Rule[], label?: string, componentType?: string) => {
       return ruleList.map((rule) => {
         if (isFunction(rule)) {
@@ -44,39 +57,62 @@ const useFormItemProps = (param: Param) => {
   );
 
   /**
+   * 重组formItemProps
+   */
+  const reCreateRuleToFormItemProps = useCallback<FormItemPropsWithNewRule>(
+    (rules: Rule[]) => {
+      /**
+       * 重新组合新的传递参数
+       */
+      if (!dataIndex || type === "complex" || type === "imgSelect") {
+        /**
+         * 如果组件类型不等于复合组件
+         * 删除name字段
+         */
+        return {
+          ...formItemProps,
+          rules,
+        };
+      } else if (dataIndex) {
+        return {
+          ...formItemProps,
+          name: dataIndex,
+          rules,
+        };
+      } else {
+        return {
+          ...formItemProps,
+          name: dataIndex,
+          rules,
+        };
+      }
+    },
+    [dataIndex, formItemProps, type]
+  );
+
+  /**
    * 尝试调整组件配置属性
    */
   const assembleFormItemProps = useMemo(() => {
+    const { rules } = formItemProps;
     /**
      * 将检验规则信息补全完整
      */
-    const rules = addRuleMessage(formItemProps?.rules || [], label, type);
-    /**
-     * 重新组合新的传递参数
-     */
-    if (!dataIndex || type === "complex" || type === "imgSelect") {
-      /**
-       * 如果组件类型不等于复合组件
-       * 删除name字段
-       */
-      return {
-        ...formItemProps,
-        rules,
-      };
-    } else if (dataIndex) {
-      return {
-        ...formItemProps,
-        name: dataIndex,
-        rules,
-      };
-    } else {
-      return {
-        ...formItemProps,
-        name: dataIndex,
-        rules,
-      };
+    const newRules = resetRuleMessage(rules || [], label, type);
+    const formItemPropsWithNewRule = reCreateRuleToFormItemProps(newRules);
+    let newFuncs: ComponentFunc = {};
+    if (isComponentFuncConfig(func)) {
+      newFuncs = reCreateFunc(func, formItemNormalize);
     }
-  }, [addRuleMessage, dataIndex, formItemProps, label, type]);
+    return { ...formItemPropsWithNewRule, ...newFuncs };
+  }, [
+    formItemProps,
+    func,
+    label,
+    reCreateRuleToFormItemProps,
+    resetRuleMessage,
+    type,
+  ]);
 
   return [assembleFormItemProps];
 };
@@ -89,3 +125,9 @@ type Param = {
   type?: FormItemConfig["component"]["type"];
   formItemProps?: FormItemProps;
 };
+
+type FormItemPropsWithNewRule = (
+  rules: Rule[]
+) => {
+  name?: string;
+} & FormItemProps;

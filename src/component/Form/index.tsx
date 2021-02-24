@@ -2,7 +2,7 @@
  * 自定义表单
  */
 
-import { Button, Col, Form as AForm, Row } from "antd";
+import { Button, Col, Form as AForm, message, Row } from "antd";
 import React, { FC, memo } from "react";
 import { FormConfig } from "store/modules/Form";
 import Caption from "../FormCaption";
@@ -10,17 +10,19 @@ import FormBody from "../FormBody";
 import styles from "./index.module.scss";
 import { isEmpty } from "lodash-es";
 import { Cutter } from "store/modules/order";
+import { useHistory } from "react-router-dom";
 
 const Form: FC<Props> = (props) => {
   const { config, onSearchOrderNumber, onAdd } = props;
-  const [form] = AForm.useForm();
+  const [form] = AForm.useForm<Cutter>();
+  const history = useHistory();
 
   if (!config || isEmpty(config)) {
     console.log("暂无数据");
     return <div>暂无数据</div>;
   }
 
-  const { title, caption, body } = config;
+  const { title, caption, body, others } = config;
 
   /**
    * 确认添加
@@ -41,6 +43,28 @@ const Form: FC<Props> = (props) => {
    */
   const onFormReset = () => {
     form.resetFields();
+  };
+
+  /**
+   * 返回列表
+   */
+  const gobackToOrderList = () => {
+    history.push("/order");
+  };
+
+  /**
+   * 添加并跳转到匹配的刀具
+   */
+  const addAndSwitchMatchCutter = async () => {
+    if (others && others.matchCutter) {
+      const values = await form.validateFields();
+      if (values) {
+        handleFinish(values);
+        history.push("/order/add/" + others.matchCutter);
+      }
+      return;
+    }
+    message.warning("没有匹配的刀具");
   };
 
   return (
@@ -67,13 +91,15 @@ const Form: FC<Props> = (props) => {
           </Button>
         </Col>
         <Col className={styles.formBtn} xs={12} sm={6}>
-          <Button type="primary">确认并添加匹配刀片</Button>
+          <Button type="primary" onClick={addAndSwitchMatchCutter}>
+            确认并添加匹配刀片
+          </Button>
         </Col>
         <Col className={styles.formBtn} xs={12} sm={6}>
           <Button type="primary">收藏</Button>
         </Col>
         <Col className={styles.formBtn} xs={12} sm={6}>
-          <Button>查看列表</Button>
+          <Button onClick={gobackToOrderList}>查看列表</Button>
         </Col>
       </Row>
     </AForm>

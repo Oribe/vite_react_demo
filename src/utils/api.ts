@@ -14,6 +14,12 @@ export const userApi = createAxiosGroup({
 export const formApi = createAxiosGroup({
   getFormMenu: { url: "/form/menus", method: "GET" },
   getManufacturer: { url: "/form/manufacturer", method: "GET" },
-  searchOrderNumber: { url: "/cutter", method: "GET" },
   getFormConfig: { url: "", method: "GET" },
+});
+
+/**
+ * 订单模块请求
+ */
+export const orderApi = createAxiosGroup({
+  searchOrderNumber: { url: "/cutter", method: "GET" },
 });

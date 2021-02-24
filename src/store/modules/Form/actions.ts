@@ -80,24 +80,6 @@ export const getFormConfig = createAsyncThunk(
   }
 );
 
-interface SearchOrderNumberQuery {
-  orderNumber: string;
-  subCategory: number;
-}
-/**
- * 订货号搜索
- */
-export const searchOrderNumber = createAsyncThunk(
-  "form/searchOrderNumber",
-  async ({ orderNumber, subCategory }: SearchOrderNumberQuery) => {
-    const response = await formApi.searchOrderNumber({
-      orderNumber,
-      subCategory,
-    });
-    return response;
-  }
-);
-
 /**
  * 制造商列表
  */

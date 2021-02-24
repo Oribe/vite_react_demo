@@ -33,5 +33,6 @@ const orderSlice = createSlice({
 });
 
 export * from "./interface";
+export * from "./actions";
 export const order = orderSlice.reducer;
 export const { addToOrderList } = orderSlice.actions;

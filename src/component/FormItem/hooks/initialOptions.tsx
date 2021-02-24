@@ -6,7 +6,6 @@ import { isMap } from "lodash-es";
 import { SelectProps } from "store/modules/Form";
 import { MapList, switchToMap } from "utils/index";
 
-// const useInitialOptions = (
 const initialOptions = (
   optionsList?: SelectProps,
   associatedValue?: (string | number)[],
@@ -32,5 +31,4 @@ const initialOptions = (
   return opts;
 };
 
-// export default useInitialOptions;
 export default initialOptions;
