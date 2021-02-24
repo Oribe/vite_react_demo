@@ -5,9 +5,11 @@ import Axios from "./axios";
 import { RESPONSE_OK } from "./const";
 import Interceptors from "./interceptors";
 import { AxiosError, AxiosOptions, RequestOptions } from "./type";
-
+/**
+ * 拦截器、钩子
+ */
 const interceptors: Interceptors = {
-  afterResponseHook(response, options) {
+  afterResponseHook(response) {
     const { data } = response;
     const isSuccess = data && Reflect.has(data, "code");
     if (isSuccess) {
@@ -29,6 +31,10 @@ const interceptors: Interceptors = {
 
 const isProd = process.env.NODE_ENV === "production";
 
+/**
+ * 创建请求实例
+ * @param options 请求配置
+ */
 function createAxios(options?: AxiosOptions) {
   return new Axios(
     merge<AxiosOptions, AxiosOptions>(
@@ -43,6 +49,13 @@ function createAxios(options?: AxiosOptions) {
 }
 const axios = createAxios();
 
+/**
+ * 预处理，
+ * 提前将请求地址和请求类型配置
+ * @param url 请求地址
+ * @param method 请求类型
+ * @param options 其他配置
+ */
 function createPreAxios(url: string, method: Method, options?: RequestOptions) {
   return <T = unknown>(
     data?: Record<string, unknown>,
@@ -50,10 +63,10 @@ function createPreAxios(url: string, method: Method, options?: RequestOptions) {
   ) => {
     return axios.request<T>(
       {
-        ...config,
         url,
         method,
         data,
+        ...config,
       },
       options
     );
@@ -64,22 +77,26 @@ interface AxiosGroups {
   [key: string]: { url: string; method: Method; options?: RequestOptions };
 }
 
-type PreAxiosGroups<T extends string | number | symbol> = {
-  [key in T]: (
+type PreAxiosGroups<U extends string | number | symbol> = {
+  [key in U]: <T = unknown>(
     data?: Record<string, unknown>,
     config?: AxiosRequestConfig
-  ) => Axios["request"];
+  ) => Promise<T>;
 };
 
+/**
+ * 预处理请求组模块
+ * @param axiosGroups
+ */
 export function createAxiosGroup<T extends AxiosGroups, U extends keyof T>(
   axiosGroups: T
 ): PreAxiosGroups<U> {
   const group = {} as PreAxiosGroups<U>;
   for (const key in axiosGroups) {
     const { method, url, options } = axiosGroups[key];
-    Reflect.set(group, key, createPreAxios(url, method, options));
+    const preAxios = createPreAxios(url, method, options);
+    Reflect.set(group, key, preAxios);
   }
-
   return group;
 }
 

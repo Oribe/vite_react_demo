@@ -1,4 +1,4 @@
-export interface LoginBody {
+export interface LoginBody extends Record<string, unknown> {
   username: string;
   password: string;
 }

@@ -4,8 +4,7 @@ import { NavRouter } from "route/index";
 import { RootReducer } from "store/store";
 import { ThunkApiConfig } from "store/type";
 import { formApi } from "utils/api";
-import axios from "utils/axios";
-import { FormConfig, FormMenu, FormSubMenu } from "./interface";
+import { FormConfig, FormMenu, FormSubMenu, Options } from "./interface";
 
 /**
  * 获取表侧边栏
@@ -22,7 +21,7 @@ export const getFormMenu = createAsyncThunk<NavRouter[], void, ThunkApiConfig>(
     /**
      * 数据请求
      */
-    const response = await axios.get<FormMenu[]>("/form/menus");
+    const response = await formApi.getFormMenu<FormMenu[]>();
     /**
      * 菜单列表转换成router配置
      */
@@ -69,7 +68,14 @@ export const getFormConfig = createAsyncThunk(
     if (config && !isEmpty(config)) {
       return { subCategory, config };
     }
-    const response = await axios.get<FormConfig>(`/form/${+subCategory}`);
+    // const response = await axios.get<FormConfig>(`/form/${+subCategory}`);
+    const response = await formApi.getFormConfig<FormConfig>(
+      {},
+      {
+        // 重新配置请求地址
+        url: `/form/${+subCategory}`,
+      }
+    );
     return { subCategory, config: response };
   }
 );
@@ -84,7 +90,7 @@ interface SearchOrderNumberQuery {
 export const searchOrderNumber = createAsyncThunk(
   "form/searchOrderNumber",
   async ({ orderNumber, subCategory }: SearchOrderNumberQuery) => {
-    const response = await axios.get("/cutter", {
+    const response = await formApi.searchOrderNumber({
       orderNumber,
       subCategory,
     });
@@ -100,7 +106,7 @@ export const getManufacturer = createAsyncThunk(
   async (_, { getState }) => {
     const { manufacturer } = (getState() as RootReducer).form;
     if (isEmpty(manufacturer)) {
-      const response = await formApi.getManufacturer();
+      const response = await formApi.getManufacturer<Options>();
       return response;
     }
     return manufacturer;
