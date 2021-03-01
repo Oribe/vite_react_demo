@@ -1,42 +1,27 @@
-import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { isEmpty } from "lodash-es";
 import { RootReducer } from "store/store";
 import { ThunkApiConfig } from "store/type";
+import { createActinos } from "utils/index";
 import { formApi } from "utils/api";
 import { FormConfig, FormMenu, Options } from "./interface";
 
 /**
  * actionTypes
  */
+const PREFIX_ACTION_TYPES = "form";
 export const ACTION_TYPES = {
   SWITCH_MENU_TO_ROUTERS: "SWITCH_MENU_TO_ROUTERS",
-};
-
-/**
- * 自动识别payload类型
- */
-function withPayloadType<T>() {
-  return (t: T) => ({ payload: t });
-}
-
-/**
- * 动态创建actions
- */
-export const createActinos = <T = unknown>(
-  actionTypes: string,
-  withPrefix?: boolean
-) => {
-  if (withPrefix) {
-    return createAction(`form/${actionTypes}`, withPayloadType<T>());
-  }
-  return createAction(actionTypes, withPayloadType<T>());
+  GET_FORM_MENU: "GET_FORM_MENU",
+  GET_FORM_CONFIG: "GET_FORM_CONFIG",
+  GET_MANUFACTURER: "GET_MANUFACTURER",
 };
 
 /**
  * 获取表侧边栏
  */
 export const getFormMenu = createAsyncThunk<FormMenu[], void, ThunkApiConfig>(
-  "form/getFormMenu",
+  createActinos(ACTION_TYPES.GET_FORM_MENU, PREFIX_ACTION_TYPES).type,
   async (_, { getState, dispatch }) => {
     /**
      * 数据存在时就直接返回
@@ -49,7 +34,10 @@ export const getFormMenu = createAsyncThunk<FormMenu[], void, ThunkApiConfig>(
      */
     const response = await formApi.getFormMenu<FormMenu[]>();
     dispatch(
-      createActinos(ACTION_TYPES.SWITCH_MENU_TO_ROUTERS, true)(response)
+      createActinos(
+        ACTION_TYPES.SWITCH_MENU_TO_ROUTERS,
+        PREFIX_ACTION_TYPES
+      )(response)
     );
     return response;
   }
@@ -59,7 +47,7 @@ export const getFormMenu = createAsyncThunk<FormMenu[], void, ThunkApiConfig>(
  * 获取表单配置
  */
 export const getFormConfig = createAsyncThunk(
-  "form/getFormConfig",
+  createActinos(ACTION_TYPES.GET_FORM_CONFIG, PREFIX_ACTION_TYPES).type,
   async (subCategory: number, { getState }) => {
     const state = getState() as RootReducer;
     const config = state.form.form[subCategory];
@@ -82,7 +70,7 @@ export const getFormConfig = createAsyncThunk(
  * 制造商列表
  */
 export const getManufacturer = createAsyncThunk(
-  "form/getManufacturer",
+  createActinos(ACTION_TYPES.GET_MANUFACTURER, PREFIX_ACTION_TYPES).type,
   async (_, { getState }) => {
     const { manufacturer } = (getState() as RootReducer).form;
     if (isEmpty(manufacturer)) {
@@ -92,8 +80,3 @@ export const getManufacturer = createAsyncThunk(
     return manufacturer;
   }
 );
-
-/**
- * 根据subCategory获取category
- */
-export category 

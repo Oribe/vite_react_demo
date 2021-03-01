@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Act } from "store/type";
-import { Cutter } from "./interface";
+import { addToOrderList } from "./actions";
 import orderState from "./state";
 
 const orderSlice = createSlice({
   name: "order",
   initialState: orderState,
-  reducers: {
-    addToOrderList(state, action: Act<Cutter>) {
+  reducers: {},
+  extraReducers: ({ addCase }) => {
+    addCase(addToOrderList.fulfilled, (state, action) => {
       if (action.payload) {
         const { category, orderNumber, subCategory } = action.payload;
         const index = state.orderList.findIndex((order) => {
@@ -27,12 +27,11 @@ const orderSlice = createSlice({
           state.orderList.push(action?.payload);
         }
       }
-    },
+    });
   },
-  extraReducers: {},
 });
 
-export * from "./interface";
 export * from "./actions";
+export * from "./interface";
 export const order = orderSlice.reducer;
-export const { addToOrderList } = orderSlice.actions;
+// export const {  } = orderSlice.actions;

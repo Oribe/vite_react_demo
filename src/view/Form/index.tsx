@@ -74,10 +74,18 @@ const CutterForm: FC = () => {
   /**
    * 添加到订单列表
    */
-  const onAdd = (order: Cutter) => {
-    dispatch({ type: addToOrderList.type, payload: order }); // 可以成功运行，且能通过ts校验
-    // dispatch(addToOrderList(order)); // 可以成功运行，但是无法通过ts校验
-    message.success("添加成功");
+  const onAdd = async (order: Cutter) => {
+    const result = await dispatch(
+      addToOrderList({ ...order, subCategory: +params.subCategory })
+    ); // 可以成功运行，且能通过ts校验
+    if (isFulfilled(result)) {
+      message.success("添加成功");
+    }
+    if (isRejected(result)) {
+      message.error("添加失败");
+      return Promise.reject(result.error.message || "");
+    }
+    return Promise.resolve(true);
   };
 
   return (

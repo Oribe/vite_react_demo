@@ -8,7 +8,7 @@ import { FormConfig } from "store/modules/Form";
 import Caption from "../FormCaption";
 import FormBody from "../FormBody";
 import styles from "./index.module.scss";
-import { fromPairs, isEmpty } from "lodash-es";
+import { isEmpty } from "lodash-es";
 import { Cutter } from "store/modules/order";
 import { useHistory } from "react-router-dom";
 
@@ -29,8 +29,9 @@ const Form: FC<Props> = (props) => {
    */
   const handleFinish = (values: Cutter) => {
     if (onAdd) {
-      onAdd(values);
-      form.resetFields();
+      onAdd(values).then(() => {
+        form.resetFields();
+      });
     }
   };
 
@@ -123,7 +124,7 @@ export default memo(Form);
 
 interface Props {
   config?: FormConfig;
-  onAdd?: (order: Cutter) => void;
+  onAdd?: (order: Cutter) => Promise<boolean>;
   onCollection?: (order: Cutter) => void;
   onSearchOrderNumber?: (orderNumber?: string) => void;
 }

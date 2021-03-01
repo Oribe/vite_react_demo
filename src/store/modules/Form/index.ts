@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { NavRouter } from "route/index";
 import { Act } from "store/type";
+import { createActinos } from "utils/index";
 import {
   ACTION_TYPES,
-  createActinos,
   getFormConfig,
   getFormMenu,
   getManufacturer,
@@ -15,20 +15,6 @@ const formSlice = createSlice({
   name: "form",
   initialState: formState,
   reducers: {
-    // getCategoryWithSub(state, action: Act<number>) {
-    //   const subCategory = Number(action.payload);
-    //   const { menu } = state;
-    //   const categoryObj = menu.find((subMenu) => {
-    //     if (subMenu.subCategory && typeof Array.isArray(subMenu.subCategory)) {
-    //       const { subCategory: children } = subMenu;
-    //       return children.find(
-    //         (child) => Number(child.subCategory) === subCategory
-    //       );
-    //     }
-    //     return false;
-    //   });
-    //   return categoryObj?.category;
-    // },
     [createActinos(ACTION_TYPES.SWITCH_MENU_TO_ROUTERS).type]: (
       state,
       action: Act<FormMenu[]>
@@ -36,7 +22,6 @@ const formSlice = createSlice({
       /**
        * 菜单列表转换成router配置
        */
-      console.log("111");
       const menuToRouter = (
         menuList: (FormMenu | FormSubMenu)[]
       ): NavRouter[] => {
@@ -68,7 +53,6 @@ const formSlice = createSlice({
       };
 
       const { payload } = action;
-
       const routers = menuToRouter(payload || []) as typeof state.routers;
       state.routers = routers;
     },

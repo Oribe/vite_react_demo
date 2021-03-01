@@ -1,3 +1,4 @@
+import { createAction } from "@reduxjs/toolkit";
 import { debounce } from "lodash-es";
 import { ComponentFunc, ComponentFuncConfig } from "store/modules/Form";
 
@@ -100,3 +101,23 @@ export function reCreateFunc(
   }
   return newFuncObj;
 }
+
+/**
+ * 自动识别payload类型
+ */
+function withPayloadType<T>() {
+  return (t: T) => ({ payload: t });
+}
+
+/**
+ * 动态创建actions
+ */
+export const createActinos = <T = unknown>(
+  actionTypes: string,
+  withPrefix?: string
+) => {
+  if (withPrefix) {
+    return createAction(`${withPrefix}/${actionTypes}`, withPayloadType<T>());
+  }
+  return createAction(actionTypes, withPayloadType<T>());
+};
