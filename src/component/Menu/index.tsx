@@ -37,10 +37,10 @@ const Navbar: FC<Props> = (props) => {
   const matchRouterKey = useCallback(
     (menuList: NavRouter[]) => {
       return menuList.reduce((keyList, menu) => {
-        const { label, path, children } = menu;
+        const { label, path, routers } = menu;
         if (Array.isArray(path)) return keyList;
-        if (children) {
-          const childrenKeyList = matchRouterKey(children);
+        if (routers) {
+          const childrenKeyList = matchRouterKey(routers);
           if (childrenKeyList.length > 0) {
             /**
              * 子类中有匹配
@@ -79,10 +79,10 @@ const Navbar: FC<Props> = (props) => {
       triggerSubMenuAction="click"
     >
       {menus.map((menu) => {
-        const { path, label, image, icon, children, isMenu } = menu;
+        const { path, label, image, icon, routers, isMenu } = menu;
         if (isMenu === false) return; // 非菜单
         if (Array.isArray(path)) return null;
-        if (children) {
+        if (routers) {
           return (
             <SubMenuComp
               key={path ?? label}
@@ -97,7 +97,7 @@ const Navbar: FC<Props> = (props) => {
                 selectedKeys.includes(path ?? label ?? "") ? styles.active : ""
               }`}
             >
-              {children.map((child) => {
+              {routers.map((child) => {
                 if (Array.isArray(child.path)) return null;
                 return (
                   <MenuItem

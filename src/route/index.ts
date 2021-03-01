@@ -1,3 +1,4 @@
+import { ImgHTMLAttributes } from "react";
 import { RedirectProps, RouteProps } from "react-router-dom";
 import asyncLoader from "./asyncLoader";
 
@@ -71,14 +72,14 @@ export const navRouter: NavRouter[] = [
   },
 ];
 
-export type NavRouter = RouteProps & {
+export type NavRouter = {
   label?: string;
   icon?: React.ReactNode;
-  image?: ImageProps;
+  image?: ImgHTMLAttributes<unknown>;
   path?: string | string[];
   transition?: string;
   isMenu?: boolean;
-  children?: NavRouter[];
-};
+  routers?: NavRouter[];
+} & RouteProps;
 
-export type ImageProps = React.ImgHTMLAttributes<HTMLImageElement>;
+export type ImageProps = ImgHTMLAttributes<unknown>;

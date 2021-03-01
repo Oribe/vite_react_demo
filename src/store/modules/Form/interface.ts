@@ -1,5 +1,4 @@
 import { ColProps as AColProps } from "antd";
-import { Components } from "antd/lib/date-picker/generatePicker";
 import { Rule } from "antd/lib/form";
 import { isObject } from "lodash-es";
 import { CSSProperties } from "react";
@@ -122,11 +121,12 @@ export type SelectProps = Options[] | ImageOptions[] | MapOptions;
  * state类型结构
  */
 export interface FormState {
-  menu: Array<NavRouter>;
+  menu: FormMenu[];
   form: {
     [key: number]: FormConfig | undefined;
   };
   manufacturer: Options[];
+  routers: NavRouter[];
 }
 
 /**

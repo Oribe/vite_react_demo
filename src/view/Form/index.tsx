@@ -87,7 +87,7 @@ const CutterForm: FC = () => {
         <Col xs={0} md={6}>
           <Menu
             mode="vertical"
-            menus={state.menu}
+            menus={state.routers}
             className={styles.formMenu}
             subMenuClassName={styles.formMenuSub}
             itemClassName={styles.formMenuItem}
