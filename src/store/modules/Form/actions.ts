@@ -1,17 +1,43 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { isEmpty } from "lodash-es";
-import { NavRouter } from "route/index";
 import { RootReducer } from "store/store";
 import { ThunkApiConfig } from "store/type";
 import { formApi } from "utils/api";
-import { FormConfig, FormMenu, FormSubMenu, Options } from "./interface";
+import { FormConfig, FormMenu, Options } from "./interface";
+
+/**
+ * actionTypes
+ */
+export const ACTION_TYPES = {
+  SWITCH_MENU_TO_ROUTERS: "SWITCH_MENU_TO_ROUTERS",
+};
+
+/**
+ * 自动识别payload类型
+ */
+function withPayloadType<T>() {
+  return (t: T) => ({ payload: t });
+}
+
+/**
+ * 动态创建actions
+ */
+export const createActinos = <T = unknown>(
+  actionTypes: string,
+  withPrefix?: boolean
+) => {
+  if (withPrefix) {
+    return createAction(`form/${actionTypes}`, withPayloadType<T>());
+  }
+  return createAction(actionTypes, withPayloadType<T>());
+};
 
 /**
  * 获取表侧边栏
  */
-export const getFormMenu = createAsyncThunk<NavRouter[], void, ThunkApiConfig>(
+export const getFormMenu = createAsyncThunk<FormMenu[], void, ThunkApiConfig>(
   "form/getFormMenu",
-  async (_, { getState }) => {
+  async (_, { getState, dispatch }) => {
     /**
      * 数据存在时就直接返回
      */
@@ -22,38 +48,10 @@ export const getFormMenu = createAsyncThunk<NavRouter[], void, ThunkApiConfig>(
      * 数据请求
      */
     const response = await formApi.getFormMenu<FormMenu[]>();
-    /**
-     * 菜单列表转换成router配置
-     */
-    const menuToRouter = (menuList: (FormMenu | FormSubMenu)[]) => {
-      return menuList.reduce((routers, menu) => {
-        const { name, imgUrl, subCategory } = menu;
-        const router: NavRouter = {
-          label: name,
-          image: {
-            src: imgUrl ? "http://localhost:3030" + imgUrl : "",
-          },
-        };
-        if (Array.isArray(subCategory)) {
-          /**
-           * 存在子类
-           */
-          const children = menuToRouter(subCategory);
-          router.children = children;
-          routers.push(router);
-          return routers;
-        }
-        /**
-         * 不存在子类
-         */
-        router.path = "/order/add/" + subCategory;
-        routers.push(router);
-
-        return routers;
-      }, [] as NavRouter[]);
-    };
-
-    return menuToRouter(response);
+    dispatch(
+      createActinos(ACTION_TYPES.SWITCH_MENU_TO_ROUTERS, true)(response)
+    );
+    return response;
   }
 );
 
@@ -88,9 +86,14 @@ export const getManufacturer = createAsyncThunk(
   async (_, { getState }) => {
     const { manufacturer } = (getState() as RootReducer).form;
     if (isEmpty(manufacturer)) {
-      const response = await formApi.getManufacturer<Options>();
+      const response = await formApi.getManufacturer<Options[]>();
       return response;
     }
     return manufacturer;
   }
 );
+
+/**
+ * 根据subCategory获取category
+ */
+export category 
