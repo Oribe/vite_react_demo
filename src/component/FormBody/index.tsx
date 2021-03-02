@@ -3,7 +3,7 @@
  */
 
 import React, { FC, memo } from "react";
-import { FormItem as FormItemConfig } from "store/modules/Form";
+import { FormItem as FormItemConfig } from "store/modules/form";
 import FormCol from "../FormCol";
 import FormItem from "../FormItem";
 

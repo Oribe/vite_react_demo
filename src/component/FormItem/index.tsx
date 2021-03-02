@@ -5,7 +5,7 @@
 import { Form, FormItemProps } from "antd";
 import ImageHint from "component/ImageHint";
 import React, { FC, memo, useRef, useState } from "react";
-import { Component, FormItem as FormItemConfig } from "store/modules/Form";
+import { Component, FormItem as FormItemConfig } from "store/modules/form";
 import useFormItemProps from "./hooks/formItemProps";
 import renderComponent from "./hooks/renderComp";
 import styles from "./index.module.scss";

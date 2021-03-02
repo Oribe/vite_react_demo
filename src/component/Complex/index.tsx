@@ -6,7 +6,7 @@ import FormCol from "component/FormCol";
 import FormItem from "component/FormItem";
 import React, { memo } from "react";
 import { FC } from "react";
-import { FormItem as FormItemConfig } from "store/modules/Form";
+import { FormItem as FormItemConfig } from "store/modules/form";
 
 const Complex: FC<Props> = (props) => {
   const { config } = props;

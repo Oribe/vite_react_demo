@@ -1,7 +1,7 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { AxiosError, RequestOptions, ResponseOk } from "./type";
 
-export default abstract class Interceptors {
+export abstract class Interceptors {
   /**
    * @description 请求发出之前钩子
    */
@@ -21,7 +21,7 @@ export default abstract class Interceptors {
   /**
    * @description 请求错误钩子
    */
-  responseCatchHook?: (error: AxiosError) => any;
+  responseCatchHook?: (error: AxiosError) => unknown;
 
   /**
    * @description 请求发出之前拦截请求配置
@@ -36,7 +36,7 @@ export default abstract class Interceptors {
   /**
    * @description 响应拦截器
    */
-  responseInterceptors?: <T = any, R = any>(
+  responseInterceptors?: <T = unknown, R = unknown>(
     response: AxiosResponse<ResponseOk<T>>
   ) => R;
 

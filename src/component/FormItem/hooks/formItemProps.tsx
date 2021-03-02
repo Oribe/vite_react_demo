@@ -6,7 +6,7 @@ import {
   FormItem as FormItemConfig,
   FormItemProps,
   isComponentFuncConfig,
-} from "store/modules/Form";
+} from "store/modules/form";
 import {
   formItemNormalize,
   reCreateFunc,

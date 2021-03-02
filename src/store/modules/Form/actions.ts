@@ -26,8 +26,8 @@ export const getFormMenu = createAsyncThunk<FormMenu[], void, ThunkApiConfig>(
     /**
      * 数据存在时就直接返回
      */
-    if (getState().form.menu.length > 0) {
-      return getState().form.menu;
+    if (getState().form.menu.data.length > 0) {
+      return getState().form.menu.data;
     }
     /**
      * 数据请求
@@ -50,7 +50,7 @@ export const getFormConfig = createAsyncThunk(
   createActinos(ACTION_TYPES.GET_FORM_CONFIG, PREFIX_ACTION_TYPES).type,
   async (subCategory: number, { getState }) => {
     const state = getState() as RootReducer;
-    const config = state.form.form[subCategory];
+    const config = state.form.form.data[subCategory];
     if (config && !isEmpty(config)) {
       return { subCategory, config };
     }
@@ -77,6 +77,6 @@ export const getManufacturer = createAsyncThunk(
       const response = await formApi.getManufacturer<Options[]>();
       return response;
     }
-    return manufacturer;
+    return manufacturer.data;
   }
 );

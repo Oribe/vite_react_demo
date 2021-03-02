@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
-import { FormState, getFormConfig, getFormMenu } from "store/modules/Form";
+import { FormState, getFormConfig, getFormMenu } from "store/modules/form";
 import {
   addToOrderList,
   collection,
@@ -59,16 +59,8 @@ const CutterForm: FC = () => {
    *  收藏
    * @param order
    */
-  const onCollection = async (cutter: Cutter) => {
-    const response = await dispatch(
-      collection({ ...cutter, subCategory: +params.subCategory })
-    );
-    if (isFulfilled(response)) {
-      message.success("收藏成功");
-    }
-    if (isRejected(response)) {
-      message.error("收藏失败");
-    }
+  const onCollection = (cutter: Cutter) => {
+    dispatch(collection({ ...cutter, subCategory: +params.subCategory }));
   };
 
   /**
@@ -104,8 +96,9 @@ const CutterForm: FC = () => {
         </Col>
         <Col xs={24} md={18} className={styles.fromWrapper}>
           <Form
-            config={state.form[+params.subCategory]}
+            config={state.form.data[+params.subCategory]}
             onAdd={onAdd}
+            loading={state.form.loading}
             onCollection={onCollection}
             onSearchOrderNumber={onSearchOrderNumber}
           />

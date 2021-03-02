@@ -2,24 +2,28 @@
  * 自定义表单
  */
 
-import { Button, Col, Form as AForm, message, Row } from "antd";
+import { Button, Col, Empty, Form as AForm, message, Row } from "antd";
 import React, { FC, memo } from "react";
-import { FormConfig } from "store/modules/Form";
+import { FormConfig } from "store/modules/form";
 import Caption from "../FormCaption";
 import FormBody from "../FormBody";
 import styles from "./index.module.scss";
 import { isEmpty } from "lodash-es";
 import { Cutter } from "store/modules/order";
 import { useHistory } from "react-router-dom";
+import Loading from "component/Loading";
 
 const Form: FC<Props> = (props) => {
-  const { config, onSearchOrderNumber, onAdd, onCollection } = props;
+  const { config, onSearchOrderNumber, onAdd, onCollection, loading } = props;
   const [form] = AForm.useForm<Cutter>();
   const history = useHistory();
 
+  if (loading) {
+    return <Loading tip="loading..." />;
+  }
+
   if (!config || isEmpty(config)) {
-    console.log("暂无数据");
-    return <div>暂无数据</div>;
+    return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
   }
 
   const { title, decodeHintImgUrl, caption, body, others } = config;
@@ -127,4 +131,5 @@ interface Props {
   onAdd?: (order: Cutter) => Promise<boolean>;
   onCollection?: (order: Cutter) => void;
   onSearchOrderNumber?: (orderNumber?: string) => void;
+  loading?: boolean;
 }

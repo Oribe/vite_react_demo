@@ -1,6 +1,6 @@
 import { Space } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { ImageOptions } from "store/modules/Form";
+import { ImageOptions } from "store/modules/form";
 import { Form } from "antd";
 import styles from "./index.module.scss";
 

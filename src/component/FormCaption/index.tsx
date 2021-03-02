@@ -12,7 +12,7 @@ import {
   ComponentFuncConfig,
   FormItem as FormItemConfig,
   isComponentFuncConfig,
-} from "store/modules/Form";
+} from "store/modules/form";
 import { reCreateFunc } from "utils/index";
 import FormItem from "../FormItem";
 import styles from "./index.module.scss";

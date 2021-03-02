@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
 import { debounce } from "lodash-es";
-import { ComponentFunc, ComponentFuncConfig } from "store/modules/Form";
+import { ComponentFunc, ComponentFuncConfig } from "store/modules/form";
 
 /**
  * 类型

@@ -15,6 +15,9 @@ const formSlice = createSlice({
   name: "form",
   initialState: formState,
   reducers: {
+    /**
+     * menu转换成routers
+     */
     [createActinos(ACTION_TYPES.SWITCH_MENU_TO_ROUTERS).type]: (
       state,
       action: Act<FormMenu[]>
@@ -58,20 +61,57 @@ const formSlice = createSlice({
     },
   },
   extraReducers: ({ addCase }) => {
+    /**
+     * 接口获取菜单中
+     */
+    addCase(getFormMenu.pending, (state) => {
+      state.menu.loading = true;
+    });
+    /**
+     * 接口获取菜单成功
+     */
     addCase(getFormMenu.fulfilled, (state, action: Act<Array<FormMenu>>) => {
+      console.log("加载完成");
       if (action.payload) {
-        return { ...state, menu: action.payload };
+        return { ...state, menu: { data: action.payload, loading: false } };
       }
     });
+    /**
+     * 接口菜单获取失败
+     */
+    addCase(getFormMenu.rejected, (state) => {
+      state.menu.loading = false;
+    });
+    /**
+     * 获取表单配置中
+     */
+    addCase(getFormConfig.pending, (state) => {
+      console.log("获取表单loading....");
+
+      state.form.loading = true;
+    });
+    /**
+     * 获取表单配置成功
+     */
     addCase(getFormConfig.fulfilled, (state, action) => {
       const { subCategory, config } = action.payload || {};
       if (subCategory) {
-        state.form[subCategory] = config;
+        state.form.data[subCategory] = config;
       }
+      state.form.loading = false;
     });
+    /**
+     * 获取表单配置失败
+     */
+    addCase(getFormConfig.rejected, (state) => {
+      state.form.loading = true;
+    });
+    /**
+     *
+     */
     addCase(getManufacturer.fulfilled, (state, action) => {
       const { payload } = action;
-      state.manufacturer = payload;
+      state.manufacturer.data = payload;
     });
   },
 });

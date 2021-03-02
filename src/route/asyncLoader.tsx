@@ -1,4 +1,4 @@
-import { Spin } from "antd";
+import Loading from "component/Loading";
 import React, {
   ComponentType,
   lazy,
@@ -38,7 +38,7 @@ const asyncLoader = <T extends ComponentType<any>>(
     }, [handleRouterInterceptors]);
 
     return (
-      <Suspense fallback={<Spin />}>
+      <Suspense fallback={<Loading tip="loading..." />}>
         <Component {...props} />
       </Suspense>
     );

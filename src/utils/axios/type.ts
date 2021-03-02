@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
-import Interceptors from "./interceptors";
+import { Interceptors } from "./interceptors";
 
 export interface RequestOptions {
   // 请求参数拼接到url
@@ -16,12 +16,17 @@ export interface RequestOptions {
   errorMessageMode?: unknown;
   // 是否加入时间戳
   joinTime?: boolean;
+  // 拦截器
 }
 
-export interface AxiosOptions extends AxiosRequestConfig {
+export interface RequestOptionsConfig {
   interceptors?: Interceptors;
   requestOptions?: RequestOptions;
 }
+
+export interface AxiosOptions
+  extends AxiosRequestConfig,
+    RequestOptionsConfig {}
 
 export interface ResponseOk<T = unknown> {
   code: number;

@@ -1,9 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { createActinos } from "utils/index";
-import { orderApi } from "utils/api";
-import { Cutter } from "./interface";
+import { message } from "antd";
 import { RootReducer } from "store/store";
-import { FormMenu } from "../Form";
+import { orderApi } from "utils/api";
+import { createActinos } from "utils/index";
+import { FormMenu } from "../form";
+import { Cutter } from "./interface";
 
 /**
  * actionTypes
@@ -35,17 +36,6 @@ export const searchOrderNumber = createAsyncThunk(
 );
 
 /**
- * 添加收藏
- */
-export const collection = createAsyncThunk(
-  createActinos(ACTION_TYPES.ORDER_COLLECTION, PREFIX_ACTION_TYPES).type,
-  async (cutter: Cutter) => {
-    const result = await orderApi.collection(cutter);
-    return result;
-  }
-);
-
-/**
  * 根据subCategory获取category
  */
 export const getCategoryWithSub = (menu: FormMenu[], subCategory: number) => {
@@ -62,24 +52,53 @@ export const getCategoryWithSub = (menu: FormMenu[], subCategory: number) => {
 };
 
 /**
+ *
+ */
+export const processCutter = (cutter: Cutter, getState: () => unknown) => {
+  const {
+    form: {
+      menu: { data },
+    },
+    user: {
+      userInfo: { id, supplier },
+    },
+  } = getState() as RootReducer;
+  const category = getCategoryWithSub(data, cutter.subCategory);
+  if (category) {
+    cutter.category = category;
+  } else {
+    return Promise.reject("刀具大类不存在");
+  }
+  cutter.submitter = id;
+  cutter.manufacturer = supplier;
+  return Promise.resolve(cutter);
+};
+
+/**
  * 添加到订单列表
  */
-export const addToOrderList = createAsyncThunk(
+export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
   createActinos(ACTION_TYPES.ADD_ORDER_LIST, PREFIX_ACTION_TYPES).type,
-  async (order: Cutter, { getState }) => {
-    const {
-      form: { menu },
-      user: {
-        userInfo: { id },
-      },
-    } = getState() as RootReducer;
-    const category = getCategoryWithSub(menu, order.subCategory);
-    if (category) {
-      order.category = category;
-    } else {
-      return Promise.reject("刀具大类不存在");
-    }
-    order.submitter = id;
-    return order;
+  async (order, { getState }) => {
+    const _order = processCutter(order, getState);
+    return _order;
+  }
+);
+
+/**
+ * 添加收藏
+ */
+export const collection = createAsyncThunk<void, Cutter>(
+  createActinos(ACTION_TYPES.ORDER_COLLECTION, PREFIX_ACTION_TYPES).type,
+  async (cutter: Cutter, { getState }) => {
+    const _cutter = await processCutter(cutter, getState);
+    orderApi
+      .collection(_cutter)
+      .then(() => {
+        message.success("收藏成功");
+      })
+      .catch(() => {
+        message.error("收藏失败");
+      });
   }
 );

@@ -1,5 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import { AxiosOptions, RequestOptions, ResponseOk } from "./type";
+import {
+  AxiosOptions,
+  RequestOptions,
+  RequestOptionsConfig,
+  ResponseOk,
+} from "./type";
 import { isFunction, cloneDeep } from "lodash-es";
 import CancelToken from "./cancelToken";
 
@@ -122,15 +127,24 @@ export default class Axios {
   /**
    * 接口请求
    */
-  request<T = unknown>(config: AxiosRequestConfig, options?: RequestOptions) {
+  request<T = unknown>(
+    config: AxiosRequestConfig,
+    { interceptors, requestOptions: options }: RequestOptionsConfig
+  ) {
     let conf = cloneDeep(config);
 
+    /**
+     * options
+     */
     const { requestOptions } = this.options;
     const opt = Object.assign({}, requestOptions, options || {});
 
-    const interceptors = this.getInterceptors();
+    /**
+     * interceptors
+     */
+    const interceptorsDefault = this.getInterceptors();
     const { beforeRequestHook, afterResponseHook, responseCatchHook } =
-      interceptors ?? {};
+      { ...interceptorsDefault, ...interceptors } ?? {};
 
     if (beforeRequestHook && isFunction(beforeRequestHook)) {
       conf = beforeRequestHook(conf, opt);
@@ -155,10 +169,10 @@ export default class Axios {
         .catch((error) => {
           console.log("请求失败", error.response.data);
           if (responseCatchHook && isFunction(responseCatchHook)) {
-            reject(responseCatchHook(error));
+            reject(responseCatchHook(error.response.data));
             return;
           }
-          reject();
+          reject(error.response.data);
         });
     });
   }
@@ -169,9 +183,9 @@ export default class Axios {
   post<T = unknown>(
     url: string,
     data: Record<string, unknown>,
-    options?: RequestOptions
+    requestOptions?: RequestOptions
   ) {
-    return this.request<T>({ url, data, method: "POST" }, options);
+    return this.request<T>({ url, data, method: "POST" }, { requestOptions });
   }
 
   /**
@@ -180,8 +194,8 @@ export default class Axios {
   get<T = unknown>(
     url: string,
     params?: Record<string, unknown> | string,
-    options?: RequestOptions
+    requestOptions?: RequestOptions
   ) {
-    return this.request<T>({ url, params, method: "GET" }, options);
+    return this.request<T>({ url, params, method: "GET" }, { requestOptions });
   }
 }

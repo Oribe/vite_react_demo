@@ -3,7 +3,7 @@
  */
 
 import { isMap } from "lodash-es";
-import { SelectProps } from "store/modules/Form";
+import { SelectProps } from "store/modules/form";
 import { MapList, switchToMap } from "utils/index";
 
 const initialOptions = (

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
-import { getManufacturer } from "store/modules/Form";
+import { getManufacturer } from "store/modules/form";
 import { OrderState } from "store/modules/order";
 import style from "./index.module.scss";
 

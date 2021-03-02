@@ -1,6 +1,6 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { user } from "store/modules/user";
-import { form } from "store/modules/Form";
+import { form } from "store/modules/form";
 import { order } from "store/modules/order";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage/session";

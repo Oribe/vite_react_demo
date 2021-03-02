@@ -8,7 +8,7 @@ import {
   isImageOptions,
   isOptions,
   SelectProps,
-} from "store/modules/Form";
+} from "store/modules/form";
 import initialOptions from "./initialOptions";
 
 const renderComponent = (

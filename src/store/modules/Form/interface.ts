@@ -121,11 +121,20 @@ export type SelectProps = Options[] | ImageOptions[] | MapOptions;
  * state类型结构
  */
 export interface FormState {
-  menu: FormMenu[];
-  form: {
-    [key: number]: FormConfig | undefined;
+  menu: {
+    data: FormMenu[];
+    loading: boolean;
   };
-  manufacturer: Options[];
+  form: {
+    data: {
+      [key: number]: FormConfig | undefined;
+    };
+    loading: boolean;
+  };
+  manufacturer: {
+    data: Options[];
+    loading: boolean;
+  };
   routers: NavRouter[];
 }
 

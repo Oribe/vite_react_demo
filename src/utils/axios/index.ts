@@ -1,10 +1,9 @@
-import { message } from "antd";
-import { AxiosRequestConfig, Method } from "axios";
+import { Method } from "axios";
 import { merge } from "lodash-es";
 import Axios from "./axios";
 import { RESPONSE_OK } from "./const";
-import Interceptors from "./interceptors";
-import { AxiosError, AxiosOptions, RequestOptions } from "./type";
+import { Interceptors } from "./interceptors";
+import { AxiosOptions, RequestOptions } from "./type";
 /**
  * 拦截器、钩子
  */
@@ -21,12 +20,12 @@ const interceptors: Interceptors = {
     throw new Error("返回数据错误");
   },
 
-  responseCatchHook(error: AxiosError) {
-    message.error(
-      error?.response?.data?.message ?? error.message ?? "请求失败"
-    );
-    return;
-  },
+  // responseCatchHook(error: AxiosError) {
+  // message.error(
+  //   error?.response?.data?.message ?? error.message ?? "请求失败"
+  // );
+  // return error.message;
+  // },
 };
 
 const isProd = process.env.NODE_ENV === "production";
@@ -35,7 +34,7 @@ const isProd = process.env.NODE_ENV === "production";
  * 创建请求实例
  * @param options 请求配置
  */
-function createAxios(options?: AxiosOptions) {
+function createAxios(options: AxiosOptions = {}) {
   return new Axios(
     merge<AxiosOptions, AxiosOptions>(
       {
@@ -43,7 +42,7 @@ function createAxios(options?: AxiosOptions) {
         timeout: 10 * 1000,
         interceptors,
       },
-      options || {}
+      options
     )
   );
 }
@@ -59,7 +58,7 @@ const axios = createAxios();
 function createPreAxios(url: string, method: Method, options?: RequestOptions) {
   return <T = unknown>(
     data?: Record<string, unknown>,
-    config?: AxiosRequestConfig
+    requestConfig?: AxiosOptions
   ) => {
     const _data: Record<string, unknown> = {};
     if (method.toUpperCase() === "GET") {
@@ -67,6 +66,9 @@ function createPreAxios(url: string, method: Method, options?: RequestOptions) {
     } else {
       _data.data = data;
     }
+
+    const { interceptors, requestOptions, ...config } = requestConfig || {};
+
     return axios.request<T>(
       {
         url,
@@ -74,7 +76,10 @@ function createPreAxios(url: string, method: Method, options?: RequestOptions) {
         ..._data,
         ...config,
       },
-      options
+      {
+        interceptors,
+        requestOptions: { ...options, ...requestOptions },
+      }
     );
   };
 }
@@ -86,7 +91,7 @@ interface AxiosGroups {
 type PreAxiosGroups<U extends string | number | symbol> = {
   [key in U]: <T = unknown>(
     data?: Record<string, unknown>,
-    config?: AxiosRequestConfig
+    config?: AxiosOptions
   ) => Promise<T>;
 };
 
@@ -107,3 +112,5 @@ export function createAxiosGroup<T extends AxiosGroups, U extends keyof T>(
 }
 
 export default axios;
+export * from "./type";
+export * from "./interceptors";

@@ -1,6 +1,9 @@
 import { Action, Dispatch } from "redux";
 import { RootReducer } from ".";
 
+/**
+ * actions
+ */
 export interface Act<T = unknown> extends Action {
   payload?: T;
 }
