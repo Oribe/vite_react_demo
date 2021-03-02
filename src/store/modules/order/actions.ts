@@ -88,12 +88,16 @@ export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
 /**
  * 添加收藏
  */
-export const collection = createAsyncThunk<void, Cutter>(
+export const collection = createAsyncThunk<void, Cutter[]>(
   createActinos(ACTION_TYPES.ORDER_COLLECTION, PREFIX_ACTION_TYPES).type,
-  async (cutter: Cutter, { getState }) => {
-    const _cutter = await processCutter(cutter, getState);
+  async (cutterList: Cutter[], { getState }) => {
+    const _cutterList: Cutter[] = [];
+    for (let i = 0; i < cutterList.length; i++) {
+      const cutter = await processCutter(cutterList[i], getState);
+      _cutterList.push(cutter);
+    }
     orderApi
-      .collection(_cutter)
+      .collection({ collections: _cutterList })
       .then(() => {
         message.success("收藏成功");
       })
