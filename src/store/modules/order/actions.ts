@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { message } from "antd";
 import { RootReducer } from "store/store";
-import { orderApi } from "utils/api";
+import { cutterApi, orderApi } from "utils/api";
 import { createActinos } from "utils/index";
 import { FormMenu } from "../form";
 import { Cutter } from "./interface";
@@ -52,7 +52,7 @@ export const getCategoryWithSub = (menu: FormMenu[], subCategory: number) => {
 };
 
 /**
- *
+ * 重新组装cutter
  */
 export const processCutter = (cutter: Cutter, getState: () => unknown) => {
   const {
@@ -80,7 +80,8 @@ export const processCutter = (cutter: Cutter, getState: () => unknown) => {
 export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
   createActinos(ACTION_TYPES.ADD_ORDER_LIST, PREFIX_ACTION_TYPES).type,
   async (order, { getState }) => {
-    const _order = processCutter(order, getState);
+    const _order = await processCutter(order, getState);
+    await cutterApi.save(_order);
     return _order;
   }
 );
@@ -96,8 +97,8 @@ export const collection = createAsyncThunk<void, Cutter[]>(
       const cutter = await processCutter(cutterList[i], getState);
       _cutterList.push(cutter);
     }
-    orderApi
-      .collection({ collections: _cutterList })
+    cutterApi
+      .collection(_cutterList)
       .then(() => {
         message.success("收藏成功");
       })

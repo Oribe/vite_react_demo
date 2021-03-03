@@ -60,7 +60,7 @@ const CutterForm: FC = () => {
    * @param order
    */
   const onCollection = (cutter: Cutter) => {
-    dispatch(collection({ ...cutter, subCategory: +params.subCategory }));
+    dispatch(collection([{ ...cutter, subCategory: +params.subCategory }]));
   };
 
   /**
@@ -75,7 +75,7 @@ const CutterForm: FC = () => {
     }
     if (isRejected(result)) {
       message.error("添加失败");
-      return Promise.reject(result.error.message || "");
+      return Promise.reject();
     }
     return Promise.resolve(true);
   };

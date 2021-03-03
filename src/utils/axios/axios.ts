@@ -22,6 +22,7 @@ export default class Axios {
    */
   private initialAxios(config: AxiosOptions) {
     this.axiosInstance = axios.create(config);
+    this.setInterceptors();
   }
 
   /**
@@ -59,7 +60,7 @@ export default class Axios {
   /**
    * @description 设置拦截
    */
-  setInterceptors() {
+  private setInterceptors() {
     const interceptors = this.getInterceptors();
 
     if (!interceptors) {
@@ -143,7 +144,7 @@ export default class Axios {
      * interceptors
      */
     const interceptorsDefault = this.getInterceptors();
-    const { beforeRequestHook, afterResponseHook, responseCatchHook } =
+    const { beforeRequestHook, responseHook, responseCatchHook } =
       { ...interceptorsDefault, ...interceptors } ?? {};
 
     if (beforeRequestHook && isFunction(beforeRequestHook)) {
@@ -154,9 +155,8 @@ export default class Axios {
       this.axiosInstance
         .request<ResponseOk<T>>(conf)
         .then((response) => {
-          console.log("请求成功", response.data?.data);
-          if (afterResponseHook && isFunction(afterResponseHook)) {
-            const resp = afterResponseHook<T>(response, opt);
+          if (responseHook && isFunction(responseHook)) {
+            const resp = responseHook<T>(response, opt);
             if (resp) {
               resolve(resp);
             } else {
@@ -167,9 +167,8 @@ export default class Axios {
           resolve(response.data.data);
         })
         .catch((error) => {
-          console.log("请求失败", error.response.data);
           if (responseCatchHook && isFunction(responseCatchHook)) {
-            reject(responseCatchHook(error.response.data));
+            reject(responseCatchHook(error, opt));
             return;
           }
           reject(error.response.data);

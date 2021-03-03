@@ -1,6 +1,8 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { Interceptors } from "./interceptors";
 
+export type ErrorMessageMode = "none" | "modal" | "message" | undefined;
+
 export interface RequestOptions {
   // 请求参数拼接到url
   joinParamsToUrl?: boolean;
@@ -13,7 +15,7 @@ export interface RequestOptions {
   // 接口地址， 不填则使用默认apiUrl
   apiUrl?: string;
   // 错误消息提示类型
-  errorMessageMode?: unknown;
+  errorMessageMode?: ErrorMessageMode;
   // 是否加入时间戳
   joinTime?: boolean;
   // 拦截器
@@ -42,3 +44,5 @@ export interface ResponseError {
 export interface AxiosError extends Error {
   response: AxiosResponse<ResponseError>;
 }
+
+export type RequestData = Record<string, unknown> | unknown[];

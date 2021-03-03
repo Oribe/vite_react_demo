@@ -13,7 +13,7 @@ export abstract class Interceptors {
   /**
    * @description 请求成功后钩子
    */
-  afterResponseHook?: <T>(
+  responseHook?: <T>(
     response: AxiosResponse<ResponseOk<T>>,
     options: RequestOptions
   ) => T;
@@ -21,7 +21,7 @@ export abstract class Interceptors {
   /**
    * @description 请求错误钩子
    */
-  responseCatchHook?: (error: AxiosError) => unknown;
+  responseCatchHook?: (error: AxiosError, options: RequestOptions) => unknown;
 
   /**
    * @description 请求发出之前拦截请求配置

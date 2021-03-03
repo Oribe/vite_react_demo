@@ -1,14 +1,35 @@
+import { message } from "antd";
 import { Method } from "axios";
 import { merge } from "lodash-es";
+import store from "store/index";
+import { createAuthorization } from "utils/auth";
 import Axios from "./axios";
 import { RESPONSE_OK } from "./const";
 import { Interceptors } from "./interceptors";
-import { AxiosOptions, RequestOptions } from "./type";
+import { AxiosOptions, RequestData, RequestOptions } from "./type";
+
 /**
- * 拦截器、钩子
+ * @description 默认的拦截器、钩子
  */
 const interceptors: Interceptors = {
-  afterResponseHook(response) {
+  /**
+   * @description 请求前拦截器
+   */
+  requestInterceptors(config) {
+    const uuid = store.getState().user.uuid;
+    config.headers.Authorization = createAuthorization(uuid);
+    return config;
+  },
+  /**
+   * @description 捕获拦截配置错误
+   */
+  requestInterceptorsCatch(error) {
+    console.error(error);
+  },
+  /**
+   * @description 请求响应后钩子
+   */
+  responseHook(response) {
     const { data } = response;
     const isSuccess = data && Reflect.has(data, "code");
     if (isSuccess) {
@@ -19,13 +40,18 @@ const interceptors: Interceptors = {
     }
     throw new Error("返回数据错误");
   },
-
-  // responseCatchHook(error: AxiosError) {
-  // message.error(
-  //   error?.response?.data?.message ?? error.message ?? "请求失败"
-  // );
-  // return error.message;
-  // },
+  /**
+   * @description 请求响应错误拦截钩子
+   */
+  responseCatchHook(error, options) {
+    const { errorMessageMode } = options;
+    const { data } = error.response;
+    const { message: msg } = data;
+    if (msg && errorMessageMode && errorMessageMode !== "none") {
+      message.error(msg);
+    }
+    return data;
+  },
 };
 
 const isProd = process.env.NODE_ENV === "production";
@@ -56,10 +82,7 @@ const axios = createAxios();
  * @param options 其他配置
  */
 function createPreAxios(url: string, method: Method, options?: RequestOptions) {
-  return <T = unknown>(
-    data?: Record<string, unknown>,
-    requestConfig?: AxiosOptions
-  ) => {
+  return <T = unknown>(data?: RequestData, requestConfig?: AxiosOptions) => {
     const _data: Record<string, unknown> = {};
     if (method.toUpperCase() === "GET") {
       _data.params = data;
@@ -90,7 +113,7 @@ interface AxiosGroups {
 
 type PreAxiosGroups<U extends string | number | symbol> = {
   [key in U]: <T = unknown>(
-    data?: Record<string, unknown>,
+    data?: RequestData,
     config?: AxiosOptions
   ) => Promise<T>;
 };
