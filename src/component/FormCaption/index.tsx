@@ -20,6 +20,9 @@ import styles from "./index.module.scss";
 const Caption: FC<Props> = (props) => {
   const { config, decodeHintImgUrl, onFormReset, ...funcProps } = props;
 
+  /**
+   * 绑定方法
+   */
   const handleReCreateFunc = useCallback(
     (funcObj?: ComponentFuncConfig) => {
       if (funcObj) {

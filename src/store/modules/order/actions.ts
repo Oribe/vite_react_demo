@@ -21,7 +21,7 @@ interface SearchOrderNumberQuery {
   subCategory: number;
 }
 /**
- * 订货号搜索
+ * 刀具订货号搜索
  */
 export const searchOrderNumber = createAsyncThunk(
   createActinos(ACTION_TYPES.SEARCH_ORDER_NUMBER, PREFIX_ACTION_TYPES).type,

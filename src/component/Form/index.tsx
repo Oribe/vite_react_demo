@@ -73,6 +73,9 @@ const Form: FC<Props> = (props) => {
     });
   };
 
+  /**
+   * 表单验证失败
+   */
   const handleFinishFailed = (errorInfo: unknown) => {
     console.error("errorInfo", errorInfo);
   };
@@ -165,6 +168,6 @@ interface Props {
   config?: FormConfig;
   onAdd?: (order: Cutter) => Promise<boolean>;
   onCollection?: (order: Cutter) => void;
-  onSearchOrderNumber?: (orderNumber?: string) => void;
+  onSearchOrderNumber?: (orderNumber?: string) => Cutter[];
   loading?: boolean;
 }

@@ -1,6 +1,7 @@
 import { AutoComplete, Input, Select } from "antd";
 import Complex from "component/Complex";
 import ImgSelect from "component/ImgSelect";
+import { isFunction } from "lodash";
 import React from "react";
 import {
   Component,
@@ -18,10 +19,24 @@ const renderComponent = (
   const { type, props: componentProps, func } = comp || {};
   const { options } = componentProps || {};
   let opts: SelectProps | undefined = options;
+
+  /**
+   * 筛选出级联组件对象的下拉菜单
+   */
   if (associatedValues && associatedValues.length > 0) {
     opts = initialOptions(options, associatedValues, true);
   }
 
+  if (func && func.onSearch && isFunction(func.onSearch)) {
+    // const { onSearch } = func;
+    // const handleOnSearch = (value: string) => {
+    //   const response = dis
+    // }
+  }
+
+  /**
+   * 筛选出对应的组件
+   */
   const switchComponent = () => {
     switch (type?.toUpperCase()) {
       /**
