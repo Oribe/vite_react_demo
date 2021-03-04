@@ -52,15 +52,12 @@ export const getCategoryWithSub = (menu: FormMenu[], subCategory: number) => {
 };
 
 /**
- * 重新组装cutter
+ * 添加大类
  */
 export const processCutter = (cutter: Cutter, getState: () => unknown) => {
   const {
     form: {
       menu: { data },
-    },
-    user: {
-      userInfo: { id, supplier },
     },
   } = getState() as RootReducer;
   const category = getCategoryWithSub(data, cutter.subCategory);
@@ -69,8 +66,6 @@ export const processCutter = (cutter: Cutter, getState: () => unknown) => {
   } else {
     return Promise.reject("刀具大类不存在");
   }
-  cutter.submitter = id;
-  cutter.manufacturer = supplier;
   return Promise.resolve(cutter);
 };
 

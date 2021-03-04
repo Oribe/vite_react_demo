@@ -1,8 +1,8 @@
 /**
  * uuid加密模块
  */
-
-import { AES, DES, mode, pad, RAS } from "crypto-js";
+import { Buffer } from "buffer";
+import { pki } from "node-forge";
 
 const publicKey = `-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC0HvosNomhSfTbfHbQdQeDARLt
@@ -12,6 +12,8 @@ qSXTe37aK9uyCSjHdQIDAQAB
 -----END PUBLIC KEY-----
 `;
 
+const publicK = pki.publicKeyFromPem(publicKey);
+
 /**
  * @description 生成Authorization
  */
@@ -19,15 +21,10 @@ export const createAuthorization = (uuid: string) => {
   if (!uuid) {
     return "";
   }
-  // const butter = Buffer.from(uuid, "base64");
-  // return AES.encrypt(
-  //   {
-  //     key: publicKey,
-  //     padding: constants.RSA_PKCS1_PADDING,
-  //   },
-  //   butter
-  // ).toString("base64");
-  // return DES.encrypt(uuid, publicKey, {
-  //   mode: mode.CBC
-  // }).toString().toUpperCase();
+  const encryptMsg = publicK.encrypt(uuid, "RSA-OAEP");
+  const token = Buffer.from(encryptMsg, "utf8").toString("base64");
+  // const _token = window.btoa(unescape(encodeURIComponent(encryptMsg)));
+  console.log(token);
+
+  return token;
 };

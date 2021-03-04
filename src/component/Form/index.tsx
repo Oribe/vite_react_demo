@@ -29,14 +29,48 @@ const Form: FC<Props> = (props) => {
   const { title, decodeHintImgUrl, caption, body, others } = config;
 
   /**
+   * 提交前，将组合字段添加到刀具信息
+   */
+  const beforeAdd = (values: Cutter) => {
+    [...caption, ...body].forEach((item) => {
+      const {
+        dataIndex,
+        component: { type },
+        complexConfig,
+      } = item;
+      if (type.toLowerCase() !== "complex") {
+        return;
+      }
+      if (
+        dataIndex &&
+        complexConfig &&
+        Array.isArray(complexConfig) &&
+        complexConfig.length
+      ) {
+        const value = complexConfig.reduce((v, c) => {
+          const { dataIndex: dx } = c;
+          if (dx) {
+            v += values[dx] ?? "";
+          }
+          return v;
+        }, "");
+        values[dataIndex] = value;
+      }
+    });
+    return values;
+  };
+
+  /**
    * 确认添加
    */
   const handleFinish = (values: Cutter) => {
-    if (onAdd) {
-      onAdd(values).then(() => {
-        form.resetFields();
-      });
+    if (!onAdd) {
+      return;
     }
+    const _values = beforeAdd(values);
+    onAdd(_values).then(() => {
+      form.resetFields();
+    });
   };
 
   const handleFinishFailed = (errorInfo: unknown) => {
@@ -62,8 +96,9 @@ const Form: FC<Props> = (props) => {
    */
   const handleCollection = async () => {
     const values = await form.validateFields();
+    const _values = beforeAdd(values);
     if (values && onCollection) {
-      onCollection(values);
+      onCollection(_values);
     }
   };
 

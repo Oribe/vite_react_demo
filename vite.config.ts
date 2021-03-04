@@ -1,6 +1,8 @@
 import { resolve } from "path";
 import type { UserConfig } from "vite";
 import reactRefresh from "@vitejs/plugin-react-refresh";
+import progress from "rollup-plugin-progress";
+import builtins from "rollup-plugin-node-builtins";
 
 /**
  * 获取某文件路径
@@ -9,7 +11,14 @@ import reactRefresh from "@vitejs/plugin-react-refresh";
 const rootDir = resolve(__dirname);
 
 const config: UserConfig = {
-  plugins: [reactRefresh()],
+  plugins: [
+    {
+      ...builtins({ crypto: true }),
+      name: "rollup-plugin-node-builtins",
+    },
+    reactRefresh(),
+    progress(),
+  ],
   server: {
     port: 4000,
     open: false,
@@ -33,17 +42,19 @@ const config: UserConfig = {
     },
   },
   root: rootDir,
-  alias: [
-    { find: /^component/, replacement: resolve(rootDir, "src/component") },
-    { find: /^assets/, replacement: resolve(rootDir, "src/assets") },
-    { find: /^style/, replacement: resolve(rootDir, "src/style") },
-    { find: /^view/, replacement: resolve(rootDir, "src/view") },
-    { find: /^route/, replacement: resolve(rootDir, "src/route") },
-    { find: /^store/, replacement: resolve(rootDir, "src/store") },
-    { find: /^utils/, replacement: resolve(rootDir, "src/utils") },
-    { find: /^layout/, replacement: resolve(rootDir, "src/layout") },
-    { find: /^\/~/, replacement: resolve(rootDir, "src") },
-  ],
+  resolve: {
+    alias: [
+      { find: /^component/, replacement: resolve(rootDir, "src/component") },
+      { find: /^assets/, replacement: resolve(rootDir, "src/assets") },
+      { find: /^style/, replacement: resolve(rootDir, "src/style") },
+      { find: /^view/, replacement: resolve(rootDir, "src/view") },
+      { find: /^route/, replacement: resolve(rootDir, "src/route") },
+      { find: /^store/, replacement: resolve(rootDir, "src/store") },
+      { find: /^utils/, replacement: resolve(rootDir, "src/utils") },
+      { find: /^layout/, replacement: resolve(rootDir, "src/layout") },
+      { find: /^\/~/, replacement: resolve(rootDir, "src") },
+    ],
+  },
   optimizeDeps: {
     include: [
       "redux-persist/lib/storage/session",
