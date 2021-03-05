@@ -7,7 +7,7 @@ import ImageHint from "component/ImageHint";
 import React, { FC, memo, useRef, useState } from "react";
 import { Component, FormItem as FormItemConfig } from "store/modules/form";
 import useFormItemProps from "./hooks/formItemProps";
-import renderComponent from "./hooks/renderComp";
+import RenderComponent from "./hooks/renderComp";
 import styles from "./index.module.scss";
 
 const { Item } = Form;
@@ -60,10 +60,18 @@ const FormItem: FC<Props> = (props) => {
           }
           return (
             <Item label={label} required {...otherFormItemProps}>
-              {renderComponent(component, {
+              <RenderComponent
+                comp={component}
+                other={{
+                  complexConfig,
+                  associatedValues: associatedValues,
+                }}
+              />
+              {/* {props.children} */}
+              {/* {renderComponent(component, {
                 complexConfig,
                 associatedValues: associatedValues,
-              }) || props.children}
+              }) || props.children} */}
             </Item>
           );
         }}
@@ -77,7 +85,9 @@ const FormItem: FC<Props> = (props) => {
   return (
     <>
       <Item label={label} required {..._formItemProps}>
-        {renderComponent(component, { complexConfig }) || props.children}
+        <RenderComponent comp={component} other={{ complexConfig }} />
+        {/* {renderComponent(component, { complexConfig }) || props.children} */}
+        {/* {props.children} */}
       </Item>
       {hintImgUrl ? (
         <ImageHint className={styles.hintImage} url={hintImgUrl} />

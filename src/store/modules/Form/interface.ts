@@ -60,7 +60,10 @@ export interface FormItemProps {
 }
 
 export type ComponentFuncConfig = Record<string, string | boolean>;
-export type ComponentFunc = Record<string, (...arg: unknown[]) => void>;
+export type ComponentFunc = Record<
+  string,
+  (...arg: unknown[]) => void | Promise<unknown>
+>;
 
 /**
  * 类型保护

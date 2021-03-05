@@ -26,7 +26,7 @@ const Caption: FC<Props> = (props) => {
   const handleReCreateFunc = useCallback(
     (funcObj?: ComponentFuncConfig) => {
       if (funcObj) {
-        return reCreateFunc(funcObj, funcProps, true);
+        return reCreateFunc(funcObj, funcProps, false);
       }
       return {};
     },
@@ -103,5 +103,6 @@ interface Props {
   config?: FormItemConfig[];
   decodeHintImgUrl?: string;
   onFormReset?: () => void;
-  onSearchOrderNumber?: (orderNumber: string) => void;
+  onSearchOrderNumber?: (orderNumber: string) => void | Promise<unknown>;
+  onSelectOneOfOrderNumber?: (value: string) => void;
 }

@@ -5,13 +5,14 @@
 import { isMap } from "lodash-es";
 import { SelectProps } from "store/modules/form";
 import { MapList, switchToMap } from "utils/index";
+import { produce } from "immer";
 
 const initialOptions = (
   optionsList?: SelectProps,
   associatedValue?: (string | number)[],
   hasAssociatedDataIndex = false
 ) => {
-  let opts: SelectProps | undefined = optionsList;
+  let opts: SelectProps | undefined = produce(optionsList, (draft) => draft);
   if (hasAssociatedDataIndex && optionsList) {
     /**
      * 有关联字段

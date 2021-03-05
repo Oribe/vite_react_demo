@@ -3,7 +3,7 @@
  */
 
 import { Button, Col, Empty, Form as AForm, message, Row } from "antd";
-import React, { FC, memo } from "react";
+import React, { FC, memo, useCallback } from "react";
 import { FormConfig } from "store/modules/form";
 import Caption from "../FormCaption";
 import FormBody from "../FormBody";
@@ -17,6 +17,25 @@ const Form: FC<Props> = (props) => {
   const { config, onSearchOrderNumber, onAdd, onCollection, loading } = props;
   const [form] = AForm.useForm<Cutter>();
   const history = useHistory();
+
+  /**
+   * 订单搜索后选择某个订单
+   */
+  const onSelectOneOfOrderNumber = useCallback(
+    (value: string) => {
+      if (value) {
+        try {
+          const valueObj = JSON.parse(value);
+          delete valueObj.createAt;
+          delete valueObj.updateAt;
+          form.setFieldsValue(valueObj);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    },
+    [form]
+  );
 
   if (loading) {
     return <Loading tip="loading..." />;
@@ -135,6 +154,7 @@ const Form: FC<Props> = (props) => {
           onFormReset={onFormReset}
           decodeHintImgUrl={decodeHintImgUrl}
           onSearchOrderNumber={onSearchOrderNumber}
+          onSelectOneOfOrderNumber={onSelectOneOfOrderNumber}
         />
         <FormBody body={body} />
       </Row>
@@ -168,6 +188,6 @@ interface Props {
   config?: FormConfig;
   onAdd?: (order: Cutter) => Promise<boolean>;
   onCollection?: (order: Cutter) => void;
-  onSearchOrderNumber?: (orderNumber?: string) => Cutter[];
+  onSearchOrderNumber?: (orderNumber?: string) => Promise<unknown>;
   loading?: boolean;
 }

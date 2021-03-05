@@ -26,8 +26,7 @@ interface SearchOrderNumberQuery {
 export const searchOrderNumber = createAsyncThunk(
   createActinos(ACTION_TYPES.SEARCH_ORDER_NUMBER, PREFIX_ACTION_TYPES).type,
   async ({ orderNumber, subCategory }: SearchOrderNumberQuery) => {
-    console.log(orderNumber, subCategory);
-    const response = await orderApi.searchOrderNumber({
+    const response = orderApi.searchOrderNumber<Cutter[]>({
       orderNumber: orderNumber.toUpperCase(),
       subCategory,
     });

@@ -24,7 +24,6 @@ export const createAuthorization = (uuid: string) => {
   const encryptMsg = publicK.encrypt(uuid, "RSA-OAEP");
   const token = Buffer.from(encryptMsg, "utf8").toString("base64");
   // const _token = window.btoa(unescape(encodeURIComponent(encryptMsg)));
-  console.log(token);
 
   return token;
 };

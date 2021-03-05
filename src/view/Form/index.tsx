@@ -50,9 +50,14 @@ const CutterForm: FC = () => {
       searchOrderNumber({ orderNumber, subCategory: +params.subCategory })
     );
     if (isFulfilled(response)) {
-      const resData = response.payload;
-      console.log("resData", resData);
+      const resData = response.payload as Cutter[];
+      const cutterOptions = resData.map((item) => ({
+        label: item.orderNumber,
+        value: JSON.stringify(item),
+      }));
+      return Promise.resolve(cutterOptions);
     }
+    return Promise.resolve([]);
   };
 
   /**
