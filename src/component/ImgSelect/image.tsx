@@ -6,14 +6,14 @@ const Image: FC<ImageProps> = (props) => {
   const { label, src, onChange } = props;
 
   const handleClick = () => {
-    onChange && onChange(props.value === 0 ? 1 : 0);
+    onChange && onChange((props.value || 0) === 0 ? 1 : 0);
   };
 
   return (
     <div className={styles.imageSelect} onClick={handleClick}>
       <div
         className={`${styles.imageContainer} ${
-          props.value === 1 ? styles.active : ""
+          (props.value || 0) === 1 ? styles.active : ""
         }`}
       >
         <img

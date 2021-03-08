@@ -21,18 +21,39 @@ const ImgSelect: FC<Props> = (props) => {
 
   return (
     <Space className={styles.imgSelectRow} align="start" wrap size="middle">
-      {options.map((option) => {
+      {options.map((option, idx) => {
+        if (idx === 0) {
+          return (
+            <Item
+              key={option.dataIndex}
+              noStyle={true}
+              dependencies={dataIndexs}
+              hasFeedback
+              help="必须选择一个"
+              validateStatus={"success"}
+            >
+              {({ getFieldsValue }) => {
+                const values = getFieldsValue(dataIndexs);
+
+                return (
+                  <Item noStyle={true} name={option.dataIndex}>
+                    <Image key={option.label} {...option} />
+                  </Item>
+                );
+              }}
+            </Item>
+          );
+        }
         return (
-          <Item
-            key={option.dataIndex}
-            name={option.dataIndex}
-            noStyle={true}
-            dependencies={dataIndexs}
-          >
+          <Item key={option.dataIndex} noStyle={true} dependencies={dataIndexs}>
             {({ getFieldsValue }) => {
               const values = getFieldsValue(dataIndexs);
-              console.log("values", values);
-              return <Image key={option.label} {...option} />;
+
+              return (
+                <Item noStyle={true} name={option.dataIndex}>
+                  <Image key={option.label} {...option} />
+                </Item>
+              );
             }}
           </Item>
         );
