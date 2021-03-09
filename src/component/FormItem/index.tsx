@@ -22,7 +22,15 @@ const FormItem: FC<Props> = (props) => {
     complexConfig,
     ...formItemProps
   } = props;
+  /**
+   * 记录被关联字段的值
+   */
   const [associatedValue, setAssociatedValue] = useState();
+  /**
+   * 记录是否第一次渲染
+   * 防止当表单有初始值时，关联字段的值会被重置
+   */
+  const [isFirstRender, setIsFirstRender] = useState(true);
   const timerRef = useRef<number>();
   const [_formItemProps] = useFormItemProps({
     label,
@@ -40,6 +48,9 @@ const FormItem: FC<Props> = (props) => {
       <Item noStyle style={style} dependencies={associatedDataIndex}>
         {({ getFieldValue, resetFields }) => {
           timerRef.current = setTimeout(() => {
+            /**
+             * 获取当前被关联字段的值
+             */
             const _associatedValue = getFieldValue(
               associatedDataIndex[associatedDataIndex.length - 1]
             );
@@ -47,8 +58,14 @@ const FormItem: FC<Props> = (props) => {
               otherFormItemProps?.name &&
               associatedValue !== _associatedValue
             ) {
+              /**
+               * 关联字段值发生改变
+               */
               setAssociatedValue(_associatedValue);
-              resetFields([otherFormItemProps.name]);
+              setIsFirstRender(false);
+              if (!isFirstRender) {
+                resetFields([otherFormItemProps.name]);
+              }
             }
             clearTimeout(timerRef.current);
           });
@@ -67,11 +84,6 @@ const FormItem: FC<Props> = (props) => {
                   associatedValues: associatedValues,
                 }}
               />
-              {/* {props.children} */}
-              {/* {renderComponent(component, {
-                complexConfig,
-                associatedValues: associatedValues,
-              }) || props.children} */}
             </Item>
           );
         }}
@@ -86,8 +98,6 @@ const FormItem: FC<Props> = (props) => {
     <>
       <Item label={label} required {..._formItemProps}>
         <RenderComponent comp={component} other={{ complexConfig }} />
-        {/* {renderComponent(component, { complexConfig }) || props.children} */}
-        {/* {props.children} */}
       </Item>
       {hintImgUrl ? (
         <ImageHint className={styles.hintImage} url={hintImgUrl} />

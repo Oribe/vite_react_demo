@@ -10,14 +10,19 @@ import React, {
 import { useHistory } from "react-router-dom";
 import { routerAction, RouterAction, routerInterceptors } from "./guard";
 
-const asyncLoader = <T extends ComponentType<any>>(
+const asyncLoader = <T extends ComponentType<unknown>>(
   loader: () => Promise<{ default: T }>
 ) => {
   const LazyComponent = (props: any) => {
     const history = useHistory();
-
+    /**
+     * 加载组件
+     */
     const Component = useMemo(() => lazy(loader), []);
 
+    /**
+     * 路由拦截拦截
+     */
     const handleRouterInterceptors = useCallback(
       (routerAction: RouterAction) => {
         const interceptors = routerInterceptors.get(routerAction) || [];

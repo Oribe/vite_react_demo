@@ -20,7 +20,7 @@ export const router: NavRouter[] = [
     exact: true,
   },
   {
-    path: ["/:model", "/:model/add/:subCategory"],
+    path: ["/:model", "/:model/add/:subCategory", "/:model/edit/:subCategory"],
     component: asyncLoader(() => import("view/Navigation")),
     exact: true,
   },
@@ -66,7 +66,7 @@ export const navRouter: NavRouter[] = [
     component: asyncLoader(() => import("view/Collection")),
   },
   {
-    path: "/order/add/:subCategory",
+    path: ["/order/edit/:subCategory", "/order/add/:subCategory"],
     component: asyncLoader(() => import("view/Form")),
     isMenu: false,
   },

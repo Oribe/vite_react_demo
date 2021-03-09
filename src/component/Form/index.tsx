@@ -3,7 +3,7 @@
  */
 
 import { Button, Col, Empty, Form as AForm, message, Row } from "antd";
-import React, { FC, memo, useCallback } from "react";
+import React, { FC, memo, useCallback, useEffect } from "react";
 import { FormConfig } from "store/modules/form";
 import Caption from "../FormCaption";
 import FormBody from "../FormBody";
@@ -14,7 +14,14 @@ import { useHistory } from "react-router-dom";
 import Loading from "component/Loading";
 
 const Form: FC<Props> = (props) => {
-  const { config, onSearchOrderNumber, onAdd, onCollection, loading } = props;
+  const {
+    config,
+    onSearchOrderNumber,
+    onAdd,
+    onCollection,
+    loading,
+    initialValue,
+  } = props;
   const [form] = AForm.useForm<Cutter>();
   const history = useHistory();
 
@@ -37,11 +44,26 @@ const Form: FC<Props> = (props) => {
     [form]
   );
 
+  /**
+   * 设置默认值
+   */
+  useEffect(() => {
+    if (initialValue) {
+      form.setFieldsValue(initialValue);
+    }
+  }, [form, initialValue]);
+
   if (loading) {
+    /**
+     * 配置加载中
+     */
     return <Loading tip="loading..." />;
   }
 
   if (!config || isEmpty(config)) {
+    /**
+     * 如果配置不存在
+     */
     return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
   }
 
@@ -190,4 +212,5 @@ interface Props {
   onCollection?: (order: Cutter) => void;
   onSearchOrderNumber?: (orderNumber?: string) => Promise<unknown>;
   loading?: boolean;
+  initialValue?: Cutter;
 }

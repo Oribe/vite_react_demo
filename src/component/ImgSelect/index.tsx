@@ -22,39 +22,30 @@ const ImgSelect: FC<Props> = (props) => {
   return (
     <Space className={styles.imgSelectRow} align="start" wrap size="middle">
       {options.map((option, idx) => {
-        if (idx === 0) {
-          return (
-            <Item
-              key={option.dataIndex}
-              noStyle={true}
-              dependencies={dataIndexs}
-              hasFeedback
-              help="必须选择一个"
-              validateStatus={"success"}
-            >
-              {({ getFieldsValue }) => {
-                const values = getFieldsValue(dataIndexs);
-
-                return (
-                  <Item noStyle={true} name={option.dataIndex}>
-                    <Image key={option.label} {...option} />
-                  </Item>
-                );
-              }}
-            </Item>
-          );
-        }
         return (
-          <Item key={option.dataIndex} noStyle={true} dependencies={dataIndexs}>
-            {({ getFieldsValue }) => {
-              const values = getFieldsValue(dataIndexs);
-
-              return (
-                <Item noStyle={true} name={option.dataIndex}>
-                  <Image key={option.label} {...option} />
-                </Item>
-              );
-            }}
+          <Item
+            key={option.dataIndex}
+            noStyle={true}
+            dependencies={dataIndexs}
+            name={option.dataIndex}
+            rules={[
+              ({ getFieldsValue }) => ({
+                validator() {
+                  if (idx === 0) {
+                    const values = getFieldsValue(dataIndexs);
+                    if (Object.values(values).includes(1)) {
+                      // 至少选择了一种
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject(new Error("至少选择一种"));
+                    }
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <Image key={option.label} {...option} />
           </Item>
         );
       })}

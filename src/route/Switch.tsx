@@ -12,7 +12,7 @@ const SwitchRouter: FC<Props> = ({ location, routers, redirect }) => {
     <Switch location={location}>
       {routers.map((r) => (
         <Route
-          key={r.path as string}
+          key={r.path?.toString()}
           path={r.path}
           exact={r.exact ?? true}
           component={r.component}

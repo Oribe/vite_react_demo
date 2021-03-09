@@ -1,10 +1,16 @@
+/**
+ * 刀具表单页
+ * URL： /tool/order/edit/:orderNumber
+ * URL： /tool/order/add/:category
+ */
+
 import { isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { Col, message, Row } from "antd";
 import Form from "component/Form";
 import Menu from "component/Menu";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
 import { FormState, getFormConfig, getFormMenu } from "store/modules/form";
@@ -12,6 +18,7 @@ import {
   addToOrderList,
   collection,
   Cutter,
+  OrderState,
   searchOrderNumber,
 } from "store/modules/order";
 import styles from "./index.module.scss";
@@ -21,10 +28,17 @@ const formProps = createSelector<RootReducer, FormState, FormState>(
   (formState) => formState
 );
 
+const orderProps = createSelector<RootReducer, OrderState, OrderState>(
+  (states) => states.order,
+  (orderState) => orderState
+);
+
 const CutterForm: FC = () => {
-  const state = useSelector(formProps);
+  const formStore = useSelector(formProps);
+  const orderStore = useSelector(orderProps);
   const dispatch = useDispatch();
   const params = useParams<UrlParam>();
+  const location = useLocation<UrlState>();
 
   /**
    * api请求获取数据
@@ -41,6 +55,23 @@ const CutterForm: FC = () => {
       dispatch(getFormConfig(+params.subCategory));
     }
   }, [dispatch, params]);
+
+  /**
+   * 订单列表中数据修改
+   * 获取对应的列表中的数据
+   */
+  const getOneInfoOfOrderList = useMemo(() => {
+    const { orderNumber } = location.state || {};
+    if (orderNumber) {
+      /**
+       * 订货号存在
+       */
+      return orderStore.orderList.find(
+        (item) => item.orderNumber === location.state.orderNumber
+      );
+    }
+    return;
+  }, [location.state, orderStore.orderList]);
 
   /**
    * 订货号搜索
@@ -92,7 +123,7 @@ const CutterForm: FC = () => {
         <Col xs={0} md={6}>
           <Menu
             mode="vertical"
-            menus={state.routers}
+            menus={formStore.routers}
             className={styles.formMenu}
             subMenuClassName={styles.formMenuSub}
             itemClassName={styles.formMenuItem}
@@ -101,11 +132,12 @@ const CutterForm: FC = () => {
         </Col>
         <Col xs={24} md={18} className={styles.fromWrapper}>
           <Form
-            config={state.form.data[+params.subCategory]}
+            config={formStore.form.data[+params.subCategory]}
             onAdd={onAdd}
-            loading={state.form.loading}
+            loading={formStore.form.loading}
             onCollection={onCollection}
             onSearchOrderNumber={onSearchOrderNumber}
+            initialValue={getOneInfoOfOrderList}
           />
         </Col>
       </Row>
@@ -117,4 +149,8 @@ export default CutterForm;
 
 interface UrlParam {
   subCategory: string;
+}
+
+interface UrlState {
+  orderNumber: string;
 }

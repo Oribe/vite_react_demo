@@ -1,10 +1,13 @@
 @import "../../style/var.scss";
+
 .orderTable {
-  .tableColumns {
-    background-color: $primary-color;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 500;
+  :global {
+    .ant-table-thead > tr > th {
+      background-color: $primary-color;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+    }
   }
 }
 

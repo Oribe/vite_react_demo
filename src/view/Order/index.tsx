@@ -1,14 +1,20 @@
+/**
+ * 列表页
+ * URL: /tool/order
+ */
+
 import { Table } from "antd";
 import { ButtonGroupProps } from "antd/lib/button";
 import { ColumnsType, ColumnType } from "antd/lib/table";
+import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
-import React, { FC, useEffect, useMemo } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
 import { getManufacturer } from "store/modules/form";
-import { OrderState } from "store/modules/order";
+import { Cutter, OrderState } from "store/modules/order";
 import style from "./index.module.scss";
 
 const publicColumnsType: ColumnType<any> = {
@@ -21,6 +27,9 @@ const buttonConfig: ButtonGroupProps = {
   className: style.btnGroup,
 };
 
+/**
+ * 按钮组配置
+ */
 const buttons: ButtonTypes[] = [
   {
     label: "添加",
@@ -58,11 +67,14 @@ const orderStore = createSelector<RootReducer, OrderState, OrderState>(
   (order) => order
 );
 
+/**
+ * 订单列表
+ */
 const Order: FC = () => {
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const orderState = useSelector(orderStore);
-  const dispatch = useDispatch();
-  const columns = useMemo<ColumnsType<any>>(() => {
-    const cols: ColumnsType<any> = [
+  const columns = useMemo<ColumnsType<Cutter>>(() => {
+    const cols: ColumnsType<Cutter> = [
       {
         title: "刀具子类",
         dataIndex: "subCategory",
@@ -90,17 +102,33 @@ const Order: FC = () => {
       {
         title: "操作",
         align: "center",
-        render() {
-          return <Link to="/order/edit/:orderNumber">编辑</Link>;
+        render(_, record) {
+          return (
+            <Link
+              to={{
+                pathname: `/order/edit/${record.subCategory}`,
+                state: { orderNumber: record.orderNumber },
+              }}
+            >
+              编辑
+            </Link>
+          );
         },
       },
     ];
     return cols.map((item) => ({ ...item, ...publicColumnsType }));
   }, []);
 
-  useEffect(() => {
-    dispatch(getManufacturer());
-  }, [dispatch]);
+  /**
+   * 选项
+   */
+  const rowSelection: TableRowSelection<Cutter> = {
+    type: "checkbox",
+    onSelect: (record, selected, selectedRows) => {
+      const orderNumberRows = selectedRows.map((item) => item.orderNumber);
+      setSelectedRows(orderNumberRows);
+    },
+  };
 
   return (
     <>
@@ -109,6 +137,7 @@ const Order: FC = () => {
         className={style.orderTable}
         columns={columns}
         dataSource={orderState.orderList || []}
+        rowSelection={rowSelection}
       />
       <ButtonGroups config={buttonConfig} buttons={buttons} />
     </>

@@ -8,7 +8,6 @@ import style from "./index.module.scss";
 
 const Navigation: FC = () => {
   const location = useLocation();
-
   return (
     <>
       <Navbar
