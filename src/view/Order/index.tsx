@@ -8,13 +8,12 @@ import { ButtonGroupProps } from "antd/lib/button";
 import { ColumnsType, ColumnType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
-import { getManufacturer } from "store/modules/form";
-import { Cutter, OrderState } from "store/modules/order";
+import { Cutter, deletedOrderAction, OrderState } from "store/modules/order";
 import style from "./index.module.scss";
 
 const publicColumnsType: ColumnType<any> = {
@@ -27,41 +26,6 @@ const buttonConfig: ButtonGroupProps = {
   className: style.btnGroup,
 };
 
-/**
- * 按钮组配置
- */
-const buttons: ButtonTypes[] = [
-  {
-    label: "添加",
-    href: "/order/add/257",
-  },
-  {
-    label: "收藏夹导入",
-  },
-  {
-    label: "文件导入",
-  },
-  {
-    label: "收藏",
-  },
-  {
-    label: "删除",
-  },
-  {
-    label: "暂存",
-  },
-  {
-    label: "提交",
-    type: "ghost",
-    className: style.submitBut,
-  },
-  {
-    label: "下载文件示例",
-    type: "link",
-    className: style.downloadBut,
-  },
-];
-
 const orderStore = createSelector<RootReducer, OrderState, OrderState>(
   (store) => store.order,
   (order) => order
@@ -73,6 +37,7 @@ const orderStore = createSelector<RootReducer, OrderState, OrderState>(
 const Order: FC = () => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const orderState = useSelector(orderStore);
+  const dispatch = useDispatch();
   const columns = useMemo<ColumnsType<Cutter>>(() => {
     const cols: ColumnsType<Cutter> = [
       {
@@ -120,6 +85,14 @@ const Order: FC = () => {
   }, []);
 
   /**
+   * 删除
+   */
+  const handleDeletedOrder = () => {
+    const result = dispatch(deletedOrderAction(selectedRows));
+    console.log(result);
+  };
+
+  /**
    * 选项
    */
   const rowSelection: TableRowSelection<Cutter> = {
@@ -130,11 +103,48 @@ const Order: FC = () => {
     },
   };
 
+  /**
+   * 按钮组配置
+   */
+  const buttons: ButtonTypes[] = [
+    {
+      label: "添加",
+      href: "/order/add/257",
+    },
+    {
+      label: "收藏夹导入",
+    },
+    {
+      label: "文件导入",
+    },
+    {
+      label: "收藏",
+    },
+    {
+      label: "删除",
+      onClick: handleDeletedOrder,
+    },
+    {
+      label: "暂存",
+    },
+    {
+      label: "提交",
+      type: "ghost",
+      className: style.submitBut,
+    },
+    {
+      label: "下载文件示例",
+      type: "link",
+      className: style.downloadBut,
+    },
+  ];
+
   return (
     <>
       <h3>订单编辑列表</h3>
       <Table
         className={style.orderTable}
+        rowKey="orderNumber"
         columns={columns}
         dataSource={orderState.orderList || []}
         rowSelection={rowSelection}

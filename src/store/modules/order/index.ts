@@ -1,11 +1,27 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addToOrderList } from "./actions";
 import orderState from "./state";
 
 const orderSlice = createSlice({
   name: "order",
   initialState: orderState,
-  reducers: {},
+  reducers: {
+    deletedOrderAction(state, action: PayloadAction<string[]>) {
+      const orderNumberList = action.payload;
+      if (!orderNumberList) {
+        return state;
+      }
+      let len = orderNumberList.length;
+      while (len--) {
+        const orderNumber = orderNumberList[len];
+        const index = state.orderList.findIndex(
+          (item) => item.orderNumber === orderNumber
+        );
+        state.orderList.splice(index, 1);
+      }
+      return state;
+    },
+  },
   extraReducers: ({ addCase }) => {
     addCase(addToOrderList.fulfilled, (state, action) => {
       if (action.payload) {
@@ -34,4 +50,4 @@ const orderSlice = createSlice({
 export * from "./actions";
 export * from "./interface";
 export const order = orderSlice.reducer;
-// export const {  } = orderSlice.actions;
+export const { deletedOrderAction } = orderSlice.actions;
