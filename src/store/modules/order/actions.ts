@@ -88,16 +88,23 @@ export const collection = createAsyncThunk<void, Cutter[]>(
   async (cutterList: Cutter[], { getState }) => {
     const _cutterList: Cutter[] = [];
     for (let i = 0; i < cutterList.length; i++) {
+      if (cutterList[i].category) {
+        _cutterList.push(cutterList[i]);
+        continue;
+      }
       const cutter = await processCutter(cutterList[i], getState);
       _cutterList.push(cutter);
     }
+    console.log(_cutterList);
+
     cutterApi
       .collection(_cutterList)
       .then(() => {
         message.success("收藏成功");
       })
-      .catch(() => {
-        message.error("收藏失败");
+      .catch((error) => {
+        console.log(error);
+        message.error(error?.message ?? "收藏失败");
       });
   }
 );

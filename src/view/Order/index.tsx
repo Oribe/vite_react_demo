@@ -3,17 +3,22 @@
  * URL: /tool/order
  */
 
-import { Table } from "antd";
+import { message, Table } from "antd";
 import { ButtonGroupProps } from "antd/lib/button";
 import { ColumnsType, ColumnType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, Key, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
-import { Cutter, deletedOrderAction, OrderState } from "store/modules/order";
+import {
+  collection,
+  Cutter,
+  deletedOrderAction,
+  OrderState,
+} from "store/modules/order";
 import style from "./index.module.scss";
 
 const publicColumnsType: ColumnType<any> = {
@@ -35,7 +40,7 @@ const orderStore = createSelector<RootReducer, OrderState, OrderState>(
  * 订单列表
  */
 const Order: FC = () => {
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Key[]>([]);
   const orderState = useSelector(orderStore);
   const dispatch = useDispatch();
   const columns = useMemo<ColumnsType<Cutter>>(() => {
@@ -88,8 +93,20 @@ const Order: FC = () => {
    * 删除
    */
   const handleDeletedOrder = () => {
+    if (selectedRows.length <= 0) {
+      message.warning("请先选择要删除的刀具");
+      return;
+    }
     const result = dispatch(deletedOrderAction(selectedRows));
-    console.log(result);
+    const idx = orderState.orderList.findIndex((item) =>
+      result.payload.includes(item.orderNumber)
+    );
+    if (idx < 0) {
+      message.success("删除成功");
+      setSelectedRows([]);
+      return;
+    }
+    message.success("删除失败");
   };
 
   /**
@@ -97,10 +114,33 @@ const Order: FC = () => {
    */
   const rowSelection: TableRowSelection<Cutter> = {
     type: "checkbox",
-    onSelect: (record, selected, selectedRows) => {
-      const orderNumberRows = selectedRows.map((item) => item.orderNumber);
-      setSelectedRows(orderNumberRows);
+    onChange: (selectedRowKeys) => {
+      setSelectedRows(selectedRowKeys);
     },
+  };
+
+  /**
+   * 收藏
+   */
+  const handleOrderListCollection = async () => {
+    if (selectedRows.length <= 0) {
+      message.warning("请先选择要收藏的刀具");
+      return;
+    }
+    const willCollectionCutters = orderState.orderList.reduce<Cutter[]>(
+      (n, c) => {
+        if (selectedRows.includes(c.orderNumber)) {
+          n.push(c);
+        }
+        return n;
+      },
+      []
+    );
+    if (willCollectionCutters.length !== selectedRows.length) {
+      message.error("收藏失败");
+      return;
+    }
+    dispatch(collection(willCollectionCutters));
   };
 
   /**
@@ -119,10 +159,13 @@ const Order: FC = () => {
     },
     {
       label: "收藏",
+      onClick: handleOrderListCollection,
+      disabled: selectedRows.length <= 0,
     },
     {
       label: "删除",
       onClick: handleDeletedOrder,
+      disabled: selectedRows.length <= 0,
     },
     {
       label: "暂存",

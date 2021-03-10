@@ -2,6 +2,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 import { user } from "store/modules/user";
 import { form } from "store/modules/form";
 import { order } from "store/modules/order";
+import { collection } from "store/modules/collection";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage/session";
 
@@ -9,6 +10,7 @@ const reducers = {
   user,
   form,
   order,
+  collection,
 };
 
 const rootReducer = combineReducers(reducers);

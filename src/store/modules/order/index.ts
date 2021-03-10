@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Key } from "react";
 import { addToOrderList } from "./actions";
 import orderState from "./state";
 
@@ -6,7 +7,7 @@ const orderSlice = createSlice({
   name: "order",
   initialState: orderState,
   reducers: {
-    deletedOrderAction(state, action: PayloadAction<string[]>) {
+    deletedOrderAction(state, action: PayloadAction<Key[]>) {
       const orderNumberList = action.payload;
       if (!orderNumberList) {
         return state;
@@ -19,6 +20,7 @@ const orderSlice = createSlice({
         );
         state.orderList.splice(index, 1);
       }
+      console.log("1111");
       return state;
     },
   },
