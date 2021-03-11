@@ -1,7 +1,10 @@
 import { CollectionState } from "./interface";
 
 const collectionState: CollectionState = {
-  collectionList: [],
+  collectionList: {
+    loading: false,
+    data: [],
+  },
 };
 
 export default collectionState;

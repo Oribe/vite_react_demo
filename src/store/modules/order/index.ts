@@ -20,7 +20,6 @@ const orderSlice = createSlice({
         );
         state.orderList.splice(index, 1);
       }
-      console.log("1111");
       return state;
     },
   },

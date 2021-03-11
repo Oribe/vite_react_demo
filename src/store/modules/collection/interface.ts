@@ -1,4 +1,5 @@
 export interface CollectionType {
+  id: number;
   orderNumber: string;
   category: number;
   subCategory: number;
@@ -6,5 +7,8 @@ export interface CollectionType {
 }
 
 export interface CollectionState {
-  collectionList: CollectionType[];
+  collectionList: {
+    loading: boolean;
+    data: CollectionType[];
+  };
 }

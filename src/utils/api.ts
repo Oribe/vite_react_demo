@@ -39,3 +39,15 @@ export const cutterApi = createAxiosGroup({
 export const orderApi = createAxiosGroup({
   searchOrderNumber: { url: "/cutter", method: "GET" },
 });
+
+/**
+ * 搜藏
+ */
+export const collectionApi = createAxiosGroup({
+  search: {
+    url: "/collection",
+    method: "GET",
+    options: { errorMessageMode: "message" },
+  },
+  collectionDetail: { url: "/collection/complete", method: "GET" },
+});

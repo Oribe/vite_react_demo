@@ -1,0 +1,14 @@
+.searchRow {
+  margin: 16px 0;
+  .searchOptionsCol {
+    display: flex;
+    align-items: center;
+  }
+
+  .searchOptions {
+    flex: 1;
+  }
+}
+.btnsContainer {
+  margin-top: 16px;
+}

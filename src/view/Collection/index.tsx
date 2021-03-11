@@ -7,23 +7,31 @@ import { Button, Cascader, Col, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroup, { ButtonTypes } from "component/ButtonGroup";
-import React, { FC, useMemo } from "react";
-import { useSelector } from "react-redux";
-import { createSelector } from "reselect";
-import { RootReducer } from "store/index";
-import { CollectionType, CollectionState } from "store/modules/collection";
-
-const collectionStore = createSelector<
-  RootReducer,
-  CollectionState,
-  CollectionState
->(
-  (store) => store.collection,
-  (orderState) => orderState
-);
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  collectionSearch,
+  CollectionType,
+  importCollectionToOrderList,
+} from "store/modules/collection";
+import { getFormMenu } from "store/modules/form";
+import { collectionStore } from "./model";
+import styles from "./index.module.scss";
 
 const Collection: FC = () => {
-  const collectionState = useSelector(collectionStore);
+  const dispatch = useDispatch();
+  const state = useSelector(collectionStore);
+  const [subCategory, setSubCategory] = useState<number>();
+  /**
+   * 导入
+   */
+  const handleImportToOrderList = useCallback(
+    (improtList: number[]) => {
+      dispatch(importCollectionToOrderList(improtList));
+    },
+    [dispatch]
+  );
+
   /**
    * table行配置
    */
@@ -33,6 +41,15 @@ const Collection: FC = () => {
         title: "刀具子类",
         dataIndex: "subCategory",
         align: "center",
+        render(value, record) {
+          const categoryOption = state.cutterCategory.find(
+            (item) => item.value === record.category
+          );
+          const subCategoryOption = categoryOption?.children?.find(
+            (item) => item.value === value
+          );
+          return subCategoryOption?.label ?? value;
+        },
       },
       {
         title: "制造商",
@@ -43,12 +60,21 @@ const Collection: FC = () => {
         title: "操作",
         key: "action",
         align: "center",
-        render() {
-          return <Button>导入</Button>;
+        render(_, record) {
+          return (
+            <Button
+              type="link"
+              onClick={() => {
+                handleImportToOrderList([record.id]);
+              }}
+            >
+              导入
+            </Button>
+          );
         },
       },
     ],
-    []
+    [handleImportToOrderList, state.cutterCategory]
   );
 
   /**
@@ -79,25 +105,59 @@ const Collection: FC = () => {
     []
   );
 
+  useEffect(() => {
+    /**
+     * 获取下拉菜单数据
+     */
+    dispatch(getFormMenu());
+  }, [dispatch]);
+
+  /**
+   * 搜索
+   */
+  const handelSearch = () => {
+    dispatch(collectionSearch(subCategory));
+  };
+
   return (
     <>
       <h3>刀具收藏列表</h3>
-      <Row>
-        <Col>
-          <label htmlFor="">刀具子类：</label>
-          <Cascader options={[]} />
+      <Row className={styles.searchRow}>
+        <Col span={18} className={styles.searchOptionsCol}>
+          <label htmlFor="subCategory" className={styles.searchTitle}>
+            刀具子类：
+          </label>
+          <Cascader
+            id="subCategory"
+            className={styles.searchOptions}
+            options={state.cutterCategory}
+            onChange={([, subCategory]) => {
+              if (subCategory) {
+                setSubCategory(+subCategory);
+                return;
+              }
+              setSubCategory(undefined);
+            }}
+          />
         </Col>
-        <Col>
-          <Button>查看</Button>
+        <Col span={6}>
+          <Row justify="end">
+            <Button type="primary" onClick={handelSearch}>
+              查看
+            </Button>
+          </Row>
         </Col>
       </Row>
       <Table
         columns={columns}
         rowSelection={rowSelection}
         rowKey="orderNumber"
-        dataSource={collectionState.collectionList}
+        loading={state.collectionList.loading}
+        dataSource={state.collectionList.data}
       />
-      <ButtonGroup buttons={btns} />
+      <div className={styles.btnsContainer}>
+        <ButtonGroup buttons={btns} />
+      </div>
     </>
   );
 };

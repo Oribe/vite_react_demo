@@ -1,5 +1,5 @@
+import "./style/antd.less"; // 必须放在第一位， 项目样式加载顺序按照引入顺序
 import "./style/index.scss";
-import "./style/antd.less";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
