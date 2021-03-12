@@ -4,37 +4,15 @@
  */
 
 import { message, Table } from "antd";
-import { ButtonGroupProps } from "antd/lib/button";
-import { ColumnsType, ColumnType } from "antd/lib/table";
+import { ColumnsType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
 import React, { FC, Key, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { createSelector } from "reselect";
-import { RootReducer } from "store/index";
-import {
-  collection,
-  Cutter,
-  deletedOrderAction,
-  OrderState,
-} from "store/modules/order";
+import { collection, Cutter, deletedOrderAction } from "store/modules/order";
 import style from "./index.module.scss";
-
-const publicColumnsType: ColumnType<any> = {
-  align: "center",
-  className: style.tableColumns,
-};
-
-const buttonConfig: ButtonGroupProps = {
-  // size: "large",
-  className: style.btnGroup,
-};
-
-const orderStore = createSelector<RootReducer, OrderState, OrderState>(
-  (store) => store.order,
-  (order) => order
-);
+import { buttonConfig, orderStore, publicColumnsType } from "./model";
 
 /**
  * 订单列表
@@ -50,6 +28,15 @@ const Order: FC = () => {
         dataIndex: "subCategory",
         align: "center",
         className: style.tableColumns,
+        render(value, record) {
+          const category = orderState.cutterCategory.find(
+            (item) => item.category === record.category
+          );
+          const subCategory = category?.subCategory.find(
+            (item) => item.subCategory === value
+          );
+          return subCategory?.name ?? value;
+        },
       },
       {
         title: "订货号",
@@ -87,7 +74,7 @@ const Order: FC = () => {
       },
     ];
     return cols.map((item) => ({ ...item, ...publicColumnsType }));
-  }, []);
+  }, [orderState.cutterCategory]);
 
   /**
    * 删除

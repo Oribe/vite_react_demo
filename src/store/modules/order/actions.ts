@@ -1,19 +1,21 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, isRejected } from "@reduxjs/toolkit";
 import { message } from "antd";
 import { RootReducer } from "store/store";
 import { cutterApi, orderApi } from "utils/api";
-import { createActinos } from "utils/index";
+import { createActions } from "utils/index";
 import { FormMenu } from "../form";
-import { Cutter } from "./interface";
+import { Cutter, SubmitOrderType } from "./interface";
 
 /**
  * actionTypes
  */
-const PREFIX_ACTION_TYPES = "order";
+export const ACTION_PREFIX_ORDER = "order";
 export const ACTION_TYPES = {
   SEARCH_ORDER_NUMBER: "SEARCH_ORDER_NUMBER",
   ORDER_COLLECTION: "ORDER_COLLECTION",
   ADD_ORDER_LIST: "ADD_ORDER_LIST",
+  ADD_LIST_TO_ORDER_LIST: "ADD_LIST_TO_ORDER_LIST",
+  ORDER_LIST_SUBMIT: "ORDER_LIST_SUBMIT",
 };
 
 interface SearchOrderNumberQuery {
@@ -24,7 +26,7 @@ interface SearchOrderNumberQuery {
  * 刀具订货号搜索
  */
 export const searchOrderNumber = createAsyncThunk(
-  createActinos(ACTION_TYPES.SEARCH_ORDER_NUMBER, PREFIX_ACTION_TYPES).type,
+  createActions(ACTION_TYPES.SEARCH_ORDER_NUMBER, ACTION_PREFIX_ORDER).type,
   async ({ orderNumber, subCategory }: SearchOrderNumberQuery) => {
     const response = orderApi.searchOrderNumber<Cutter[]>({
       orderNumber: orderNumber.toUpperCase(),
@@ -72,7 +74,7 @@ export const processCutter = (cutter: Cutter, getState: () => unknown) => {
  * 添加到订单列表
  */
 export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
-  createActinos(ACTION_TYPES.ADD_ORDER_LIST, PREFIX_ACTION_TYPES).type,
+  createActions(ACTION_TYPES.ADD_ORDER_LIST, ACTION_PREFIX_ORDER).type,
   async (order, { getState }) => {
     const _order = await processCutter(order, getState);
     await cutterApi.save(_order);
@@ -81,10 +83,34 @@ export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
 );
 
 /**
+ * 添加到订单列表
+ * 多条
+ */
+export const addListToOrderList = createAsyncThunk<unknown, Cutter[]>(
+  createActions(ACTION_TYPES.ADD_LIST_TO_ORDER_LIST, ACTION_PREFIX_ORDER).type,
+  async (cutterList, { dispatch }) => {
+    let i = 0;
+    while (i < cutterList.length) {
+      const result = await dispatch(addToOrderList(cutterList[i]));
+      if (isRejected(result)) {
+        // 添加失败删除之前添加的
+        dispatch({
+          type: "order/deletedOrderAction",
+          payload: cutterList.slice(0, i).map((item) => item.orderNumber),
+        });
+        return Promise.reject();
+      }
+      i++;
+    }
+    return Promise.resolve();
+  }
+);
+
+/**
  * 添加收藏
  */
 export const collection = createAsyncThunk<void, Cutter[]>(
-  createActinos(ACTION_TYPES.ORDER_COLLECTION, PREFIX_ACTION_TYPES).type,
+  createActions(ACTION_TYPES.ORDER_COLLECTION, ACTION_PREFIX_ORDER).type,
   async (cutterList: Cutter[], { getState }) => {
     const _cutterList: Cutter[] = [];
     for (let i = 0; i < cutterList.length; i++) {
@@ -108,3 +134,13 @@ export const collection = createAsyncThunk<void, Cutter[]>(
       });
   }
 );
+
+/**
+ * 提交
+ */
+// export const orderListSubmit = createAsyncThunk<unknown, Cutter[]>(
+//   createActions(ACTION_TYPES.ORDER_LIST_SUBMIT).type,
+//   async (orderList, { dispatch, getState }) => {
+
+//   }
+// );

@@ -112,7 +112,7 @@ function withPayloadType<T>() {
 /**
  * 动态创建actions
  */
-export const createActinos = <T = unknown>(
+export const createActions = <T = unknown>(
   actionTypes: string,
   withPrefix?: string
 ) => {

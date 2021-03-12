@@ -4,7 +4,7 @@ import { RootReducer } from "store/index";
 import { CollectionState } from "store/modules/collection";
 import { FormMenu, FormState, FormSubMenu } from "store/modules/form";
 
-function menuToCasOption(menu: FormMenu[]) {
+export function menuToCasOption(menu: FormMenu[]) {
   const options = (list: (FormMenu | FormSubMenu)[]) =>
     list.reduce<CascaderOptionType[]>((o, c) => {
       const { name, category, subCategory } = c;

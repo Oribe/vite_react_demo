@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { NavRouter } from "route/index";
 import { Act } from "store/type";
-import { createActinos } from "utils/index";
+import { createActions } from "utils/index";
 import {
   ACTION_TYPES,
   getFormConfig,
@@ -18,7 +18,7 @@ const formSlice = createSlice({
     /**
      * menu转换成routers
      */
-    [createActinos(ACTION_TYPES.SWITCH_MENU_TO_ROUTERS).type]: (
+    [createActions(ACTION_TYPES.SWITCH_MENU_TO_ROUTERS).type]: (
       state,
       action: Act<FormMenu[]>
     ) => {

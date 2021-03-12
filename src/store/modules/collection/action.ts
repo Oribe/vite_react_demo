@@ -1,6 +1,7 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, isFulfilled, isRejected } from "@reduxjs/toolkit";
+import { message } from "antd";
 import { collectionApi } from "utils/api";
-import { Cutter } from "../order";
+import { addListToOrderList, Cutter } from "../order";
 import { CollectionType } from "./interface";
 
 /**
@@ -25,6 +26,12 @@ export const importCollectionToOrderList = createAsyncThunk(
     const result = await collectionApi.collectionDetail<Cutter[]>({
       ids: collectionList.toString(),
     });
-    console.log(result);
+    const importResult = await dispatch(addListToOrderList(result));
+    if (isFulfilled(importResult)) {
+      message.success("导入成功");
+    }
+    if (isRejected(importResult)) {
+      message.error("导入失败");
+    }
   }
 );
