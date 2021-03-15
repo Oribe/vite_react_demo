@@ -25,7 +25,7 @@ const ImgSelect: FC<Props> = (props) => {
         return (
           <Item
             key={option.dataIndex}
-            noStyle={true}
+            noStyle
             dependencies={dataIndexs}
             name={option.dataIndex}
             rules={[
@@ -36,9 +36,8 @@ const ImgSelect: FC<Props> = (props) => {
                     if (Object.values(values).includes(1)) {
                       // 至少选择了一种
                       return Promise.resolve();
-                    } else {
-                      return Promise.reject(new Error("至少选择一种"));
                     }
+                    return Promise.reject(new Error("至少选择一种"));
                   }
                   return Promise.resolve();
                 },

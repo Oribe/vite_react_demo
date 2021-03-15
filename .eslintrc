@@ -52,13 +52,24 @@
     ],
     "react/prop-types": "off",
     "react/jsx-props-no-spreading": [
-      "error",
+      "off",
       {
         "html": "ignore",
-        "custom": "enforce",
-        "explicitSpread": "enforce",
+        "custom": "ignore",
+        "explicitSpread": "ignore",
         "exceptions": []
       }
-    ]
+    ],
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      {
+        "required": {
+          "some": [
+            "nesting",
+            "id"
+          ]
+        }
+      }
+    ],
   }
 }

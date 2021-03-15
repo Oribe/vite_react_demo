@@ -1,15 +1,16 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { isFunction, cloneDeep } from "lodash-es";
 import {
   AxiosOptions,
   RequestOptions,
   RequestOptionsConfig,
   ResponseOk,
 } from "./type";
-import { isFunction, cloneDeep } from "lodash-es";
 import CancelToken from "./cancelToken";
 
 export default class Axios {
   private axiosInstance!: AxiosInstance;
+
   private options: AxiosOptions;
 
   constructor(options: AxiosOptions) {
@@ -74,54 +75,56 @@ export default class Axios {
       responseInterceptorsCatch,
     } = interceptors;
 
-    const axiosCancel = new CancelToken();
+    const axiosCancel = CancelToken;
 
     /**
      * 请求拦截错误捕获
      */
-    requestInterceptorsCatch &&
-      isFunction(requestInterceptorsCatch) &&
+    if (requestInterceptorsCatch && isFunction(requestInterceptorsCatch)) {
       this.axiosInstance.interceptors.request.use(
         undefined,
         requestInterceptorsCatch
       );
+    }
 
     /**
      * 请求拦截
      */
     this.axiosInstance.interceptors.request.use((config) => {
-      axiosCancel.add(config);
+      let newConfig = config;
+      axiosCancel.add(newConfig);
       const {
         headers: { ignoreCancelToke } = { ignoreCancelToke: false },
-      } = config;
+      } = newConfig;
       if (!ignoreCancelToke) {
-        axiosCancel.add(config);
+        axiosCancel.add(newConfig);
       }
       if (requestInterceptors && isFunction(requestInterceptors)) {
-        config = requestInterceptors(config);
+        newConfig = requestInterceptors(newConfig);
       }
-      return config;
+      return newConfig;
     });
 
     /**
      * 响应错误捕获
      */
-    responseInterceptorsCatch &&
-      isFunction(responseInterceptorsCatch) &&
+    if (responseInterceptorsCatch && isFunction(responseInterceptorsCatch)) {
       this.axiosInstance.interceptors.response.use(
         undefined,
         responseInterceptorsCatch
       );
+    }
 
     /**
      * 响应拦截
      */
     this.axiosInstance.interceptors.response.use((response) => {
-      axiosCancel.remove(response.config);
+      let newResp = response;
+      axiosCancel.remove(newResp.config);
       if (responseInterceptors && isFunction(responseInterceptors)) {
-        response = responseInterceptors(response);
+        newResp = responseInterceptors(newResp);
       }
-      return response;
+      return newResp;
     });
   }
 
@@ -138,7 +141,7 @@ export default class Axios {
      * options
      */
     const { requestOptions } = this.options;
-    const opt = Object.assign({}, requestOptions, options || {});
+    const opt = { ...requestOptions, ...(options || {}) };
 
     /**
      * interceptors
@@ -160,7 +163,7 @@ export default class Axios {
             if (resp) {
               resolve(resp);
             } else {
-              reject("request error");
+              reject(new Error("request error"));
             }
             return;
           }

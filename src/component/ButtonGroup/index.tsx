@@ -1,15 +1,14 @@
-/***
+/** *
  * 按钮组
  */
 
 import { Button } from "antd";
 import { ButtonProps } from "antd/lib/button";
-import React from "react";
-import { FC } from "react";
+import React, { FC } from "react";
 import { debounce } from "lodash-es";
 import ButtonGroup, { ButtonGroupProps } from "antd/lib/button/button-group";
-import style from "./index.module.scss";
 import { Link } from "react-router-dom";
+import style from "./index.module.scss";
 
 const ButtonGroups: FC<Props> = ({
   config: { className, ...arg } = {},
@@ -17,20 +16,24 @@ const ButtonGroups: FC<Props> = ({
 }) => {
   return (
     <ButtonGroup className={`${style.buttonGroup} ${className}`} {...arg}>
-      {buttons.map(({ label, onClick, className, href, ...props }) => {
-        return (
-          <Button
-            className={`${style.but} ${className}`}
-            key={label}
-            onClick={debounce((...arg: any) => {
-              onClick && onClick(arg);
-            }, 500)}
-            {...props}
-          >
-            {href ? <Link to={href}>{label}</Link> : label}
-          </Button>
-        );
-      })}
+      {buttons.map(
+        ({ label, onClick, className: classname, href, ...props }) => {
+          return (
+            <Button
+              className={`${style.but} ${classname}`}
+              key={label}
+              onClick={debounce((...args) => {
+                if (onClick) {
+                  onClick(args);
+                }
+              }, 500)}
+              {...props}
+            >
+              {href ? <Link to={href}>{label}</Link> : label}
+            </Button>
+          );
+        }
+      )}
     </ButtonGroup>
   );
 };

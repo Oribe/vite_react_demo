@@ -3,15 +3,15 @@
  */
 
 import { Button, Col, Empty, Form as AForm, message, Row } from "antd";
-import React, { FC, memo, useCallback, useEffect } from "react";
-import { FormConfig } from "store/modules/form";
-import Caption from "../FormCaption";
-import FormBody from "../FormBody";
-import styles from "./index.module.scss";
-import { isEmpty } from "lodash-es";
-import { Cutter } from "store/modules/order";
-import { useHistory } from "react-router-dom";
 import Loading from "component/Loading";
+import { isEmpty } from "lodash-es";
+import React, { FC, memo, useCallback, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { FormConfig } from "store/modules/form";
+import { Cutter } from "store/modules/order";
+import FormBody from "../FormBody";
+import Caption from "../FormCaption";
+import styles from "./index.module.scss";
 
 const Form: FC<Props> = (props) => {
   const {
@@ -37,6 +37,7 @@ const Form: FC<Props> = (props) => {
           delete valueObj.updateAt;
           form.setFieldsValue(valueObj);
         } catch (e) {
+          // throw e;
           console.error(e);
         }
       }
@@ -73,6 +74,7 @@ const Form: FC<Props> = (props) => {
    * 提交前，将组合字段添加到刀具信息
    */
   const beforeAdd = (values: Cutter) => {
+    const valuesCopy = values;
     [...caption, ...body].forEach((item) => {
       const {
         dataIndex,
@@ -89,16 +91,17 @@ const Form: FC<Props> = (props) => {
         complexConfig.length
       ) {
         const value = complexConfig.reduce((v, c) => {
+          let vCopy = v;
           const { dataIndex: dx } = c;
           if (dx) {
-            v += values[dx] ?? "";
+            vCopy += values[dx] ?? "";
           }
-          return v;
+          return vCopy;
         }, "");
-        values[dataIndex] = value;
+        valuesCopy[dataIndex] = value;
       }
     });
-    return values;
+    return valuesCopy;
   };
 
   /**
@@ -108,8 +111,8 @@ const Form: FC<Props> = (props) => {
     if (!onAdd) {
       return;
     }
-    const _values = beforeAdd(values);
-    onAdd(_values).then(() => {
+    const newValues = beforeAdd(values);
+    onAdd(newValues).then(() => {
       form.resetFields();
     });
   };
@@ -118,7 +121,7 @@ const Form: FC<Props> = (props) => {
    * 表单验证失败
    */
   const handleFinishFailed = (errorInfo: unknown) => {
-    console.error("errorInfo", errorInfo);
+    console.error(errorInfo);
   };
 
   /**
@@ -140,9 +143,9 @@ const Form: FC<Props> = (props) => {
    */
   const handleCollection = async () => {
     const values = await form.validateFields();
-    const _values = beforeAdd(values);
+    const newValues = beforeAdd(values);
     if (values && onCollection) {
-      onCollection(_values);
+      onCollection(newValues);
     }
   };
 
@@ -154,7 +157,7 @@ const Form: FC<Props> = (props) => {
       const values = await form.validateFields();
       if (values) {
         handleFinish(values);
-        history.push("/order/add/" + others.matchCutter);
+        history.push(`/order/add/${others.matchCutter}`);
       }
       return;
     }

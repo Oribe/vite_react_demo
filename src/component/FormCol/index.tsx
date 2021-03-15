@@ -1,11 +1,11 @@
 import { Col, ColProps } from "antd";
-import React from "react";
-import { FC } from "react";
+import React, { FC } from "react";
 
 const FormCol: FC<Props> = (props) => {
+  const { children } = props;
   return (
     <Col xs={24} sm={12} {...props}>
-      {props.children}
+      {children}
     </Col>
   );
 };

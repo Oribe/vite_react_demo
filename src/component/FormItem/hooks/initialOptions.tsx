@@ -21,7 +21,7 @@ const initialOptions = (
 
     if (isMap(mapOptions) && associatedValue) {
       let val: MapList | (string | number)[] = mapOptions;
-      for (let i = 0; i < associatedValue.length; i++) {
+      for (let i = 0; i < associatedValue.length; i += 1) {
         val = (isMap(val) && val.get(associatedValue[i])) || [];
       }
       opts =

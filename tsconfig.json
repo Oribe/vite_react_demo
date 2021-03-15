@@ -54,7 +54,7 @@
   },
   "include": [
     "src"
-  ],
+, "react-app-env.d.ts"  ],
   "exclude": [
     "node_modules",
     "dist",

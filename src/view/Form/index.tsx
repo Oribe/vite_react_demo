@@ -70,7 +70,7 @@ const CutterForm: FC = () => {
         (item) => item.orderNumber === location.state.orderNumber
       );
     }
-    return;
+    return undefined;
   }, [location.state, orderStore.orderList]);
 
   /**

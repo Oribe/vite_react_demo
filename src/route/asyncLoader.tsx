@@ -24,9 +24,9 @@ const asyncLoader = <T extends ComponentType<unknown>>(
      * 路由拦截拦截
      */
     const handleRouterInterceptors = useCallback(
-      (routerAction: RouterAction) => {
-        const interceptors = routerInterceptors.get(routerAction) || [];
-        for (let i = 0; i < interceptors?.length; i++) {
+      (routerActionType: RouterAction) => {
+        const interceptors = routerInterceptors.get(routerActionType) || [];
+        for (let i = 0; i < interceptors?.length; i += 1) {
           interceptors[i](history);
         }
       },

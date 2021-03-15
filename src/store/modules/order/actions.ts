@@ -4,7 +4,7 @@ import { RootReducer } from "store/store";
 import { cutterApi, orderApi } from "utils/api";
 import { createActions } from "utils/index";
 import { FormMenu } from "../form";
-import { Cutter, SubmitOrderType } from "./interface";
+import { Cutter } from "./interface";
 
 /**
  * actionTypes
@@ -56,18 +56,19 @@ export const getCategoryWithSub = (menu: FormMenu[], subCategory: number) => {
  * 添加大类
  */
 export const processCutter = (cutter: Cutter, getState: () => unknown) => {
+  const newCutter = cutter;
   const {
     form: {
       menu: { data },
     },
   } = getState() as RootReducer;
-  const category = getCategoryWithSub(data, cutter.subCategory);
+  const category = getCategoryWithSub(data, newCutter.subCategory);
   if (category) {
-    cutter.category = category;
+    newCutter.category = category;
   } else {
-    return Promise.reject("刀具大类不存在");
+    return Promise.reject(new Error("刀具大类不存在"));
   }
-  return Promise.resolve(cutter);
+  return Promise.resolve(newCutter);
 };
 
 /**
@@ -76,9 +77,9 @@ export const processCutter = (cutter: Cutter, getState: () => unknown) => {
 export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
   createActions(ACTION_TYPES.ADD_ORDER_LIST, ACTION_PREFIX_ORDER).type,
   async (order, { getState }) => {
-    const _order = await processCutter(order, getState);
-    await cutterApi.save(_order);
-    return _order;
+    const newOrder = await processCutter(order, getState);
+    await cutterApi.save(newOrder);
+    return newOrder;
   }
 );
 
@@ -90,17 +91,24 @@ export const addListToOrderList = createAsyncThunk<unknown, Cutter[]>(
   createActions(ACTION_TYPES.ADD_LIST_TO_ORDER_LIST, ACTION_PREFIX_ORDER).type,
   async (cutterList, { dispatch }) => {
     let i = 0;
+    const promiseResults = [];
     while (i < cutterList.length) {
-      const result = await dispatch(addToOrderList(cutterList[i]));
+      promiseResults.push(dispatch(addToOrderList(cutterList[i])));
+      i += 1;
+    }
+    await Promise.all(promiseResults);
+    let { length } = promiseResults;
+    while (length) {
+      length -= 1;
+      const result = promiseResults[length];
       if (isRejected(result)) {
         // 添加失败删除之前添加的
         dispatch({
           type: "order/deletedOrderAction",
-          payload: cutterList.slice(0, i).map((item) => item.orderNumber),
+          payload: cutterList.map((item) => item.orderNumber),
         });
         return Promise.reject();
       }
-      i++;
     }
     return Promise.resolve();
   }
@@ -112,19 +120,22 @@ export const addListToOrderList = createAsyncThunk<unknown, Cutter[]>(
 export const collection = createAsyncThunk<void, Cutter[]>(
   createActions(ACTION_TYPES.ORDER_COLLECTION, ACTION_PREFIX_ORDER).type,
   async (cutterList: Cutter[], { getState }) => {
-    const _cutterList: Cutter[] = [];
-    for (let i = 0; i < cutterList.length; i++) {
+    const newCutterList: (Cutter | Promise<Cutter>)[] = [];
+    for (let i = 0; i < cutterList.length; i += 1) {
       if (cutterList[i].category) {
-        _cutterList.push(cutterList[i]);
-        continue;
+        newCutterList.push(cutterList[i]);
+      } else {
+        newCutterList.push(processCutter(cutterList[i], getState));
       }
-      const cutter = await processCutter(cutterList[i], getState);
-      _cutterList.push(cutter);
     }
-    console.log(_cutterList);
-
+    try {
+      await Promise.all(newCutterList);
+    } catch (e) {
+      message.error("收藏失败");
+      return;
+    }
     cutterApi
-      .collection(_cutterList)
+      .collection(newCutterList)
       .then(() => {
         message.success("收藏成功");
       })

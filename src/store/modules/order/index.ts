@@ -13,7 +13,8 @@ const orderSlice = createSlice({
         return state;
       }
       let len = orderNumberList.length;
-      while (len--) {
+      while (len) {
+        len -= 1;
         const orderNumber = orderNumberList[len];
         const index = state.orderList.findIndex(
           (item) => item.orderNumber === orderNumber
@@ -25,9 +26,10 @@ const orderSlice = createSlice({
   },
   extraReducers: ({ addCase }) => {
     addCase(addToOrderList.fulfilled, (state, action) => {
+      const newState = state;
       if (action.payload) {
         const { category, orderNumber, subCategory } = action.payload;
-        const index = state.orderList.findIndex((order) => {
+        const index = newState.orderList.findIndex((order) => {
           if (
             order.category === category &&
             order.orderNumber === orderNumber &&
@@ -39,11 +41,12 @@ const orderSlice = createSlice({
         });
         if (index > -1) {
           // 存在， 覆盖
-          state.orderList[index] = action.payload;
+          newState.orderList[index] = action.payload;
         } else {
-          state.orderList.push(action?.payload);
+          newState.orderList.push(action?.payload);
         }
       }
+      return newState;
     });
   },
 });

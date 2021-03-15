@@ -24,7 +24,7 @@ const useFormItemProps = (param: Param) => {
    * rule检验调整
    */
   const resetRuleMessage = useCallback(
-    (ruleList: Rule[], label?: string, componentType?: string) => {
+    (ruleList: Rule[], lab?: string, componentType?: string) => {
       return ruleList.map((rule) => {
         if (isFunction(rule)) {
           /**
@@ -33,22 +33,22 @@ const useFormItemProps = (param: Param) => {
            */
           return rule;
         }
-        const { type, message } = rule;
+        const { type: t, message } = rule;
         if (message) {
           // 如果存在消息提示
           return rule;
         }
-        if (type) {
+        if (t) {
           /**
            * 如果存在类型
            */
-          return { ...rule, message: switchTypeToMessage(type) };
+          return { ...rule, message: switchTypeToMessage(t) };
         }
         if ("required" in rule) {
           if (componentType === "select") {
-            return { ...rule, message: "请选择" + label };
+            return { ...rule, message: `请选择${lab}` };
           }
-          return { ...rule, message: "请输入" + label };
+          return { ...rule, message: `请输入${lab}` };
         }
         return rule;
       });
@@ -73,19 +73,19 @@ const useFormItemProps = (param: Param) => {
           ...formItemProps,
           rules,
         };
-      } else if (dataIndex) {
-        return {
-          ...formItemProps,
-          name: dataIndex,
-          rules,
-        };
-      } else {
+      }
+      if (dataIndex) {
         return {
           ...formItemProps,
           name: dataIndex,
           rules,
         };
       }
+      return {
+        ...formItemProps,
+        name: dataIndex,
+        rules,
+      };
     },
     [dataIndex, formItemProps, type]
   );

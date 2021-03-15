@@ -2,11 +2,15 @@ import { message } from "antd";
 import { Method } from "axios";
 import { merge } from "lodash-es";
 import store from "store/index";
-import { createAuthorization } from "utils/auth";
+import createAuthorization from "utils/auth";
 import Axios from "./axios";
 import { RESPONSE_OK } from "./const";
-import { Interceptors } from "./interceptors";
-import { AxiosOptions, RequestData, RequestOptions } from "./type";
+import {
+  AxiosOptions,
+  Interceptors,
+  RequestData,
+  RequestOptions,
+} from "./type";
 
 /**
  * @description 默认的拦截器、钩子
@@ -16,9 +20,10 @@ const interceptors: Interceptors = {
    * @description 请求前拦截器
    */
   requestInterceptors(config) {
-    const uuid = store.getState().user.uuid;
-    config.headers.Authorization = createAuthorization(uuid);
-    return config;
+    const newConfig = config;
+    const { uuid } = store.getState().user;
+    newConfig.headers.Authorization = createAuthorization(uuid);
+    return newConfig;
   },
   /**
    * @description 捕获拦截配置错误
@@ -83,24 +88,25 @@ const axios = createAxios();
  */
 function createPreAxios(url: string, method: Method, options?: RequestOptions) {
   return <T = unknown>(data?: RequestData, requestConfig?: AxiosOptions) => {
-    const _data: Record<string, unknown> = {};
+    const newData: Record<string, unknown> = {};
     if (method.toUpperCase() === "GET") {
-      _data.params = data;
+      newData.params = data;
     } else {
-      _data.data = data;
+      newData.data = data;
     }
 
-    const { interceptors, requestOptions, ...config } = requestConfig || {};
+    const { interceptors: interce, requestOptions, ...config } =
+      requestConfig || {};
 
     return axios.request<T>(
       {
         url,
         method,
-        ..._data,
+        ...newData,
         ...config,
       },
       {
-        interceptors,
+        interceptors: interce,
         requestOptions: { ...options, ...requestOptions },
       }
     );
@@ -126,7 +132,11 @@ export function createAxiosGroup<T extends AxiosGroups, U extends keyof T>(
   axiosGroups: T
 ): PreAxiosGroups<U> {
   const group = {} as PreAxiosGroups<U>;
-  for (const key in axiosGroups) {
+  const keys = Object.keys(axiosGroups);
+  let { length } = keys;
+  while (length) {
+    length -= 1;
+    const key = keys[length];
     const { method, url, options } = axiosGroups[key];
     const preAxios = createPreAxios(url, method, options);
     Reflect.set(group, key, preAxios);
@@ -136,4 +146,3 @@ export function createAxiosGroup<T extends AxiosGroups, U extends keyof T>(
 
 export default axios;
 export * from "./type";
-export * from "./interceptors";

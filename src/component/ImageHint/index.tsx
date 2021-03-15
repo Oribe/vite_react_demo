@@ -10,7 +10,7 @@ const ImageHint: FC<Props> = (props) => {
   const { url, className } = props;
   return (
     <span className={className}>
-      <Popover content={<img src={url} />}>
+      <Popover content={<img src={url} alt="" />}>
         <QuestionCircleOutlined />
       </Popover>
     </span>

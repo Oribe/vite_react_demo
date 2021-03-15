@@ -31,8 +31,8 @@ const FormItem: FC<Props> = (props) => {
    * 防止当表单有初始值时，关联字段的值会被重置
    */
   const [isFirstRender, setIsFirstRender] = useState(true);
-  const timerRef = useRef<number>();
-  const [_formItemProps] = useFormItemProps({
+  const timerRef = useRef<NodeJS.Timeout | number>();
+  const [newFormItemProps] = useFormItemProps({
     label,
     dataIndex,
     type: component?.type,
@@ -43,7 +43,7 @@ const FormItem: FC<Props> = (props) => {
     /**
      * 当有关联字段时
      */
-    const { style, ...otherFormItemProps } = _formItemProps;
+    const { style, ...otherFormItemProps } = newFormItemProps;
     return (
       <Item noStyle style={style} dependencies={associatedDataIndex}>
         {({ getFieldValue, resetFields }) => {
@@ -51,23 +51,27 @@ const FormItem: FC<Props> = (props) => {
             /**
              * 获取当前被关联字段的值
              */
-            const _associatedValue = getFieldValue(
+            const newAssociatedValue = getFieldValue(
               associatedDataIndex[associatedDataIndex.length - 1]
             );
             if (
               otherFormItemProps?.name &&
-              associatedValue !== _associatedValue
+              associatedValue !== newAssociatedValue
             ) {
               /**
                * 关联字段值发生改变
                */
-              setAssociatedValue(_associatedValue);
+              setAssociatedValue(newAssociatedValue);
               setIsFirstRender(false);
               if (!isFirstRender) {
                 resetFields([otherFormItemProps.name]);
               }
             }
-            clearTimeout(timerRef.current);
+            clearTimeout(
+              typeof timerRef.current === "number"
+                ? timerRef.current
+                : undefined
+            );
           });
           let associatedValues: (string | number)[] | undefined;
           if (associatedDataIndex) {
@@ -81,7 +85,7 @@ const FormItem: FC<Props> = (props) => {
                 comp={component}
                 other={{
                   complexConfig,
-                  associatedValues: associatedValues,
+                  associatedValues,
                 }}
               />
             </Item>
@@ -96,7 +100,7 @@ const FormItem: FC<Props> = (props) => {
    */
   return (
     <>
-      <Item label={label} required {..._formItemProps}>
+      <Item label={label} required {...newFormItemProps}>
         <RenderComponent comp={component} other={{ complexConfig }} />
       </Item>
       {hintImgUrl ? (

@@ -12,15 +12,18 @@ const collectionSlice = createSlice({
   reducers: {},
   extraReducers: ({ addCase }) => {
     addCase(collectionSearch.pending, (state) => {
-      state.collectionList.loading = true;
+      const { collectionList } = state;
+      collectionList.loading = true;
     })
       .addCase(collectionSearch.rejected, (state) => {
-        state.collectionList.loading = false;
-        state.collectionList.data = [];
+        const { collectionList } = state;
+        collectionList.loading = false;
+        collectionList.data = [];
       })
       .addCase(collectionSearch.fulfilled, (state, action) => {
-        state.collectionList.loading = false;
-        state.collectionList.data = action.payload;
+        const { collectionList } = state;
+        collectionList.loading = false;
+        collectionList.data = action.payload;
       });
   },
 });

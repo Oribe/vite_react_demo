@@ -5,6 +5,7 @@ import { order } from "store/modules/order";
 import { collection } from "store/modules/collection";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage/session";
+import { Action, Dispatch } from "redux";
 
 const reducers = {
   user,
@@ -25,6 +26,21 @@ const persistedReducer = persistReducer(
 );
 
 export default persistedReducer;
+
+/**
+ * actions
+ */
+export interface Act<T = unknown> extends Action {
+  payload?: T;
+}
+
+export interface ThunkApiConfig<T = unknown> {
+  state: RootReducer;
+  dispatch?: Dispatch;
+  extra?: unknown;
+  rejectValue?: T;
+  serializedErrorType?: unknown;
+}
 
 export type Reducers = typeof reducers;
 export type RootReducer = ReturnType<typeof rootReducer>;

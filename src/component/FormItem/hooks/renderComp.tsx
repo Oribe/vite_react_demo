@@ -18,9 +18,9 @@ import {
   isOptions,
   SelectProps,
 } from "store/modules/form";
-import initialOptions from "./initialOptions";
 import { produce } from "immer";
 import { SelectValue } from "antd/lib/select";
+import initialOptions from "./initialOptions";
 
 interface Props {
   comp?: Component;
@@ -29,7 +29,7 @@ interface Props {
   onChange?: (value?: unknown) => void;
 }
 
-type compInputType = ChangeEvent<HTMLInputElement> | SelectValue;
+type CompInputType = ChangeEvent<HTMLInputElement> | SelectValue;
 
 /**
  * 函数组件
@@ -60,8 +60,8 @@ const RenderComponent: FC<Props> = ({
   useEffect(() => {
     if (func && func.onSearch && isFunction(func.onSearch)) {
       const { onSearch } = func;
-      const handleOnSearch = async (value: string) => {
-        const response = (await onSearch(value)) as undefined;
+      const handleOnSearch = async (v: string) => {
+        const response = (await onSearch(v)) as undefined;
         console.log("response", response);
         setOpts(response);
       };
@@ -75,20 +75,22 @@ const RenderComponent: FC<Props> = ({
   }, [func]);
 
   const handleValueChange = useCallback(
-    (value: compInputType) => {
-      if (typeof value === "number" || typeof value === "string") {
-        onChange && onChange(value);
-        return;
+    (v: CompInputType) => {
+      if (onChange) {
+        if (typeof v === "number" || typeof v === "string") {
+          onChange(v);
+          return;
+        }
+        if ("value" in v) {
+          onChange(v.value);
+          return;
+        }
+        if (Array.isArray(v)) {
+          onChange(v);
+          return;
+        }
+        onChange(v.target.value);
       }
-      if ("value" in value) {
-        onChange && onChange(value.value);
-        return;
-      }
-      if (Array.isArray(value)) {
-        onChange && onChange(value);
-        return;
-      }
-      onChange && onChange(value.target.value);
     },
     [onChange]
   );

@@ -34,4 +34,3 @@ export default store;
 export type Store = typeof store;
 
 export * from "./store";
-export * from "./type";

@@ -131,9 +131,9 @@ const Collection: FC = () => {
             id="subCategory"
             className={styles.searchOptions}
             options={state.cutterCategory}
-            onChange={([, subCategory]) => {
-              if (subCategory) {
-                setSubCategory(+subCategory);
+            onChange={([, sub]) => {
+              if (sub) {
+                setSubCategory(+sub);
                 return;
               }
               setSubCategory(undefined);

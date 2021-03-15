@@ -3,12 +3,13 @@ import { ImageProps } from "route/index";
 import styles from "./index.module.scss";
 
 const MenuImage: FC<ImageProps> = (props) => {
-  if (!props.src) {
+  const { src } = props;
+  if (!src) {
     return null;
   }
   return (
     <div className={styles.menuImageWrapper}>
-      <img {...props} />
+      <img alt="" {...props} />
     </div>
   );
 };

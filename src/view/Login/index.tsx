@@ -2,8 +2,8 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row } from "antd";
 import React, { FC } from "react";
 import { useDispatch } from "react-redux";
-import style from "./index.module.scss";
 import { LoginBody, userLogin } from "store/modules/user";
+import style from "./index.module.scss";
 
 const { Item } = Form;
 

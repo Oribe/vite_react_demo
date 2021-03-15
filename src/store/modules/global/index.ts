@@ -47,4 +47,4 @@ const globalSlice = createSlice({
   },
 });
 
-export const { reducer } = globalSlice;
+export default globalSlice.reducer;

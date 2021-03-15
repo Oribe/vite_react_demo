@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { userApi } from "utils/api";
 import { LoginBody, LoginRespData } from "./interface";
 import TypePrefix from "./actionTypes";
-import { userApi } from "utils/api";
 
 /**
  * @description 登陆
@@ -13,3 +13,10 @@ export const userLogin = createAsyncThunk(
     return response as LoginRespData;
   }
 );
+
+/**
+ * @description 登出
+ */
+export const userLogout = () => {
+  //
+};

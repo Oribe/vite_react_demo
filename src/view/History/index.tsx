@@ -1,7 +1,7 @@
 import { Table } from "antd";
 import { ColumnsType, ColumnType } from "antd/lib/table";
-import React from "react";
-import { FC } from "react";
+import React, { FC } from "react";
+
 import style from "./index.module.scss";
 
 const publicColumnsType: ColumnType<any> = {

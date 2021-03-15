@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint"
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
   },
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
@@ -12,6 +13,9 @@
     "antd": "^4.14.0",
     "axios": "^0.21.1",
     "buffer": "^6.0.3",
+    "history": "^5.0.0",
+    "immer": "^8.0.1",
+    "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "node-forge": "^0.10.0",
     "react": "^17.0.1",

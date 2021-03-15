@@ -13,8 +13,8 @@ const LoginStatus: FC<Props> = (props: Props) => {
   }
   const { mobile } = userInfo;
 
-  const handleVisibleChange = (visible: boolean) => {
-    setVisible(visible);
+  const handleVisibleChange = (vis: boolean) => {
+    setVisible(vis);
   };
 
   const hanldeVisibleClose = () => {
@@ -22,7 +22,7 @@ const LoginStatus: FC<Props> = (props: Props) => {
   };
 
   const porpoverContent = () => (
-    <div onClick={hanldeVisibleClose}>
+    <div onClick={hanldeVisibleClose} aria-hidden="true">
       <Col className={style.porConent}>
         <Link to="/user">个人信息</Link>
       </Col>

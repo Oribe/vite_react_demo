@@ -37,6 +37,7 @@ const Navbar: FC<Props> = (props) => {
   const matchRouterKey = useCallback(
     (menuList: NavRouter[]) => {
       return menuList.reduce((keyList, menu) => {
+        let newKeyList = keyList;
         const { label, path, routers } = menu;
         if (Array.isArray(path)) return keyList;
         if (routers) {
@@ -45,17 +46,18 @@ const Navbar: FC<Props> = (props) => {
             /**
              * 子类中有匹配
              */
-            keyList = [...childrenKeyList, path ?? label ?? "", ...keyList];
+            newKeyList = [...childrenKeyList, path ?? label ?? "", ...keyList];
           }
-        } else {
+        } else if (
+          typeof path === "string" &&
+          location.pathname.includes(path)
+        ) {
           /**
            * 无子类
            */
-          if (typeof path === "string" && location.pathname.includes(path)) {
-            keyList.push(path ?? label ?? "");
-          }
+          newKeyList.push(path ?? label ?? "");
         }
-        return keyList;
+        return newKeyList;
       }, [] as string[]);
     },
     [location.pathname]
@@ -74,13 +76,13 @@ const Navbar: FC<Props> = (props) => {
     <Menu
       className={`${className} ${styles.antdMenu}`}
       style={style}
-      mode={mode ? mode : "horizontal"}
+      mode={mode || "horizontal"}
       selectedKeys={selectedKeys}
       triggerSubMenuAction="click"
     >
       {menus.map((menu) => {
         const { path, label, image, icon, routers, isMenu } = menu;
-        if (isMenu === false) return; // 非菜单
+        if (isMenu === false) return null; // 非菜单
         if (Array.isArray(path)) return null;
         if (routers) {
           return (

@@ -1,5 +1,5 @@
 import { Menu } from "antd";
-import React, { CSSProperties, FC } from "react";
+import React, { CSSProperties, FC, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import { ImageProps } from "route/index";
 import MenuImage from "../MenuImage";
@@ -18,6 +18,11 @@ const MenuItem: FC<MenuItemProps> = ({
   activeStyle,
   ...props
 }) => {
+  const navbarLabel = useMemo(
+    () => (label ? <span className={styles.navbarLabel}>{label}</span> : null),
+    [label]
+  );
+
   if (Array.isArray(path)) {
     return null;
   }
@@ -43,11 +48,11 @@ const MenuItem: FC<MenuItemProps> = ({
           strict
           to={path}
         >
-          {label ? <span className={styles.navbarLabel}>{label}</span> : null}
+          {navbarLabel}
         </NavLink>
-      ) : label ? (
-        <span className={styles.navbarLabel}>{label}</span>
-      ) : null}
+      ) : (
+        { navbarLabel }
+      )}
     </Item>
   );
 };

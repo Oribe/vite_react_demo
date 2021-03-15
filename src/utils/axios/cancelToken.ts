@@ -21,18 +21,20 @@ function getRequestUrl(config: AxiosRequestConfig) {
 }
 
 class CancelToken {
-  add(config: AxiosRequestConfig) {
-    const url = getRequestUrl(config);
-    config.cancelToken =
+  static add(config: AxiosRequestConfig) {
+    const newConfig = config;
+    const url = getRequestUrl(newConfig);
+    newConfig.cancelToken =
       config.cancelToken ??
       new axios.CancelToken((cancel: Canceler) => {
         if (!requestMap.has(url)) {
           requestMap.set(url, cancel);
         }
       });
+    return newConfig;
   }
 
-  removeAll() {
+  static removeAll() {
     requestMap.forEach((cancel) => {
       if (cancel && isFunction(cancel)) {
         cancel();
@@ -44,14 +46,16 @@ class CancelToken {
   /**
    * @description 删除之前的请求
    */
-  remove(config: AxiosRequestConfig) {
+  static remove(config: AxiosRequestConfig) {
     const url = getRequestUrl(config);
     if (requestMap.has(url)) {
       /**
        * 如果存在，取消就取消之前的请求
        */
       const cancel = requestMap.get(url);
-      cancel && cancel();
+      if (cancel) {
+        cancel();
+      }
       requestMap.delete(url);
     }
   }
@@ -59,7 +63,7 @@ class CancelToken {
   /**
    * @description 重置
    */
-  reset() {
+  static reset() {
     requestMap = initRequestMap();
   }
 }

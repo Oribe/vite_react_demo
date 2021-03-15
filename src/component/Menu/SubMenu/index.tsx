@@ -6,7 +6,7 @@ import MenuItem from "../MenuItem";
 
 const { SubMenu: SubMenuComp } = Menu;
 
-export const SubMenu: FC<Props> = ({
+const SubMenu: FC<Props> = ({
   menus,
   className,
   style,
@@ -19,8 +19,8 @@ export const SubMenu: FC<Props> = ({
   return (
     <>
       {menus.map((menu) => {
-        const { label, icon, image, children } = menu;
-        if (children) {
+        const { label, icon, image, routers } = menu;
+        if (routers) {
           return (
             <SubMenuComp
               className={className}
@@ -42,7 +42,7 @@ export const SubMenu: FC<Props> = ({
                 itemStyle={itemStyle}
                 activeClassName={activeClassName}
                 activeStyle={activeStyle}
-                menus={children}
+                menus={routers}
               />
             </SubMenuComp>
           );
@@ -62,6 +62,8 @@ export const SubMenu: FC<Props> = ({
     </>
   );
 };
+
+export default SubMenu;
 
 type Props = {
   menus: NavRouter[];

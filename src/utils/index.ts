@@ -41,7 +41,8 @@ export function switchToMap(list: unknown): MapList | (string | number)[] {
   if (!isMapArray(list)) return list;
   const newList = new Map<string | number, (string | number)[] | MapList>();
   let { length } = list;
-  while (length--) {
+  while (length) {
+    length -= 1;
     const [key, value] = list[length];
     const val = switchToMap(value);
     newList.set(key, val || value);
@@ -72,10 +73,17 @@ export function reCreateFunc(
   needDelay = false
 ) {
   const newFuncObj: ComponentFunc = {};
-  if (funcObj) {
-    for (const key in funcObj) {
-      const value = funcObj[key];
-      if (!value) continue; // false跳过
+
+  if (!funcObj) {
+    return newFuncObj;
+  }
+  const keys = Object.keys(funcObj);
+  let { length } = keys;
+  while (length) {
+    length -= 1;
+    const key = keys[length];
+    const value = funcObj[key];
+    if (value) {
       let f;
       if (typeof value === "boolean") {
         /**

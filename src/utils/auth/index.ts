@@ -17,7 +17,7 @@ const publicK = pki.publicKeyFromPem(publicKey);
 /**
  * @description 生成Authorization
  */
-export const createAuthorization = (uuid: string) => {
+const createAuthorization = (uuid: string) => {
   if (!uuid) {
     return "";
   }
@@ -27,3 +27,5 @@ export const createAuthorization = (uuid: string) => {
 
   return token;
 };
+
+export default createAuthorization;
