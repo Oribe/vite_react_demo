@@ -7,10 +7,13 @@ import { message, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
+import { isEmpty } from "lodash-es";
 import React, { FC, Key, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { collection, Cutter, deletedOrderAction } from "store/modules/order";
+import EditableCell from "./components/editableCell";
+import EditableRow from "./components/editableRow";
 import style from "./index.module.scss";
 import { buttonConfig, orderStore, publicColumnsType } from "./model";
 
@@ -21,6 +24,7 @@ const Order: FC = () => {
   const [selectedRows, setSelectedRows] = useState<Key[]>([]);
   const orderState = useSelector(orderStore);
   const dispatch = useDispatch();
+
   const columns = useMemo<ColumnsType<Cutter>>(() => {
     const cols: ColumnsType<Cutter> = [
       {
@@ -55,6 +59,15 @@ const Order: FC = () => {
         dataIndex: "quantity",
         align: "center",
         className: style.tableColumns,
+        onCell: (record) => ({
+          record,
+          editable: !isEmpty(record),
+          dataIndex: "quantity",
+          title: "数量",
+          handleSave: (value: unknown) => {
+            console.log(value);
+          },
+        }),
       },
       {
         title: "操作",
@@ -169,6 +182,16 @@ const Order: FC = () => {
     },
   ];
 
+  const component = useMemo(
+    () => ({
+      body: {
+        row: EditableRow,
+        cell: EditableCell,
+      },
+    }),
+    []
+  );
+
   return (
     <>
       <h3>订单编辑列表</h3>
@@ -176,6 +199,7 @@ const Order: FC = () => {
         className={style.orderTable}
         rowKey="orderNumber"
         columns={columns}
+        components={orderState.orderList.length ? component : undefined}
         dataSource={orderState.orderList || []}
         rowSelection={rowSelection}
       />

@@ -16,6 +16,10 @@ export const buttonConfig: ButtonGroupProps = {
   className: style.btnGroup,
 };
 
+interface OrderStateProps extends OrderState {
+  cutterCategory: FormMenu[];
+}
+
 export const orderStore = createSelector<
   RootReducer,
   FormState,
@@ -29,7 +33,3 @@ export const orderStore = createSelector<
     cutterCategory: form.menu.data,
   })
 );
-
-interface OrderStateProps extends OrderState {
-  cutterCategory: FormMenu[];
-}
