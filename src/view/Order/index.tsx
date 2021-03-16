@@ -7,11 +7,17 @@ import { message, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
+import produce from "immer";
 import { isEmpty } from "lodash-es";
-import React, { FC, Key, useMemo, useState } from "react";
+import React, { FC, Key, useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { collection, Cutter, deletedOrderAction } from "store/modules/order";
+import {
+  collection,
+  Cutter,
+  deletedOrderAction,
+  quantityChangeSave,
+} from "store/modules/order";
 import EditableCell from "./components/editableCell";
 import EditableRow from "./components/editableRow";
 import style from "./index.module.scss";
@@ -25,6 +31,30 @@ const Order: FC = () => {
   const orderState = useSelector(orderStore);
   const dispatch = useDispatch();
 
+  /**
+   * 修改熟练保存
+   */
+  const handleTableChangeSave = useCallback(
+    (values: Cutter) => {
+      const { category, subCategory, orderNumber } = values;
+      const index = orderState.orderList.findIndex(
+        (item) =>
+          item.category === category &&
+          item.subCategory === subCategory &&
+          item.orderNumber === orderNumber
+      );
+      const newValue = produce(orderState.orderList, (draft) => {
+        draft.splice(index, 1, values);
+        return draft;
+      });
+      dispatch(quantityChangeSave(newValue));
+    },
+    [dispatch, orderState.orderList]
+  );
+
+  /**
+   * table配置
+   */
   const columns = useMemo<ColumnsType<Cutter>>(() => {
     const cols: ColumnsType<Cutter> = [
       {
@@ -64,9 +94,7 @@ const Order: FC = () => {
           editable: !isEmpty(record),
           dataIndex: "quantity",
           title: "数量",
-          handleSave: (value: unknown) => {
-            console.log(value);
-          },
+          handleSave: handleTableChangeSave,
         }),
       },
       {
@@ -87,7 +115,7 @@ const Order: FC = () => {
       },
     ];
     return cols.map((item) => ({ ...item, ...publicColumnsType }));
-  }, [orderState.cutterCategory]);
+  }, [handleTableChangeSave, orderState.cutterCategory]);
 
   /**
    * 删除
@@ -144,6 +172,13 @@ const Order: FC = () => {
   };
 
   /**
+   * 提交
+   */
+  const handleSubmit = () => {
+    //
+  };
+
+  /**
    * 按钮组配置
    */
   const buttons: ButtonTypes[] = [
@@ -174,6 +209,7 @@ const Order: FC = () => {
       label: "提交",
       type: "ghost",
       className: style.submitBut,
+      onClick: handleSubmit,
     },
     {
       label: "下载文件示例",
@@ -182,6 +218,9 @@ const Order: FC = () => {
     },
   ];
 
+  /**
+   * 替换table中的内容
+   */
   const component = useMemo(
     () => ({
       body: {

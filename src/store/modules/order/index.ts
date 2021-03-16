@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Key } from "react";
-import { addToOrderList } from "./actions";
+import { addListToOrderList, addToOrderList } from "./actions";
+import { Cutter } from "./interface";
 import orderState from "./state";
 
 const orderSlice = createSlice({
@@ -22,6 +23,15 @@ const orderSlice = createSlice({
         state.orderList.splice(index, 1);
       }
       return state;
+    },
+    /**
+     * 修改数量
+     * 保存
+     */
+    quantityChangeSave(state, action: PayloadAction<Cutter[]>) {
+      const newState = state;
+      newState.orderList = action.payload;
+      return newState;
     },
   },
   extraReducers: ({ addCase }) => {
@@ -48,10 +58,15 @@ const orderSlice = createSlice({
       }
       return newState;
     });
+    addCase(addListToOrderList.fulfilled, (state, action) => {
+      const newState = state;
+      newState.orderList = action.payload;
+      return newState;
+    });
   },
 });
 
 export * from "./actions";
 export * from "./interface";
 export const order = orderSlice.reducer;
-export const { deletedOrderAction } = orderSlice.actions;
+export const { deletedOrderAction, quantityChangeSave } = orderSlice.actions;

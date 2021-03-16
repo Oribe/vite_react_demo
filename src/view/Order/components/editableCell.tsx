@@ -3,7 +3,15 @@
  */
 
 import { Form, InputNumber } from "antd";
-import React, { FC, memo, useContext, useEffect, useMemo } from "react";
+import React, {
+  FC,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
+import { Cutter } from "store/modules/order";
 import EditableContext from "./editableContext";
 
 const { Item } = Form;
@@ -20,6 +28,17 @@ const EditableCell: FC<EditableCellProps> = (props) => {
   } = props;
   const form = useContext(EditableContext);
 
+  const onSave = useCallback(async () => {
+    try {
+      const value = await form?.validateFields();
+      if (value && handleSave) {
+        handleSave({ ...record, ...value });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [form, handleSave, record]);
+
   useEffect(() => {
     form?.setFieldsValue({ [dataIndex]: record?.[dataIndex] });
   }, [dataIndex, form, record]);
@@ -35,12 +54,12 @@ const EditableCell: FC<EditableCellProps> = (props) => {
             { type: "number", message: "必须为数字" },
           ]}
         >
-          <InputNumber />
+          <InputNumber min={1} onPressEnter={onSave} onBlur={onSave} />
         </Item>
       );
     }
     return <div>{children}</div>;
-  }, [children, dataIndex, editable]);
+  }, [children, dataIndex, editable, onSave]);
 
   return <td {...restProps}>{childNode}</td>;
 };
@@ -53,7 +72,7 @@ interface EditableCellProps {
   children: React.ReactNode;
   dataIndex: keyof ItemType;
   record: ItemType;
-  handleSave: (record: ItemType) => void;
+  handleSave: (record: Cutter) => void;
 }
 
 interface ItemType {

@@ -1,4 +1,4 @@
-import React, { FC, memo } from "react";
+import React, { FC, memo, useEffect } from "react";
 import { ImageOptions } from "store/modules/form";
 import styles from "./index.module.scss";
 
@@ -10,6 +10,12 @@ const Image: FC<ImageProps> = (props) => {
       onChange((props.value || 0) === 0 ? 1 : 0);
     }
   };
+
+  useEffect(() => {
+    if (value === undefined && onChange) {
+      onChange(0);
+    }
+  }, [onChange, value]);
 
   return (
     <div

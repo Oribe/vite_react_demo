@@ -1,11 +1,13 @@
-import { createAsyncThunk, isRejected } from "@reduxjs/toolkit";
-import { message } from "antd";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { message, Modal } from "antd";
 import { RootReducer } from "store/store";
 import { cutterApi, orderApi } from "utils/api";
 import { createActions } from "utils/index";
+import { produce } from "immer";
 import { FormMenu } from "../form";
 import { Cutter } from "./interface";
 
+const { confirm } = Modal;
 /**
  * actionTypes
  */
@@ -84,33 +86,75 @@ export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
 );
 
 /**
- * 添加到订单列表
+ * 收藏
+ * 导入到订单列表
  * 多条
  */
-export const addListToOrderList = createAsyncThunk<unknown, Cutter[]>(
+export const addListToOrderList = createAsyncThunk<
+  Cutter[],
+  Cutter[],
+  { state: RootReducer }
+>(
   createActions(ACTION_TYPES.ADD_LIST_TO_ORDER_LIST, ACTION_PREFIX_ORDER).type,
-  async (cutterList, { dispatch }) => {
-    let i = 0;
-    const promiseResults = [];
-    while (i < cutterList.length) {
-      promiseResults.push(dispatch(addToOrderList(cutterList[i])));
-      i += 1;
+  async (cutterList, { getState }) => {
+    const willAddLen = cutterList.length;
+    const { orderList } = getState().order;
+    const hadLenght = orderList.length;
+    if (willAddLen + hadLenght > 8) {
+      return Promise.reject(new Error("刀具数量不能超过8条"));
     }
-    await Promise.all(promiseResults);
-    let { length } = promiseResults;
-    while (length) {
-      length -= 1;
-      const result = promiseResults[length];
-      if (isRejected(result)) {
-        // 添加失败删除之前添加的
-        dispatch({
-          type: "order/deletedOrderAction",
-          payload: cutterList.map((item) => item.orderNumber),
-        });
-        return Promise.reject();
+    /**
+     * 用于存放重复刀具信息
+     * key: orderList中对应的脚标
+     * value: cutterList中对应的脚标
+     */
+    const repeatMap = new Map<number, number>();
+    for (let i = 0; i < willAddLen; i += 1) {
+      const { category, subCategory, orderNumber } = cutterList[i];
+      const index = orderList.findIndex(
+        (item) =>
+          item.category === category &&
+          item.subCategory === subCategory &&
+          item.orderNumber === orderNumber
+      );
+      if (index > -1) {
+        repeatMap.set(index, i);
       }
     }
-    return Promise.resolve();
+    if (repeatMap.size <= 0) {
+      // 不存在重复
+      return [...orderList, ...cutterList];
+    }
+    const confirmPrmoiseFun = (older: Cutter[], newer: Cutter[]) => {
+      return new Promise<Cutter[]>((resolve) => {
+        confirm({
+          type: "warning",
+          title: "刀具信息重复",
+          content: `将要导入的刀具信息中存在与现订单中的刀具的信息重复，是否覆盖？`,
+          okText: "覆盖",
+          cancelText: "跳过",
+          onOk() {
+            // 覆盖
+            const newOlder = produce(older, (draft) => {
+              repeatMap.forEach((value, key) => {
+                draft.splice(key, 1, cutterList[value]);
+                newer.splice(value, 1);
+              });
+              return draft;
+            });
+            resolve([...newOlder, ...newer]);
+          },
+          onCancel() {
+            repeatMap.forEach((value) => {
+              newer.splice(value, 1);
+            });
+            resolve([...older, ...newer]);
+          },
+        });
+      });
+    };
+    const newCutterList = await confirmPrmoiseFun(orderList, cutterList);
+    return newCutterList;
   }
 );
 
