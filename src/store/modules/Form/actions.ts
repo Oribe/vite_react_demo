@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { isEmpty } from "lodash-es";
-import { RootReducer } from "store/store";
-import { ThunkApiConfig } from "store/type";
+import { RootReducer, ThunkApiConfig } from "store/store";
 import { createActions } from "utils/index";
 import { formApi } from "utils/api";
 import { FormConfig, FormMenu, Options } from "./interface";

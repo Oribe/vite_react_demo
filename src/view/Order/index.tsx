@@ -3,19 +3,22 @@
  * URL: /tool/order
  */
 
-import { message, Table } from "antd";
+import { isFulfilled, isRejected } from "@reduxjs/toolkit";
+import { FormInstance, message, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
 import produce from "immer";
 import { isEmpty } from "lodash-es";
-import React, { FC, Key, useCallback, useMemo, useState } from "react";
+import React, { FC, Key, useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
+  clearOrderList,
   collection,
   Cutter,
   deletedOrderAction,
+  orderListSubmit,
   quantityChangeSave,
 } from "store/modules/order";
 import EditableCell from "./components/editableCell";
@@ -30,6 +33,8 @@ const Order: FC = () => {
   const [selectedRows, setSelectedRows] = useState<Key[]>([]);
   const orderState = useSelector(orderStore);
   const dispatch = useDispatch();
+  const history = useHistory();
+  const cellFormRef = useRef<Map<string, FormInstance>>(new Map());
 
   /**
    * 修改熟练保存
@@ -50,6 +55,13 @@ const Order: FC = () => {
       dispatch(quantityChangeSave(newValue));
     },
     [dispatch, orderState.orderList]
+  );
+
+  const saveCellFormInstance = useCallback(
+    (orderNumber: string) => (form: FormInstance) => {
+      cellFormRef.current.set(orderNumber, form);
+    },
+    []
   );
 
   /**
@@ -95,6 +107,7 @@ const Order: FC = () => {
           dataIndex: "quantity",
           title: "数量",
           handleSave: handleTableChangeSave,
+          getCellFormInstance: saveCellFormInstance(record.orderNumber),
         }),
       },
       {
@@ -115,7 +128,7 @@ const Order: FC = () => {
       },
     ];
     return cols.map((item) => ({ ...item, ...publicColumnsType }));
-  }, [handleTableChangeSave, orderState.cutterCategory]);
+  }, [handleTableChangeSave, orderState.cutterCategory, saveCellFormInstance]);
 
   /**
    * 删除
@@ -172,10 +185,43 @@ const Order: FC = () => {
   };
 
   /**
+   *
+   */
+  const handleValidate = async () => {
+    const valideResult: Promise<unknown>[] = [];
+    cellFormRef.current.forEach((form) => {
+      valideResult.push(form.validateFields());
+    });
+    try {
+      await Promise.all(valideResult);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  /**
    * 提交
    */
-  const handleSubmit = () => {
-    //
+  const handleSubmit = async () => {
+    const result = await handleValidate();
+    if (!result) {
+      message.warning("请将数量填写完整");
+      return;
+    }
+    const response = await dispatch(orderListSubmit(orderState.orderList));
+    if (isFulfilled(response)) {
+      const { orderNo } = response.payload as { orderNo: string };
+      message.success("提交成功", 1.5, () => {
+        dispatch(clearOrderList());
+        if (orderNo) {
+          history.push(`/order/${orderNo}`);
+        }
+      });
+    }
+    if (isRejected(response)) {
+      message.error("提交失败");
+    }
   };
 
   /**

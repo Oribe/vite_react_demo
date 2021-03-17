@@ -35,10 +35,10 @@ const asyncLoader = <T extends ComponentType<unknown>>(
 
     useEffect(() => {
       handleRouterInterceptors(routerAction.before);
-      console.log("组件加载中");
+      // console.log("组件加载中");
       return () => {
         handleRouterInterceptors(routerAction.leave);
-        console.log("组件卸载");
+        // console.log("组件卸载");
       };
     }, [handleRouterInterceptors]);
 

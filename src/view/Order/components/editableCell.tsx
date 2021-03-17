@@ -2,7 +2,7 @@
  * 用户编辑数量的组件
  */
 
-import { Form, InputNumber } from "antd";
+import { Form, FormInstance, InputNumber } from "antd";
 import React, {
   FC,
   memo,
@@ -24,10 +24,14 @@ const EditableCell: FC<EditableCellProps> = (props) => {
     editable,
     children,
     handleSave,
+    getCellFormInstance,
     ...restProps
   } = props;
   const form = useContext(EditableContext);
 
+  /**
+   * 修改后保存
+   */
   const onSave = useCallback(async () => {
     try {
       const value = await form?.validateFields();
@@ -42,6 +46,12 @@ const EditableCell: FC<EditableCellProps> = (props) => {
   useEffect(() => {
     form?.setFieldsValue({ [dataIndex]: record?.[dataIndex] });
   }, [dataIndex, form, record]);
+
+  useEffect(() => {
+    if (getCellFormInstance && form) {
+      getCellFormInstance(form);
+    }
+  }, [form, getCellFormInstance]);
 
   const childNode = useMemo(() => {
     if (editable) {
@@ -73,6 +83,7 @@ interface EditableCellProps {
   dataIndex: keyof ItemType;
   record: ItemType;
   handleSave: (record: Cutter) => void;
+  getCellFormInstance: (form: FormInstance) => void;
 }
 
 interface ItemType {

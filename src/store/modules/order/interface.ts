@@ -12,7 +12,7 @@ export interface Cutter {
   orderNumber: string;
   category: number;
   subCategory: number;
-  [key: string]: unknown;
+  [key: string]: string | number;
 }
 
 /**

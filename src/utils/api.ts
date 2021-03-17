@@ -38,6 +38,7 @@ export const cutterApi = createAxiosGroup({
  */
 export const orderApi = createAxiosGroup({
   searchOrderNumber: { url: "/cutter", method: "GET" },
+  submit: { url: "/order", method: "POST" },
 });
 
 /**

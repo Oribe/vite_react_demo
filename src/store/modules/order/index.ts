@@ -33,6 +33,14 @@ const orderSlice = createSlice({
       newState.orderList = action.payload;
       return newState;
     },
+    /**
+     * 清空订单列表
+     */
+    clearOrderList(state) {
+      const newState = state;
+      newState.orderList = [];
+      return newState;
+    },
   },
   extraReducers: ({ addCase }) => {
     addCase(addToOrderList.fulfilled, (state, action) => {
@@ -69,4 +77,8 @@ const orderSlice = createSlice({
 export * from "./actions";
 export * from "./interface";
 export const order = orderSlice.reducer;
-export const { deletedOrderAction, quantityChangeSave } = orderSlice.actions;
+export const {
+  deletedOrderAction,
+  quantityChangeSave,
+  clearOrderList,
+} = orderSlice.actions;

@@ -90,15 +90,11 @@ export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
  * 导入到订单列表
  * 多条
  */
-export const addListToOrderList = createAsyncThunk<
-  Cutter[],
-  Cutter[],
-  { state: RootReducer }
->(
+export const addListToOrderList = createAsyncThunk<Cutter[], Cutter[]>(
   createActions(ACTION_TYPES.ADD_LIST_TO_ORDER_LIST, ACTION_PREFIX_ORDER).type,
   async (cutterList, { getState }) => {
     const willAddLen = cutterList.length;
-    const { orderList } = getState().order;
+    const { orderList } = (getState() as RootReducer).order;
     const hadLenght = orderList.length;
     if (willAddLen + hadLenght > 8) {
       return Promise.reject(new Error("刀具数量不能超过8条"));
@@ -193,9 +189,28 @@ export const collection = createAsyncThunk<void, Cutter[]>(
 /**
  * 提交
  */
-// export const orderListSubmit = createAsyncThunk<unknown, Cutter[]>(
-//   createActions(ACTION_TYPES.ORDER_LIST_SUBMIT).type,
-//   async (orderList, { dispatch, getState }) => {
-
-//   }
-// );
+export const orderListSubmit = createAsyncThunk<{ orderNo: string }, Cutter[]>(
+  createActions(ACTION_TYPES.ORDER_LIST_SUBMIT).type,
+  async (orderList) => {
+    const modelNumber = orderList.length;
+    const quantity = orderList.reduce<number>((count, current) => {
+      let total = count;
+      total += +current?.quantity;
+      return total;
+    }, 0);
+    const orders = orderList.map((item) => ({
+      orderNumber: item.orderNumber,
+      category: item.category,
+      subCategory: item.subCategory,
+      manufacturer: item.manufacturer,
+      quantity: item.quantity,
+    }));
+    const body = {
+      modelNumber,
+      quantity,
+      orders,
+    };
+    const response = await orderApi.submit<{ orderNo: string }>(body);
+    return response;
+  }
+);
