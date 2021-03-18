@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Key } from "react";
-import { addListToOrderList, addToOrderList } from "./actions";
+import { addListToOrderList, addToOrderList, getHistoryOrder } from "./actions";
 import { Cutter } from "./interface";
 import orderState from "./state";
 
@@ -71,6 +71,20 @@ const orderSlice = createSlice({
       newState.orderList = action.payload;
       return newState;
     });
+    addCase(getHistoryOrder.pending, (state) => {
+      const { history } = state;
+      history.loading = true;
+      history.data = [];
+    })
+      .addCase(getHistoryOrder.rejected, (state) => {
+        const { history } = state;
+        history.loading = false;
+      })
+      .addCase(getHistoryOrder.fulfilled, (state, action) => {
+        const { history } = state;
+        history.loading = false;
+        history.data = action.payload;
+      });
   },
 });
 

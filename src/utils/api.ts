@@ -29,20 +29,20 @@ export const formApi = createAxiosGroup({
  * 刀具信息模块
  */
 export const cutterApi = createAxiosGroup({
+  search: { url: "/cutter", method: "GET" },
   save: { url: "/cutter", method: "POST" },
-  collection: { url: "/collection", method: "POST" },
 });
 
 /**
  * 订单模块请求
  */
 export const orderApi = createAxiosGroup({
-  searchOrderNumber: { url: "/cutter", method: "GET" },
   submit: { url: "/order", method: "POST" },
+  search: { url: "/order", method: "GET" },
 });
 
 /**
- * 搜藏
+ * 收藏
  */
 export const collectionApi = createAxiosGroup({
   search: {
@@ -50,5 +50,6 @@ export const collectionApi = createAxiosGroup({
     method: "GET",
     options: { errorMessageMode: "message" },
   },
-  collectionDetail: { url: "/collection/complete", method: "GET" },
+  detail: { url: "/collection/complete", method: "GET" },
+  save: { url: "/collection", method: "POST" },
 });

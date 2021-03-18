@@ -3,6 +3,10 @@
  */
 export interface OrderState {
   orderList: Cutter[];
+  history: {
+    loading: boolean;
+    data: SubmitOrderType[];
+  };
 }
 
 /**
@@ -38,4 +42,9 @@ export interface SubmitOrderType {
   quantity: number;
   supplier: string;
   orders: OrderItemsType[];
+}
+
+export interface HistoryParamType {
+  startTime?: string;
+  endTime?: string;
 }

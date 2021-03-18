@@ -1,11 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { message, Modal } from "antd";
 import { RootReducer } from "store/store";
-import { cutterApi, orderApi } from "utils/api";
+import { collectionApi, cutterApi, orderApi } from "utils/api";
 import { createActions } from "utils/index";
 import { produce } from "immer";
+import { responsiveArray } from "antd/lib/_util/responsiveObserve";
 import { FormMenu } from "../form";
-import { Cutter } from "./interface";
+import { Cutter, HistoryParamType, SubmitOrderType } from "./interface";
 
 const { confirm } = Modal;
 /**
@@ -18,6 +19,7 @@ export const ACTION_TYPES = {
   ADD_ORDER_LIST: "ADD_ORDER_LIST",
   ADD_LIST_TO_ORDER_LIST: "ADD_LIST_TO_ORDER_LIST",
   ORDER_LIST_SUBMIT: "ORDER_LIST_SUBMIT",
+  GET_HISTORY_ORDER: "GET_HISTORY_ORDER",
 };
 
 interface SearchOrderNumberQuery {
@@ -30,7 +32,7 @@ interface SearchOrderNumberQuery {
 export const searchOrderNumber = createAsyncThunk(
   createActions(ACTION_TYPES.SEARCH_ORDER_NUMBER, ACTION_PREFIX_ORDER).type,
   async ({ orderNumber, subCategory }: SearchOrderNumberQuery) => {
-    const response = orderApi.searchOrderNumber<Cutter[]>({
+    const response = cutterApi.search<Cutter[]>({
       orderNumber: orderNumber.toUpperCase(),
       subCategory,
     });
@@ -159,7 +161,7 @@ export const addListToOrderList = createAsyncThunk<Cutter[], Cutter[]>(
  */
 export const collection = createAsyncThunk<void, Cutter[]>(
   createActions(ACTION_TYPES.ORDER_COLLECTION, ACTION_PREFIX_ORDER).type,
-  async (cutterList: Cutter[], { getState }) => {
+  async (cutterList, { getState }) => {
     const newCutterList: (Cutter | Promise<Cutter>)[] = [];
     for (let i = 0; i < cutterList.length; i += 1) {
       if (cutterList[i].category) {
@@ -174,8 +176,8 @@ export const collection = createAsyncThunk<void, Cutter[]>(
       message.error("收藏失败");
       return;
     }
-    cutterApi
-      .collection(newCutterList)
+    collectionApi
+      .save(newCutterList)
       .then(() => {
         message.success("收藏成功");
       })
@@ -211,6 +213,20 @@ export const orderListSubmit = createAsyncThunk<{ orderNo: string }, Cutter[]>(
       orders,
     };
     const response = await orderApi.submit<{ orderNo: string }>(body);
+    return response;
+  }
+);
+
+/**
+ * 查询历史订单
+ */
+export const getHistoryOrder = createAsyncThunk<
+  SubmitOrderType[],
+  HistoryParamType
+>(
+  createActions(ACTION_TYPES.GET_HISTORY_ORDER, ACTION_PREFIX_ORDER).type,
+  async (param) => {
+    const response = await orderApi.search<SubmitOrderType[]>({ ...param });
     return response;
   }
 );

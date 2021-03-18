@@ -1,0 +1,24 @@
+@import "../../../../style/var.scss";
+
+.searchContainer {
+  margin-bottom: 20px;
+}
+
+.datePicker {
+  width: 30%;
+  transition: width 0.5s ease;
+}
+
+.middleLink {
+  margin: 0 10px;
+}
+
+.btnsContainer {
+  margin: 0 auto;
+}
+
+@media screen and (max-width: $md-width) {
+  .datePicker {
+    flex: 1;
+  }
+}

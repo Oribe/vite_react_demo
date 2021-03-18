@@ -44,7 +44,11 @@ export interface AxiosError extends Error {
   response: AxiosResponse<ResponseError>;
 }
 
-export type RequestData = Record<string, unknown> | unknown[];
+export type RequestData =
+  | Record<string, never | unknown>
+  | unknown[]
+  | undefined
+  | null;
 
 export abstract class Interceptors {
   /**
