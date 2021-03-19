@@ -152,6 +152,7 @@ const Collection: FC = () => {
         columns={columns}
         rowSelection={rowSelection}
         rowKey="orderNumber"
+        scroll={{ x: true }}
         loading={state.collectionList.loading}
         dataSource={state.collectionList.data}
       />

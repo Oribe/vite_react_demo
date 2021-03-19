@@ -1,10 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { message, Modal } from "antd";
+import { produce } from "immer";
+import { Key } from "react";
 import { RootReducer } from "store/store";
 import { collectionApi, cutterApi, orderApi } from "utils/api";
 import { createActions } from "utils/index";
-import { produce } from "immer";
-import { responsiveArray } from "antd/lib/_util/responsiveObserve";
 import { FormMenu } from "../form";
 import { Cutter, HistoryParamType, SubmitOrderType } from "./interface";
 
@@ -20,6 +20,7 @@ export const ACTION_TYPES = {
   ADD_LIST_TO_ORDER_LIST: "ADD_LIST_TO_ORDER_LIST",
   ORDER_LIST_SUBMIT: "ORDER_LIST_SUBMIT",
   GET_HISTORY_ORDER: "GET_HISTORY_ORDER",
+  HISTORY_ORDER_DETAIL: "HISTORY_ORDER_DETAIL",
 };
 
 interface SearchOrderNumberQuery {
@@ -228,5 +229,26 @@ export const getHistoryOrder = createAsyncThunk<
   async (param) => {
     const response = await orderApi.search<SubmitOrderType[]>({ ...param });
     return response;
+  }
+);
+
+/**
+ * 获取订单完整信息
+ */
+export const historyOrderDetail = createAsyncThunk<unknown, Key>(
+  createActions(ACTION_TYPES.HISTORY_ORDER_DETAIL, ACTION_PREFIX_ORDER).type,
+  async (orderNo) => {
+    const response = await orderApi.detail({ orderNo });
+    return response;
+  }
+);
+
+/**
+ * 续建订单
+ */
+export const recreateOrder = createAsyncThunk<unknown, Key>(
+  "",
+  async (orderNo, { dispatch }) => {
+    const order = dispatch(historyOrderDetail(orderNo));
   }
 );

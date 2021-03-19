@@ -284,6 +284,7 @@ const Order: FC = () => {
         className={style.orderTable}
         rowKey="orderNumber"
         columns={columns}
+        scroll={{ x: true }}
         components={orderState.orderList.length ? component : undefined}
         dataSource={orderState.orderList || []}
         rowSelection={rowSelection}

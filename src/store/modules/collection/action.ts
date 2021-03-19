@@ -23,7 +23,7 @@ export const collectionSearch = createAsyncThunk(
 export const importCollectionToOrderList = createAsyncThunk(
   "collection/import",
   async (collectionList: number[], { dispatch }) => {
-    const result = await collectionApi.collectionDetail<Cutter[]>({
+    const result = await collectionApi.detail<Cutter[]>({
       ids: collectionList.toString(),
     });
     const importResult = await dispatch(addListToOrderList(result));

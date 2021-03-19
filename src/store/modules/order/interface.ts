@@ -5,9 +5,11 @@ export interface OrderState {
   orderList: Cutter[];
   history: {
     loading: boolean;
-    data: SubmitOrderType[];
+    data: HistoryOrder[];
   };
 }
+
+export type HistoryOrder = SubmitOrderType;
 
 /**
  * 刀具信息

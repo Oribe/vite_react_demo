@@ -18,6 +18,10 @@
     font-size: 16px;
     font-weight: 500;
   }
+  .ant-layout,
+  .ant-layout * {
+    white-space: nowrap;
+  }
 }
 
 .btnGroup {

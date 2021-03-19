@@ -1,12 +1,14 @@
 @import "../../style/var.scss";
 
 .historyTable {
-  // .tableColumns {
+}
+
+.tableColumns {
   //   background-color: $primary-color;
   //   color: #fff;
   //   font-size: 16px;
   //   font-weight: 500;
-  // }
+  white-space: nowrap;
 }
 
 // :global {
