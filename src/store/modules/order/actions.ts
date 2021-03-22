@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, isFulfilled } from "@reduxjs/toolkit";
 import { message, Modal } from "antd";
 import { produce } from "immer";
 import { Key } from "react";
@@ -6,6 +6,7 @@ import { RootReducer } from "store/store";
 import { collectionApi, cutterApi, orderApi } from "utils/api";
 import { createActions } from "utils/index";
 import { FormMenu } from "../form";
+import { errorMsg, successMsg } from "../global";
 import { Cutter, HistoryParamType, SubmitOrderType } from "./interface";
 
 const { confirm } = Modal;
@@ -235,10 +236,10 @@ export const getHistoryOrder = createAsyncThunk<
 /**
  * 获取订单完整信息
  */
-export const historyOrderDetail = createAsyncThunk<unknown, Key>(
+export const historyOrderDetail = createAsyncThunk<Cutter[], Key>(
   createActions(ACTION_TYPES.HISTORY_ORDER_DETAIL, ACTION_PREFIX_ORDER).type,
   async (orderNo) => {
-    const response = await orderApi.detail({ orderNo });
+    const response = await orderApi.detail<Cutter[]>({ orderNo });
     return response;
   }
 );
@@ -249,6 +250,17 @@ export const historyOrderDetail = createAsyncThunk<unknown, Key>(
 export const recreateOrder = createAsyncThunk<unknown, Key>(
   "",
   async (orderNo, { dispatch }) => {
-    const order = dispatch(historyOrderDetail(orderNo));
+    const historyOrderDetailAction = await dispatch(
+      historyOrderDetail(orderNo)
+    );
+    if (isFulfilled(historyOrderDetailAction)) {
+      dispatch(addListToOrderList(historyOrderDetailAction.payload))
+        .then(() => {
+          dispatch(successMsg("续建成功"));
+        })
+        .catch(() => {
+          dispatch(errorMsg("续建失败"));
+        });
+    }
   }
 );

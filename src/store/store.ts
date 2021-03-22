@@ -1,17 +1,19 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { user } from "store/modules/user";
-import { form } from "store/modules/form";
-import { order } from "store/modules/order";
-import { collection } from "store/modules/collection";
+import { Action, Dispatch } from "redux";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage/session";
-import { Action, Dispatch } from "redux";
+import { collection } from "store/modules/collection";
+import { form } from "store/modules/form";
+import { order } from "store/modules/order";
+import { user } from "store/modules/user";
+import { globalStore } from "./modules/global";
 
 const reducers = {
   user,
   form,
   order,
   collection,
+  globalStore,
 };
 
 const rootReducer = combineReducers(reducers);

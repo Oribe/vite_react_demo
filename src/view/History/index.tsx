@@ -1,4 +1,3 @@
-import { isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { message, Table } from "antd";
 import { ColumnsType, ColumnType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
@@ -8,7 +7,7 @@ import { Link } from "react-router-dom";
 import {
   getHistoryOrder,
   HistoryOrder,
-  historyOrderDetail,
+  recreateOrder,
 } from "store/modules/order";
 import Search, { TimeRange } from "./component/Search";
 import styles from "./index.module.scss";
@@ -65,18 +64,12 @@ const History: FC = () => {
     setTimeRange(value);
   };
 
-  const recreateOrder = useCallback(async () => {
+  const onRecreateOrder = useCallback(async () => {
     if (!selectedOrderNo) {
       message.warning("请先选择一个订单");
       return;
     }
-    const response = await dispatch(historyOrderDetail(selectedOrderNo));
-    if (isFulfilled(response)) {
-      console.log(response);
-    }
-    if (isRejected(response)) {
-      console.log(response);
-    }
+    dispatch(recreateOrder(selectedOrderNo));
   }, [dispatch, selectedOrderNo]);
 
   return (
@@ -84,7 +77,7 @@ const History: FC = () => {
       <Search
         onSearch={onSearch}
         onChange={handleSearchValueChange}
-        onRecreate={recreateOrder}
+        onRecreate={onRecreateOrder}
       />
       <Table
         className={styles.historyTable}
