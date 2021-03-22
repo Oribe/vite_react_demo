@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 import { RootReducer } from "store/index";
-import { FormState, getFormConfig, getFormMenu } from "store/modules/form";
+import { FormState, getFormConfig } from "store/modules/form";
 import {
   addToOrderList,
   collection,
@@ -39,13 +39,6 @@ const CutterForm: FC = () => {
   const dispatch = useDispatch();
   const params = useParams<UrlParam>();
   const location = useLocation<UrlState>();
-
-  /**
-   * api请求获取数据
-   */
-  useEffect(() => {
-    dispatch(getFormMenu());
-  }, [dispatch]);
 
   /**
    * 获取form配置

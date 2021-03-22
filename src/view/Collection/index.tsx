@@ -7,16 +7,15 @@ import { Button, Cascader, Col, Row, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroup, { ButtonTypes } from "component/ButtonGroup";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   collectionSearch,
   CollectionType,
   importCollectionToOrderList,
 } from "store/modules/collection";
-import { getFormMenu } from "store/modules/form";
-import { collectionStore } from "./model";
 import styles from "./index.module.scss";
+import { collectionStore } from "./model";
 
 const Collection: FC = () => {
   const dispatch = useDispatch();
@@ -104,13 +103,6 @@ const Collection: FC = () => {
     ],
     []
   );
-
-  useEffect(() => {
-    /**
-     * 获取下拉菜单数据
-     */
-    dispatch(getFormMenu());
-  }, [dispatch]);
 
   /**
    * 搜索

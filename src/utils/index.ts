@@ -1,6 +1,10 @@
 import { createAction } from "@reduxjs/toolkit";
 import { debounce } from "lodash-es";
-import { ComponentFunc, ComponentFuncConfig } from "store/modules/form";
+import {
+  ComponentFunc,
+  ComponentFuncConfig,
+  FormMenu,
+} from "store/modules/form";
 
 /**
  * 类型
@@ -128,4 +132,23 @@ export const createActions = <T = unknown>(
     return createAction(`${withPrefix}/${actionTypes}`, withPayloadType<T>());
   }
   return createAction(actionTypes, withPayloadType<T>());
+};
+
+/**
+ * 根据类型编号返回对应的中文名称
+ * @param category 大类
+ * @param subCategory 子类
+ * @param menus 类型对象
+ * @returns string
+ */
+export const getCutterNameFromMenus = (
+  category: number,
+  subCategory: number,
+  menus: FormMenu[]
+) => {
+  const categoryObj = menus.find((item) => item.category === category);
+  const sub = categoryObj?.subCategory.find(
+    (item) => item.subCategory === subCategory
+  );
+  return sub?.name ?? subCategory;
 };

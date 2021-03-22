@@ -1,4 +1,4 @@
-import { createAsyncThunk, isFulfilled } from "@reduxjs/toolkit";
+import { createAsyncThunk, isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { message, Modal } from "antd";
 import { produce } from "immer";
 import { Key } from "react";
@@ -22,6 +22,7 @@ export const ACTION_TYPES = {
   ORDER_LIST_SUBMIT: "ORDER_LIST_SUBMIT",
   GET_HISTORY_ORDER: "GET_HISTORY_ORDER",
   HISTORY_ORDER_DETAIL: "HISTORY_ORDER_DETAIL",
+  HISTORY_ORDER_RECREATE: "HISTORY_ORDER_RECREATE",
 };
 
 interface SearchOrderNumberQuery {
@@ -236,9 +237,9 @@ export const getHistoryOrder = createAsyncThunk<
 /**
  * 获取订单完整信息
  */
-export const historyOrderDetail = createAsyncThunk<Cutter[], Key>(
+export const historyOrderDetail = createAsyncThunk(
   createActions(ACTION_TYPES.HISTORY_ORDER_DETAIL, ACTION_PREFIX_ORDER).type,
-  async (orderNo) => {
+  async (orderNo: Key) => {
     const response = await orderApi.detail<Cutter[]>({ orderNo });
     return response;
   }
@@ -247,20 +248,21 @@ export const historyOrderDetail = createAsyncThunk<Cutter[], Key>(
 /**
  * 续建订单
  */
-export const recreateOrder = createAsyncThunk<unknown, Key>(
-  "",
+export const recreateOrder = createAsyncThunk<void, Key>(
+  createActions(ACTION_TYPES.HISTORY_ORDER_RECREATE, ACTION_PREFIX_ORDER).type,
   async (orderNo, { dispatch }) => {
-    const historyOrderDetailAction = await dispatch(
-      historyOrderDetail(orderNo)
-    );
-    if (isFulfilled(historyOrderDetailAction)) {
-      dispatch(addListToOrderList(historyOrderDetailAction.payload))
-        .then(() => {
-          dispatch(successMsg("续建成功"));
-        })
-        .catch(() => {
-          dispatch(errorMsg("续建失败"));
-        });
+    const actions = await dispatch(historyOrderDetail(orderNo));
+    if (isRejected(actions)) {
+      dispatch(errorMsg(actions.error.message || "续建失败"));
+    }
+    if (isFulfilled(actions)) {
+      const addResult = await dispatch(addListToOrderList(actions.payload));
+      if (isFulfilled(addResult)) {
+        dispatch(successMsg("续建成功"));
+      }
+      if (isRejected(addResult)) {
+        dispatch(errorMsg(addResult.error.message || "续建失败"));
+      }
     }
   }
 );

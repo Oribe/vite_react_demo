@@ -1,7 +1,8 @@
 import { message, Table } from "antd";
 import { ColumnsType, ColumnType } from "antd/lib/table";
 import { TableRowSelection } from "antd/lib/table/interface";
-import React, { FC, Key, useCallback, useState } from "react";
+import { join } from "lodash";
+import React, { FC, Key, useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -31,27 +32,30 @@ const History: FC = () => {
   /**
    * table列配置
    */
-  const columns: ColumnsType<HistoryOrder> = [
-    {
-      title: "订单流水号",
-      dataIndex: "orderNo",
-    },
-    {
-      title: "型号数量",
-      dataIndex: "modelNumber",
-    },
-    {
-      title: "生成日期",
-      dataIndex: "createAt",
-    },
-    {
-      title: "操作",
-      dataIndex: "action",
-      render() {
-        return <Link to="/">详情</Link>;
+  const columns = useMemo(() => {
+    const columnsTypes: ColumnsType<HistoryOrder> = [
+      {
+        title: "订单流水号",
+        dataIndex: "orderNo",
       },
-    },
-  ].map((item) => ({ ...item, ...publicColumnsType }));
+      {
+        title: "型号数量",
+        dataIndex: "modelNumber",
+      },
+      {
+        title: "生成日期",
+        dataIndex: "createAt",
+      },
+      {
+        title: "操作",
+        dataIndex: "action",
+        render: (_, record) => {
+          return <Link to={`/history/${record.orderNo}`}>详情</Link>;
+        },
+      },
+    ];
+    return columnsTypes.map((item) => ({ ...item, ...publicColumnsType }));
+  }, []);
 
   const rowSelection: TableRowSelection<HistoryOrder> = {
     type: "radio",

@@ -24,7 +24,7 @@ export interface Cutter {
 /**
  * 提交的订单信息中的刀具信息
  */
-interface OrderItemsType {
+export interface OrderItemsType {
   orderNumber: string;
   category: number;
   subCategory: number;
@@ -44,6 +44,7 @@ export interface SubmitOrderType {
   quantity: number;
   supplier: string;
   orders: OrderItemsType[];
+  createAt?: string;
 }
 
 export interface HistoryParamType {
