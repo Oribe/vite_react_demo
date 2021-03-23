@@ -17,6 +17,7 @@ import {
   SubmitOrderType,
 } from "store/modules/order";
 import { getCutterNameFromMenus } from "utils/index";
+import { getCutterDataIndexs } from "store/modules/form";
 import orderDetailState from "./model";
 import styles from "./index.module.scss";
 
@@ -25,7 +26,23 @@ const OrderDetail: FC = () => {
   const state = useSelector(orderDetailState);
   const [dataSource, setDataSource] = useState<SubmitOrderType>();
   const [loading, setLoading] = useState(true);
+  const [dataIndexList, setDataIndexList] = useState<Record<number, string[]>>(
+    {}
+  );
   const dispatch = useDispatch();
+
+  const getDataIndexList = useCallback(
+    async (subCategoryList: number[]) => {
+      const action = await dispatch(getCutterDataIndexs(subCategoryList));
+      if (isFulfilled(action)) {
+        setDataIndexList(action.payload as Record<number, string[]>);
+      }
+      if (isRejected(action)) {
+        dispatch(errorMsg("生成二维失败"));
+      }
+    },
+    [dispatch]
+  );
 
   const getData = useCallback(async () => {
     const actions = await dispatch(historyOrderDetail(param.orderNo));
@@ -35,10 +52,12 @@ const OrderDetail: FC = () => {
     }
     if (isFulfilled(actions)) {
       const payload = actions.payload as SubmitOrderType;
+      const subCategoryList = payload.orders.map((item) => item.subCategory);
+      await getDataIndexList(subCategoryList);
       setDataSource(payload);
       setLoading(false);
     }
-  }, [dispatch, param.orderNo]);
+  }, [dispatch, getDataIndexList, param.orderNo]);
 
   useEffect(() => {
     getData();

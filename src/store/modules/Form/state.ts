@@ -14,6 +14,7 @@ const formState: FormState = {
     loading: false,
   },
   routers: [],
+  cutterDataIndexs: {},
 };
 
 export default formState;

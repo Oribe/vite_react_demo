@@ -139,6 +139,7 @@ export interface FormState {
     loading: boolean;
   };
   routers: NavRouter[];
+  cutterDataIndexs: Record<number, string[]>;
 }
 
 /**

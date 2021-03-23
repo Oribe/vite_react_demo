@@ -1,8 +1,8 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, isFulfilled } from "@reduxjs/toolkit";
 import { isEmpty } from "lodash-es";
 import { RootReducer, ThunkApiConfig } from "store/store";
+import { cutterApi, formApi } from "utils/api";
 import { createActions } from "utils/index";
-import { formApi } from "utils/api";
 import { FormConfig, FormMenu, Options } from "./interface";
 
 /**
@@ -79,3 +79,33 @@ export const getManufacturer = createAsyncThunk(
     return manufacturer.data;
   }
 );
+
+/**
+ * 获取生成二维码所需的字段顺序
+ */
+export const getCutterDataIndexs = createAsyncThunk<
+  Record<number, string[]>,
+  number[],
+  ThunkApiConfig
+>("order/getCutterDataIndexs", async (subCategoryList, { getState }) => {
+  const cutterColumns = getState().form.cutterDataIndexs;
+  const notExistSubCategory = subCategoryList.reduce<number[]>(
+    (list, subCategory) => {
+      const dataIndexList = cutterColumns?.[subCategory];
+      if (!Array.isArray(dataIndexList)) {
+        list.push(subCategory);
+        return list;
+      }
+      return list;
+    },
+    []
+  );
+  let newCutterColumns = cutterColumns;
+  if (notExistSubCategory.length > 0) {
+    const response = await cutterApi.columns<Record<number, string[]>>({
+      subCategories: notExistSubCategory.toString(),
+    });
+    newCutterColumns = { ...newCutterColumns, ...response };
+  }
+  return newCutterColumns;
+});

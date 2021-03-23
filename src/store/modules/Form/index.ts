@@ -4,6 +4,7 @@ import { Act } from "store/index";
 import { createActions } from "utils/index";
 import {
   ACTION_TYPES,
+  getCutterDataIndexs,
   getFormConfig,
   getFormMenu,
   getManufacturer,
@@ -120,6 +121,14 @@ const formSlice = createSlice({
       const { payload } = action;
       const { manufacturer } = state;
       manufacturer.data = payload;
+    });
+    /**
+     * 获取生成二维码所需的字段顺序
+     */
+    addCase(getCutterDataIndexs.fulfilled, (state, action) => {
+      const newState = state;
+      newState.cutterDataIndexs = action.payload;
+      return newState;
     });
   },
 });

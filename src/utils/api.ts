@@ -31,6 +31,7 @@ export const formApi = createAxiosGroup({
 export const cutterApi = createAxiosGroup({
   search: { url: "/cutter", method: "GET" },
   save: { url: "/cutter", method: "POST" },
+  columns: { url: "/cutter/columns", method: "GET" },
 });
 
 /**
