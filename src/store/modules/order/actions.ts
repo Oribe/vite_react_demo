@@ -2,12 +2,17 @@ import { createAsyncThunk, isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { message, Modal } from "antd";
 import { produce } from "immer";
 import { Key } from "react";
-import { RootReducer } from "store/store";
+import { RootReducer, ThunkApiConfig } from "store/store";
 import { collectionApi, cutterApi, orderApi } from "utils/api";
 import { createActions } from "utils/index";
 import { FormMenu } from "../form";
 import { errorMsg, successMsg } from "../global";
-import { Cutter, HistoryParamType, SubmitOrderType } from "./interface";
+import {
+  Cutter,
+  HistoryParamType,
+  OrderItemsType,
+  SubmitOrderType,
+} from "./interface";
 
 const { confirm } = Modal;
 /**
@@ -266,3 +271,33 @@ export const recreateOrder = createAsyncThunk<void, Key>(
     }
   }
 );
+
+/**
+ * 生成二维码
+ */
+export const createQRcode = createAsyncThunk<
+  string,
+  OrderItemsType[] | undefined,
+  ThunkApiConfig
+>("order/createQRcode", (data, { getState }) => {
+  let QRcodeText = "";
+  if (!Array.isArray(data)) {
+    return QRcodeText;
+  }
+  const config = getState().form.cutterDataIndexs;
+  const phone = getState().user.userInfo.userName;
+  let i = 0;
+  const { length } = data;
+  while (i < length) {
+    const valueObj = data[i];
+    const { subCategory } = valueObj;
+    const dataIndexList = config[subCategory];
+    const text = dataIndexList.reduce<string>((t, dataIndex) => {
+      const value = valueObj[dataIndex];
+      return `${t}|${value ?? " "}`; // 如果之不存在则中间使用空格隔开
+    }, "/IN");
+    QRcodeText += `${text}|${phone}`;
+    i += 1;
+  }
+  return QRcodeText;
+});

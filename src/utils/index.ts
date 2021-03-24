@@ -152,3 +152,10 @@ export const getCutterNameFromMenus = (
   );
   return sub?.name ?? subCategory;
 };
+
+/**
+ * 生成二维码图片
+ */
+export function generationQRcode(/* text: string */) {
+  //
+}

@@ -5,45 +5,37 @@
  */
 
 import { isFulfilled, isRejected } from "@reduxjs/toolkit";
-import { Col, Row, Spin, Table } from "antd";
+import { Button, Col, Row, Spin, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+import { getCutterDataIndexs } from "store/modules/form";
 import { errorMsg } from "store/modules/global";
 import {
+  createQRcode,
   historyOrderDetail,
   OrderItemsType,
   SubmitOrderType,
 } from "store/modules/order";
 import { getCutterNameFromMenus } from "utils/index";
-import { getCutterDataIndexs } from "store/modules/form";
-import orderDetailState from "./model";
+import * as QRcode from "qrcode.react";
+import { Buffer } from "buffer";
 import styles from "./index.module.scss";
+import orderDetailState from "./model";
 
 const OrderDetail: FC = () => {
   const param = useParams<{ orderNo: string }>();
   const state = useSelector(orderDetailState);
   const [dataSource, setDataSource] = useState<SubmitOrderType>();
   const [loading, setLoading] = useState(true);
-  const [dataIndexList, setDataIndexList] = useState<Record<number, string[]>>(
-    {}
-  );
+  const [qrCodeText, setQRcodeText] = useState("");
   const dispatch = useDispatch();
+  const history = useHistory();
 
-  const getDataIndexList = useCallback(
-    async (subCategoryList: number[]) => {
-      const action = await dispatch(getCutterDataIndexs(subCategoryList));
-      if (isFulfilled(action)) {
-        setDataIndexList(action.payload as Record<number, string[]>);
-      }
-      if (isRejected(action)) {
-        dispatch(errorMsg("生成二维失败"));
-      }
-    },
-    [dispatch]
-  );
-
+  /**
+   * 获取当前页面的信息数据
+   */
   const getData = useCallback(async () => {
     const actions = await dispatch(historyOrderDetail(param.orderNo));
     if (isRejected(actions)) {
@@ -53,15 +45,31 @@ const OrderDetail: FC = () => {
     if (isFulfilled(actions)) {
       const payload = actions.payload as SubmitOrderType;
       const subCategoryList = payload.orders.map((item) => item.subCategory);
-      await getDataIndexList(subCategoryList);
+      await dispatch(getCutterDataIndexs(subCategoryList));
       setDataSource(payload);
       setLoading(false);
     }
-  }, [dispatch, getDataIndexList, param.orderNo]);
+  }, [dispatch, param.orderNo]);
+
+  /**
+   * 生成二维的文本内容
+   */
+  const QRcodeText = useCallback(async () => {
+    const result = await dispatch(createQRcode(dataSource?.orders));
+    if (isFulfilled(result)) {
+      const text = result.payload as string;
+      const textBase64 = Buffer.from(text, "utf8").toString("base64");
+      setQRcodeText(textBase64);
+    }
+  }, [dataSource?.orders, dispatch]);
 
   useEffect(() => {
     getData();
   }, [getData]);
+
+  useEffect(() => {
+    QRcodeText();
+  }, [QRcodeText]);
 
   const columns = useMemo(() => {
     const columnsTypes: ColumnsType<OrderItemsType> = [
@@ -104,6 +112,10 @@ const OrderDetail: FC = () => {
     return columnsTypes;
   }, [state.cutters]);
 
+  const goBack = () => {
+    history.goBack();
+  };
+
   return (
     <Spin spinning={loading}>
       {dataSource ? (
@@ -117,7 +129,37 @@ const OrderDetail: FC = () => {
         rowKey="orderNumber"
         columns={columns}
         dataSource={dataSource?.orders}
+        scroll={{ x: true }}
+        pagination={false}
       />
+      <QRcode
+        className={styles.QRCode}
+        value={qrCodeText}
+        renderAs="svg"
+        width="auto"
+        height="auto"
+      />
+      <Row justify="center" gutter={[16, 16]}>
+        <Col xs={12} sm={6} md={5} lg={4}>
+          <Button className={styles.btns} type="primary">
+            打印
+          </Button>
+        </Col>
+        <Col xs={12} sm={6} md={5} lg={4}>
+          <Button className={styles.btns} type="ghost" onClick={goBack}>
+            返回
+          </Button>
+        </Col>
+        <Col span={24}>
+          <Row justify="center" gutter={[16, 16]}>
+            <Col xs={24} sm={12} md={10} lg={8}>
+              <Button className={styles.btns} type="primary">
+                导出pdf
+              </Button>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
     </Spin>
   );
 };

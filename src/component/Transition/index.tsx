@@ -25,21 +25,25 @@ const Transition: FC<Props> = ({ location, children }) => {
     pathname = location.pathname;
   }
 
-  return children ? (
-    <SwitchTransition mode="out-in">
-      <CSSTransition
-        nodeRef={nodeRef}
-        key={pathname}
-        timeout={300}
-        classNames="fade"
-        unmountOnExit
-      >
-        <div className="page" ref={nodeRef}>
-          {children}
-        </div>
-      </CSSTransition>
-    </SwitchTransition>
-  ) : null;
+  return (
+    <>
+      {children ? (
+        <SwitchTransition mode="out-in">
+          <CSSTransition
+            nodeRef={nodeRef}
+            key={pathname}
+            timeout={300}
+            classNames="fade"
+            unmountOnExit
+          >
+            <div className="page" ref={nodeRef}>
+              {children}
+            </div>
+          </CSSTransition>
+        </SwitchTransition>
+      ) : null}
+    </>
+  );
 };
 
 export default Transition;

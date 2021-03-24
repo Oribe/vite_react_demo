@@ -30,6 +30,7 @@ export interface OrderItemsType {
   subCategory: number;
   manufacturer: string;
   quantity: number;
+  [key: string]: unknown;
 }
 
 export interface SubmitOrderType {

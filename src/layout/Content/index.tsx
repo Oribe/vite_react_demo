@@ -1,4 +1,5 @@
 import { Layout } from "antd";
+import Footer from "layout/Footer";
 import React, { FC } from "react";
 import SwitchRouter from "route/Switch";
 import { NavRouter, redirctRouter } from "../../route";
@@ -30,6 +31,7 @@ const Content: FC<Props> = ({ routers }) => {
       <div className={style.content}>
         <SwitchRouter routers={routers} redirect={redirctRouter} />
       </div>
+      <Footer />
     </Wrapper>
   );
 };

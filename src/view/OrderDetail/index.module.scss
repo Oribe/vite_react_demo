@@ -4,3 +4,24 @@
   color: #666;
   margin: 10px 0;
 }
+
+@media screen and (max-width: 750px) {
+  .orderInfoTitle {
+    font-weight: bold;
+    font-size: 18px;
+    color: #666;
+    margin: 10px 0;
+  }
+}
+
+.QRCode {
+  max-width: 350px;
+  width: auto;
+  height: auto;
+  margin: 20px auto;
+  display: block;
+}
+
+.btns {
+  width: 100%;
+}
