@@ -79,4 +79,10 @@
     font-size: 16px;
     padding-left: 16px;
   }
-} ;
+}
+
+@media print {
+  .header {
+    display: none;
+  }
+}

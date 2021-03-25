@@ -1,7 +1,7 @@
 import { AutoComplete, Input, Select } from "antd";
 import Complex from "component/Complex";
 import ImgSelect from "component/ImgSelect";
-import { isFunction } from "lodash";
+import { debounce, isFunction } from "lodash";
 import React, {
   ChangeEvent,
   FC,
@@ -62,7 +62,7 @@ const RenderComponent: FC<Props> = ({
       const { onSearch } = func;
       const handleOnSearch = async (v: string) => {
         const response = (await onSearch(v)) as undefined;
-        console.log("response", response);
+        // console.log("response", response);
         setOpts(response);
       };
       setFuncs(

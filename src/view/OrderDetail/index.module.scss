@@ -25,3 +25,12 @@
 .btns {
   width: 100%;
 }
+
+@media print {
+  .btnsWrapper {
+    display: none;
+  }
+  .orderInfoTitle {
+    font-size: 14px;
+  }
+}

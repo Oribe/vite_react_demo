@@ -7,7 +7,14 @@
 import { isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { Button, Col, Row, Spin, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { getCutterDataIndexs } from "store/modules/form";
@@ -21,6 +28,7 @@ import {
 import { getCutterNameFromMenus } from "utils/index";
 import * as QRcode from "qrcode.react";
 import { Buffer } from "buffer";
+import { htmlToImage } from "utils/pdf";
 import styles from "./index.module.scss";
 import orderDetailState from "./model";
 
@@ -32,6 +40,8 @@ const OrderDetail: FC = () => {
   const [qrCodeText, setQRcodeText] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const pdfContent = useRef<any>();
 
   /**
    * 获取当前页面的信息数据
@@ -112,36 +122,49 @@ const OrderDetail: FC = () => {
     return columnsTypes;
   }, [state.cutters]);
 
+  /**
+   * 返回上一页
+   */
   const goBack = () => {
     history.goBack();
   };
 
+  /**
+   * 打印
+   */
+  const onPrint = () => {
+    window.print();
+  };
+
+  /**
+   * 导出pdf
+   */
+  const onExportPDF = () => {
+    htmlToImage(pdfContent.current);
+  };
+
   return (
     <Spin spinning={loading}>
-      {dataSource ? (
+      <div id="pdf" ref={pdfContent}>
         <Row className={styles.orderInfoTitle} justify="space-between">
           <Col>订单流水号:{dataSource?.orderNo}</Col>
           <Col>供应商:{dataSource?.supplier}</Col>
-          <Col>创建日期:{dataSource?.createAt}</Col>
+          <Col>创建日期:{dataSource?.createAt?.split(" ")[0]}</Col>
         </Row>
-      ) : null}
-      <Table
-        rowKey="orderNumber"
-        columns={columns}
-        dataSource={dataSource?.orders}
-        scroll={{ x: true }}
-        pagination={false}
-      />
-      <QRcode
-        className={styles.QRCode}
-        value={qrCodeText}
-        renderAs="svg"
-        width="auto"
-        height="auto"
-      />
-      <Row justify="center" gutter={[16, 16]}>
+        <Table
+          rowKey="orderNumber"
+          columns={columns}
+          dataSource={dataSource?.orders}
+          scroll={{ x: true }}
+          pagination={false}
+        />
+        {qrCodeText ? (
+          <QRcode className={styles.QRCode} value={qrCodeText} />
+        ) : null}
+      </div>
+      <Row className={styles.btnsWrapper} justify="center" gutter={[16, 16]}>
         <Col xs={12} sm={6} md={5} lg={4}>
-          <Button className={styles.btns} type="primary">
+          <Button className={styles.btns} type="primary" onClick={onPrint}>
             打印
           </Button>
         </Col>
@@ -153,7 +176,11 @@ const OrderDetail: FC = () => {
         <Col span={24}>
           <Row justify="center" gutter={[16, 16]}>
             <Col xs={24} sm={12} md={10} lg={8}>
-              <Button className={styles.btns} type="primary">
+              <Button
+                className={styles.btns}
+                type="primary"
+                onClick={onExportPDF}
+              >
                 导出pdf
               </Button>
             </Col>
