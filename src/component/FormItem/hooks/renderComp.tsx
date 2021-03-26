@@ -60,11 +60,11 @@ const RenderComponent: FC<Props> = ({
   useEffect(() => {
     if (func && func.onSearch && isFunction(func.onSearch)) {
       const { onSearch } = func;
-      const handleOnSearch = async (v: string) => {
+      const handleOnSearch = debounce(async (v: string) => {
         const response = (await onSearch(v)) as undefined;
-        // console.log("response", response);
+        console.log("response", response);
         setOpts(response);
-      };
+      }, 1000);
       setFuncs(
         produce(func, (draft) => {
           Reflect.set(draft, "onSearch", handleOnSearch);

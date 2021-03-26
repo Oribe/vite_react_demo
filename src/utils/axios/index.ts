@@ -70,7 +70,7 @@ function createAxios(options: AxiosOptions = {}) {
     merge<AxiosOptions, AxiosOptions>(
       {
         baseURL: isProd ? "/tool/interface" : "/api/tool/interface",
-        timeout: 10 * 1000,
+        timeout: 30 * 1000,
         interceptors,
       },
       options

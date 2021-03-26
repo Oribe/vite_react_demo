@@ -8,7 +8,8 @@ import { isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { Col, message, Row } from "antd";
 import Form from "component/Form";
 import Menu from "component/Menu";
-import React, { FC, useEffect, useMemo } from "react";
+import { debounce } from "lodash";
+import React, { FC, useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
 import { createSelector } from "reselect";
@@ -69,20 +70,23 @@ const CutterForm: FC = () => {
   /**
    * 订货号搜索
    */
-  const onSearchOrderNumber = async (orderNumber = "") => {
-    const response = await dispatch(
-      searchOrderNumber({ orderNumber, subCategory: +params.subCategory })
-    );
-    if (isFulfilled(response)) {
-      const resData = response.payload as Cutter[];
-      const cutterOptions = resData.map((item) => ({
-        label: item.orderNumber,
-        value: JSON.stringify(item),
-      }));
-      return Promise.resolve(cutterOptions);
-    }
-    return Promise.resolve([]);
-  };
+  const onSearchOrderNumber = useCallback(
+    async (orderNumber = "") => {
+      const response = await dispatch(
+        searchOrderNumber({ orderNumber, subCategory: +params.subCategory })
+      );
+      if (isFulfilled(response)) {
+        const resData = response.payload as Cutter[];
+        const cutterOptions = resData.map((item) => ({
+          label: item.orderNumber,
+          value: JSON.stringify(item),
+        }));
+        return Promise.resolve(cutterOptions);
+      }
+      return Promise.resolve([]);
+    },
+    [dispatch, params.subCategory]
+  );
 
   /**
    *  收藏

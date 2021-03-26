@@ -1,12 +1,12 @@
 import { createAsyncThunk, isFulfilled, isRejected } from "@reduxjs/toolkit";
-import { message, Modal } from "antd";
+import { Modal } from "antd";
 import { produce } from "immer";
 import { Key } from "react";
 import { RootReducer, ThunkApiConfig } from "store/store";
 import { collectionApi, cutterApi, orderApi } from "utils/api";
 import { createActions } from "utils/index";
 import { FormMenu } from "../form";
-import { errorMsg, successMsg } from "../global";
+import { errorMsg, successMsg, warningMsg } from "../global";
 import {
   Cutter,
   HistoryParamType,
@@ -86,11 +86,17 @@ export const processCutter = (cutter: Cutter, getState: () => unknown) => {
 /**
  * 添加到订单列表
  */
-export const addToOrderList = createAsyncThunk<Cutter, Cutter>(
+export const addToOrderList = createAsyncThunk<Cutter, Cutter, ThunkApiConfig>(
   createActions(ACTION_TYPES.ADD_ORDER_LIST, ACTION_PREFIX_ORDER).type,
-  async (order, { getState }) => {
+  async (order, { getState, dispatch }) => {
     const newOrder = await processCutter(order, getState);
     await cutterApi.save(newOrder);
+    const orderListLen = getState().order.orderList.length;
+    if (orderListLen >= 8) {
+      const message = "刀具数量不能超过8条";
+      dispatch(warningMsg(message));
+      return Promise.reject(message);
+    }
     return newOrder;
   }
 );
@@ -169,29 +175,33 @@ export const addListToOrderList = createAsyncThunk<Cutter[], Cutter[]>(
  */
 export const collection = createAsyncThunk<void, Cutter[]>(
   createActions(ACTION_TYPES.ORDER_COLLECTION, ACTION_PREFIX_ORDER).type,
-  async (cutterList, { getState }) => {
+  async (cutterList, { getState, dispatch }) => {
     const newCutterList: (Cutter | Promise<Cutter>)[] = [];
     for (let i = 0; i < cutterList.length; i += 1) {
+      const cutter = cutterList[i];
+      delete cutter.quantity;
+      delete cutter.createAt;
+      delete cutter.updateAt;
       if (cutterList[i].category) {
-        newCutterList.push(cutterList[i]);
+        newCutterList.push(cutter);
       } else {
-        newCutterList.push(processCutter(cutterList[i], getState));
+        newCutterList.push(processCutter(cutter, getState));
       }
     }
     try {
       await Promise.all(newCutterList);
     } catch (e) {
-      message.error("收藏失败");
+      dispatch(errorMsg("收藏失败"));
       return;
     }
     collectionApi
       .save(newCutterList)
       .then(() => {
-        message.success("收藏成功");
+        dispatch(successMsg("收藏成功"));
       })
       .catch((error) => {
-        console.log(error);
-        message.error(error?.message ?? "收藏失败");
+        // console.log(error);
+        dispatch(errorMsg(error?.message ?? "收藏失败"));
       });
   }
 );

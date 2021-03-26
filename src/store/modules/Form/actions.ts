@@ -1,4 +1,4 @@
-import { createAsyncThunk, isFulfilled } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { isEmpty } from "lodash-es";
 import { RootReducer, ThunkApiConfig } from "store/store";
 import { cutterApi, formApi } from "utils/api";
