@@ -1,6 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Key } from "react";
-import { addListToOrderList, addToOrderList, getHistoryOrder } from "./actions";
+import {
+  addListToOrderList,
+  addToOrderList,
+  getHistoryOrder,
+  getUncompletedOrders,
+  orderListSubmit,
+  saveUncompletedOrders,
+} from "./actions";
 import { Cutter } from "./interface";
 import orderState from "./state";
 
@@ -43,6 +50,7 @@ const orderSlice = createSlice({
     },
   },
   extraReducers: ({ addCase }) => {
+    // 添加到订单列表中
     addCase(addToOrderList.fulfilled, (state, action) => {
       const newState = state;
       if (action.payload) {
@@ -71,6 +79,20 @@ const orderSlice = createSlice({
       newState.orderList = action.payload;
       return newState;
     });
+    // 提交订单
+    addCase(orderListSubmit.pending, (state) => ({
+      ...state,
+      orderListLoading: true,
+    }))
+      .addCase(orderListSubmit.fulfilled, (state) => ({
+        ...state,
+        orderListLoading: false,
+      }))
+      .addCase(orderListSubmit.rejected, (state) => ({
+        ...state,
+        orderListLoading: false,
+      }));
+    // 获取历史
     addCase(getHistoryOrder.pending, (state) => {
       const { history } = state;
       history.loading = true;
@@ -85,6 +107,35 @@ const orderSlice = createSlice({
         history.loading = false;
         history.data = action.payload;
       });
+    // 获取为完成
+    addCase(getUncompletedOrders.pending, (state) => {
+      const { uncompleted } = state;
+      uncompleted.loading = true;
+    })
+      .addCase(getUncompletedOrders.rejected, (state) => {
+        const { uncompleted } = state;
+        uncompleted.loading = false;
+        uncompleted.data = [];
+      })
+      .addCase(getUncompletedOrders.fulfilled, (state, action) => {
+        const { uncompleted } = state;
+        uncompleted.loading = false;
+        uncompleted.data = action.payload;
+      });
+    // 保存为未完成订单
+    addCase(saveUncompletedOrders.pending, (state) => ({
+      ...state,
+      orderListLoading: true,
+    }))
+      .addCase(saveUncompletedOrders.fulfilled, (state) => ({
+        ...state,
+        orderListLoading: false,
+        orderList: [],
+      }))
+      .addCase(saveUncompletedOrders.rejected, (state) => ({
+        ...state,
+        orderListLoading: false,
+      }));
   },
 });
 

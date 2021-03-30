@@ -2,8 +2,8 @@ import { Button, Col, DatePicker, Row, Space } from "antd";
 import React, { FC, memo, useState } from "react";
 import styles from "./index.module.scss";
 
-const Search: FC<Props> = (props) => {
-  const { onSearch, onChange, onRecreate } = props;
+const Search: FC<Props> = memo((props) => {
+  const { onSearch, onChange, children } = props;
   const [startTime, setStartTime] = useState<string>();
   const [endTime, setEndTime] = useState<string>();
 
@@ -50,22 +50,19 @@ const Search: FC<Props> = (props) => {
             <Button type="primary" onClick={onSearch}>
               查看
             </Button>
-            <Button type="primary" onClick={onRecreate}>
-              续建订单
-            </Button>
+            {children}
           </Space>
         </Row>
       </Col>
     </Row>
   );
-};
+});
 
-export default memo(Search);
+export default Search;
 
 interface Props {
   onSearch?: (param: unknown) => void;
   onChange?: (value: { startTime?: string; endTime?: string }) => void;
-  onRecreate?: () => void;
 }
 
 export interface TimeRange {

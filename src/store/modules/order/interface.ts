@@ -2,14 +2,20 @@
  * 订单State
  */
 export interface OrderState {
+  orderListLoading: boolean;
   orderList: Cutter[];
   history: {
     loading: boolean;
     data: HistoryOrder[];
   };
+  uncompleted: {
+    loading: boolean;
+    data: UncompletedOrder[];
+  };
 }
 
 export type HistoryOrder = SubmitOrderType;
+export type UncompletedOrder = SubmitOrderType;
 
 /**
  * 刀具信息
@@ -24,13 +30,10 @@ export interface Cutter {
 /**
  * 提交的订单信息中的刀具信息
  */
-export interface OrderItemsType {
-  orderNumber: string;
-  category: number;
-  subCategory: number;
+export interface OrderItemsType extends Cutter {
   manufacturer: string;
   quantity: number;
-  [key: string]: unknown;
+  [key: string]: string | number;
 }
 
 export interface SubmitOrderType {
@@ -49,6 +52,11 @@ export interface SubmitOrderType {
 }
 
 export interface HistoryParamType {
+  startTime?: string;
+  endTime?: string;
+}
+
+export interface TimeRangeParam {
   startTime?: string;
   endTime?: string;
 }

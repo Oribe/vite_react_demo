@@ -12,6 +12,8 @@ import {
   HistoryParamType,
   OrderItemsType,
   SubmitOrderType,
+  TimeRangeParam,
+  UncompletedOrder,
 } from "./interface";
 
 const { confirm } = Modal;
@@ -206,30 +208,35 @@ export const collection = createAsyncThunk<void, Cutter[]>(
   }
 );
 
+const generateOrderInfo = (orderList: Cutter[]) => {
+  const modelNumber = orderList.length;
+  const quantity = orderList.reduce<number>((count, current) => {
+    let total = count;
+    total += +current?.quantity;
+    return total;
+  }, 0);
+  const orders = orderList.map((item) => ({
+    orderNumber: item.orderNumber,
+    category: item.category,
+    subCategory: item.subCategory,
+    manufacturer: item.manufacturer,
+    quantity: item.quantity,
+  }));
+  const body = {
+    modelNumber,
+    quantity,
+    orders,
+  };
+  return body;
+};
+
 /**
  * 提交
  */
 export const orderListSubmit = createAsyncThunk<{ orderNo: string }, Cutter[]>(
   createActions(ACTION_TYPES.ORDER_LIST_SUBMIT).type,
   async (orderList) => {
-    const modelNumber = orderList.length;
-    const quantity = orderList.reduce<number>((count, current) => {
-      let total = count;
-      total += +current?.quantity;
-      return total;
-    }, 0);
-    const orders = orderList.map((item) => ({
-      orderNumber: item.orderNumber,
-      category: item.category,
-      subCategory: item.subCategory,
-      manufacturer: item.manufacturer,
-      quantity: item.quantity,
-    }));
-    const body = {
-      modelNumber,
-      quantity,
-      orders,
-    };
+    const body = generateOrderInfo(orderList);
     const response = await orderApi.submit<{ orderNo: string }>(body);
     return response;
   }
@@ -255,7 +262,7 @@ export const getHistoryOrder = createAsyncThunk<
 export const historyOrderDetail = createAsyncThunk(
   createActions(ACTION_TYPES.HISTORY_ORDER_DETAIL, ACTION_PREFIX_ORDER).type,
   async (orderNo: Key) => {
-    const response = await orderApi.detail<Cutter[]>({ orderNo });
+    const response = await orderApi.detail<SubmitOrderType>({ orderNo });
     return response;
   }
 );
@@ -271,7 +278,9 @@ export const recreateOrder = createAsyncThunk<void, Key>(
       dispatch(errorMsg(actions.error.message || "续建失败"));
     }
     if (isFulfilled(actions)) {
-      const addResult = await dispatch(addListToOrderList(actions.payload));
+      const addResult = await dispatch(
+        addListToOrderList(actions.payload.orders)
+      );
       if (isFulfilled(addResult)) {
         dispatch(successMsg("续建成功"));
       }
@@ -310,4 +319,27 @@ export const createQRcode = createAsyncThunk<
     i += 1;
   }
   return QRcodeText;
+});
+
+/**
+ * 查询未完成订单
+ */
+export const getUncompletedOrders = createAsyncThunk<
+  UncompletedOrder[],
+  TimeRangeParam
+>("order/getUncompletedOrders", async (param) => {
+  const response = await orderApi.cache<UncompletedOrder[]>({ ...param });
+  return response;
+});
+
+/**
+ * 订单暂存为未完成订单
+ */
+export const saveUncompletedOrders = createAsyncThunk<
+  { orderNo: string },
+  Cutter[]
+>("order/saveUncompletedOrders", async (orderList) => {
+  const body = generateOrderInfo(orderList);
+  const response = await orderApi.cacheSave<{ orderNo: string }>(body);
+  return response;
 });

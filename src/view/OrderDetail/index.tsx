@@ -159,7 +159,13 @@ const OrderDetail: FC = () => {
           pagination={false}
         />
         {qrCodeText ? (
-          <QRcode className={styles.QRCode} value={qrCodeText} />
+          <QRcode
+            className={styles.QRCode}
+            value={qrCodeText}
+            renderAs="canvas"
+            size={350}
+            level="L"
+          />
         ) : null}
       </div>
       <Row className={styles.btnsWrapper} justify="center" gutter={[16, 16]}>

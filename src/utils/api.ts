@@ -41,6 +41,8 @@ export const orderApi = createAxiosGroup({
   submit: { url: "/order", method: "POST" },
   search: { url: "/order", method: "GET" },
   detail: { url: "/order/complete", method: "GET" },
+  cache: { url: "/order/cache", method: "GET" },
+  cacheSave: { url: "/order/cache", method: "POST" },
 });
 
 /**

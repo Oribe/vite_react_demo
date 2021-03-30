@@ -13,6 +13,7 @@ import { isEmpty } from "lodash-es";
 import React, { FC, Key, useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
+import { errorMsg, successMsg } from "store/modules/global";
 import {
   clearOrderList,
   collection,
@@ -20,6 +21,7 @@ import {
   deletedOrderAction,
   orderListSubmit,
   quantityChangeSave,
+  saveUncompletedOrders,
 } from "store/modules/order";
 import EditableCell from "./components/editableCell";
 import EditableRow from "./components/editableRow";
@@ -133,7 +135,7 @@ const Order: FC = () => {
   /**
    * 删除
    */
-  const handleDeletedOrder = () => {
+  const handleDeletedOrder = useCallback(() => {
     if (selectedRows.length <= 0) {
       message.warning("请先选择要删除的刀具");
       return;
@@ -148,7 +150,7 @@ const Order: FC = () => {
       return;
     }
     message.success("删除失败");
-  };
+  }, [dispatch, orderState.orderList, selectedRows]);
 
   /**
    * 选项
@@ -163,7 +165,7 @@ const Order: FC = () => {
   /**
    * 收藏
    */
-  const handleOrderListCollection = async () => {
+  const handleOrderListCollection = useCallback(async () => {
     if (selectedRows.length <= 0) {
       message.warning("请先选择要收藏的刀具");
       return;
@@ -182,7 +184,7 @@ const Order: FC = () => {
       return;
     }
     dispatch(collection(willCollectionCutters));
-  };
+  }, [dispatch, orderState.orderList, selectedRows]);
 
   /**
    *
@@ -203,7 +205,7 @@ const Order: FC = () => {
   /**
    * 提交
    */
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const result = await handleValidate();
     if (!result) {
       message.warning("请将数量填写完整");
@@ -222,47 +224,78 @@ const Order: FC = () => {
     if (isRejected(response)) {
       message.error("提交失败");
     }
-  };
+  }, [dispatch, history, orderState.orderList]);
+
+  /**
+   * 暂存
+   */
+  const handleSave = useCallback(async () => {
+    const result = await handleValidate();
+    if (!result) {
+      message.warning("请将数量填写完整");
+      return;
+    }
+    const action = await dispatch(saveUncompletedOrders(orderState.orderList));
+    if (isFulfilled(action)) {
+      dispatch(successMsg("保存成功"));
+    }
+    if (isRejected(action)) {
+      dispatch(errorMsg("保存失败"));
+    }
+  }, [dispatch, orderState.orderList]);
 
   /**
    * 按钮组配置
    */
-  const buttons: ButtonTypes[] = [
-    {
-      label: "添加",
-      href: "/order/add/257",
-    },
-    {
-      label: "收藏夹导入",
-    },
-    {
-      label: "文件导入",
-    },
-    {
-      label: "收藏",
-      onClick: handleOrderListCollection,
-      disabled: selectedRows.length <= 0,
-    },
-    {
-      label: "删除",
-      onClick: handleDeletedOrder,
-      disabled: selectedRows.length <= 0,
-    },
-    {
-      label: "暂存",
-    },
-    {
-      label: "提交",
-      type: "ghost",
-      className: style.submitBut,
-      onClick: handleSubmit,
-    },
-    {
-      label: "下载文件示例",
-      type: "link",
-      className: style.downloadBut,
-    },
-  ];
+  const buttons: ButtonTypes[] = useMemo(
+    () => [
+      {
+        label: "添加",
+        href: "/order/add/257",
+      },
+      {
+        label: "收藏夹导入",
+      },
+      {
+        label: "文件导入",
+      },
+      {
+        label: "收藏",
+        onClick: handleOrderListCollection,
+        disabled: selectedRows.length <= 0,
+      },
+      {
+        label: "删除",
+        onClick: handleDeletedOrder,
+        disabled: selectedRows.length <= 0,
+      },
+      {
+        label: "暂存",
+        onClick: handleSave,
+        disabled: orderState.orderList.length <= 0,
+      },
+      {
+        label: "提交",
+        type: "ghost",
+        className: style.submitBut,
+        onClick: handleSubmit,
+        disabled: orderState.orderList.length <= 0,
+      },
+      {
+        label: "下载文件示例",
+        type: "link",
+        className: style.downloadBut,
+      },
+    ],
+    [
+      handleDeletedOrder,
+      handleOrderListCollection,
+      handleSave,
+      handleSubmit,
+      orderState.orderList.length,
+      selectedRows.length,
+    ]
+  );
 
   /**
    * 替换table中的内容
