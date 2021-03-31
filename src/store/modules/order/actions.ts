@@ -4,6 +4,7 @@ import { produce } from "immer";
 import { Key } from "react";
 import { RootReducer, ThunkApiConfig } from "store/store";
 import { collectionApi, cutterApi, orderApi } from "utils/api";
+import { Interceptors } from "utils/axios";
 import { createActions } from "utils/index";
 import { FormMenu } from "../form";
 import { errorMsg, successMsg, warningMsg } from "../global";
@@ -30,6 +31,7 @@ export const ACTION_TYPES = {
   GET_HISTORY_ORDER: "GET_HISTORY_ORDER",
   HISTORY_ORDER_DETAIL: "HISTORY_ORDER_DETAIL",
   HISTORY_ORDER_RECREATE: "HISTORY_ORDER_RECREATE",
+  UNCOMPLETED_TABLE_STATUS: "UNCOMPLETED_TABLE_STATUS",
 };
 
 interface SearchOrderNumberQuery {
@@ -243,20 +245,6 @@ export const orderListSubmit = createAsyncThunk<{ orderNo: string }, Cutter[]>(
 );
 
 /**
- * 查询历史订单
- */
-export const getHistoryOrder = createAsyncThunk<
-  SubmitOrderType[],
-  HistoryParamType
->(
-  createActions(ACTION_TYPES.GET_HISTORY_ORDER, ACTION_PREFIX_ORDER).type,
-  async (param) => {
-    const response = await orderApi.search<SubmitOrderType[]>({ ...param });
-    return response;
-  }
-);
-
-/**
  * 获取订单完整信息
  */
 export const historyOrderDetail = createAsyncThunk(
@@ -322,6 +310,32 @@ export const createQRcode = createAsyncThunk<
 });
 
 /**
+ * 订单暂存为未完成订单
+ */
+export const saveUncompletedOrders = createAsyncThunk<
+  { orderNo: string },
+  Cutter[]
+>("order/saveUncompletedOrders", async (orderList) => {
+  const body = generateOrderInfo(orderList);
+  const response = await orderApi.cacheSave<{ orderNo: string }>(body);
+  return response;
+});
+
+/**
+ * 查询历史订单
+ */
+export const getHistoryOrder = createAsyncThunk<
+  SubmitOrderType[],
+  HistoryParamType
+>(
+  createActions(ACTION_TYPES.GET_HISTORY_ORDER, ACTION_PREFIX_ORDER).type,
+  async (param) => {
+    const response = await orderApi.search<SubmitOrderType[]>({ ...param });
+    return response;
+  }
+);
+
+/**
  * 查询未完成订单
  */
 export const getUncompletedOrders = createAsyncThunk<
@@ -333,13 +347,54 @@ export const getUncompletedOrders = createAsyncThunk<
 });
 
 /**
- * 订单暂存为未完成订单
+ *  删除暂存订单
  */
-export const saveUncompletedOrders = createAsyncThunk<
-  { orderNo: string },
-  Cutter[]
->("order/saveUncompletedOrders", async (orderList) => {
-  const body = generateOrderInfo(orderList);
-  const response = await orderApi.cacheSave<{ orderNo: string }>(body);
-  return response;
-});
+export const deleteUncompletedOrders = createAsyncThunk(
+  "order/deleteUncompletedOrders",
+  async (ids: Key[], { dispatch }) => {
+    if (ids.length <= 0) {
+      dispatch(warningMsg("请先选择一条订单"));
+      return Promise.reject();
+    }
+    const interceptors: Interceptors = {
+      responseCatchHook() {
+        dispatch(errorMsg("删除失败"));
+      },
+    };
+    await orderApi.cacheDeleted({ ids }, { interceptors });
+    dispatch(errorMsg("删除成功"));
+    return ids;
+  }
+);
+
+/**
+ * 提交未完成订单
+ */
+export const submitUncompletedOrder = createAsyncThunk(
+  "order/submitUncompletedOrder",
+  async (ids: Key[], { dispatch }) => {
+    if (ids.length <= 0) {
+      dispatch(warningMsg("请先选择一条订单"));
+      return Promise.reject();
+    }
+    const changeTableStatus = (status: boolean) =>
+      dispatch({
+        type: createActions(
+          ACTION_TYPES.UNCOMPLETED_TABLE_STATUS,
+          ACTION_PREFIX_ORDER
+        ).type,
+        payload: status,
+      });
+    changeTableStatus(true);
+    const interceptors: Interceptors = {
+      responseCatchHook() {
+        dispatch(errorMsg("提交失败"));
+        changeTableStatus(false);
+      },
+    };
+    await orderApi.cacheSubmit({ ids }, { interceptors });
+    dispatch(successMsg("提交成功"));
+    changeTableStatus(false);
+    return ids;
+  }
+);

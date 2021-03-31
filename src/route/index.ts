@@ -52,7 +52,7 @@ export { beforeRouterEnter, beforeRouterLeave } from "./guard";
 export const navRouter: NavRouter[] = [
   {
     label: "新建订单",
-    path: "/order",
+    path: ["/order", "/uncompleted/:orderNo"],
     component: asyncLoader(() => import("view/Order")),
   },
   {
@@ -71,11 +71,13 @@ export const navRouter: NavRouter[] = [
     component: asyncLoader(() => import("view/Collection")),
   },
   {
+    label: "表单",
     path: ["/order/edit/:subCategory", "/order/add/:subCategory"],
     component: asyncLoader(() => import("view/Form")),
     isMenu: false,
   },
   {
+    label: "二维码",
     path: ["/order/:orderNo", "/history/:orderNo"],
     component: asyncLoader(() => import("view/OrderDetail")),
     isMenu: false,

@@ -23,10 +23,6 @@ const MenuItem: FC<MenuItemProps> = ({
     [label]
   );
 
-  if (Array.isArray(path)) {
-    return null;
-  }
-
   return (
     <Item
       className={`${className} ${styles.menuItem}`}
@@ -46,7 +42,7 @@ const MenuItem: FC<MenuItemProps> = ({
           activeStyle={activeStyle}
           activeClassName={activeClassName}
           strict
-          to={path}
+          to={Array.isArray(path) ? path[0] : path}
         >
           {navbarLabel}
         </NavLink>

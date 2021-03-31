@@ -1,6 +1,7 @@
 import { ButtonGroupProps } from "antd/lib/button";
 import { ColumnType } from "antd/lib/table";
 import { createSelector } from "reselect";
+import { beforeRouterEnter } from "route/guard";
 import { RootReducer } from "store/index";
 import { FormMenu, FormState } from "store/modules/form";
 import { OrderState } from "store/modules/order";
@@ -16,9 +17,18 @@ export const buttonConfig: ButtonGroupProps = {
   className: style.btnGroup,
 };
 
-interface OrderStateProps extends OrderState {
+interface OrderStateProps {
+  orderList: OrderState["orderList"];
+  orderListStatus: boolean;
   cutterCategory: FormMenu[];
 }
+
+/**
+ * 路由进入前
+ */
+beforeRouterEnter((history) => {
+  console.log("进入前", history);
+});
 
 export const orderStore = createSelector<
   RootReducer,
@@ -29,7 +39,8 @@ export const orderStore = createSelector<
   (store) => store.form,
   (store) => store.order,
   (form, order) => ({
-    ...order,
+    orderList: order.orderList,
+    orderListStatus: order.orderListLoading,
     cutterCategory: form.menu.data,
   })
 );

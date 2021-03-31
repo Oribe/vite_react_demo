@@ -1,8 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Key } from "react";
+import { createActions } from "utils/index";
 import {
+  ACTION_TYPES,
   addListToOrderList,
   addToOrderList,
+  deleteUncompletedOrders,
   getHistoryOrder,
   getUncompletedOrders,
   orderListSubmit,
@@ -47,6 +50,10 @@ const orderSlice = createSlice({
       const newState = state;
       newState.orderList = [];
       return newState;
+    },
+    [createActions(ACTION_TYPES.UNCOMPLETED_TABLE_STATUS).type](state, action) {
+      const { uncompleted } = state;
+      uncompleted.loading = action.payload;
     },
   },
   extraReducers: ({ addCase }) => {
@@ -136,6 +143,19 @@ const orderSlice = createSlice({
         ...state,
         orderListLoading: false,
       }));
+    // 删除暂存订单
+    addCase(deleteUncompletedOrders.pending, (state) => {
+      const { uncompleted } = state;
+      uncompleted.loading = true;
+    })
+      .addCase(deleteUncompletedOrders.rejected, (state) => {
+        const { uncompleted } = state;
+        uncompleted.loading = false;
+      })
+      .addCase(deleteUncompletedOrders.fulfilled, (state) => {
+        const { uncompleted } = state;
+        uncompleted.loading = true;
+      });
   },
 });
 

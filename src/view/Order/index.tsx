@@ -12,7 +12,7 @@ import produce from "immer";
 import { isEmpty } from "lodash-es";
 import React, { FC, Key, useCallback, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { errorMsg, successMsg } from "store/modules/global";
 import {
   clearOrderList,
@@ -37,6 +37,8 @@ const Order: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const cellFormRef = useRef<Map<string, FormInstance>>(new Map());
+
+  const params = useParams<{ orderNo?: string }>();
 
   /**
    * 修改熟练保存

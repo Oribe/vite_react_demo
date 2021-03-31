@@ -31,6 +31,13 @@ const Navbar: FC<Props> = (props) => {
     subMenuClassName,
   } = props;
 
+  const getKey = useCallback((key: string | string[] | undefined) => {
+    if (Array.isArray(key)) {
+      return key[0];
+    }
+    return key;
+  }, []);
+
   /**
    * 当页面刷新时，匹配当前菜单key
    */
@@ -38,29 +45,30 @@ const Navbar: FC<Props> = (props) => {
     (menuList: NavRouter[]) => {
       return menuList.reduce((keyList, menu) => {
         let newKeyList = keyList;
-        const { label, path, routers } = menu;
-        if (Array.isArray(path)) return keyList;
+        const { label, path, routers, isMenu } = menu;
+        if (Array.isArray(path) && isMenu === false) return keyList;
         if (routers) {
           const childrenKeyList = matchRouterKey(routers);
           if (childrenKeyList.length > 0) {
             /**
              * 子类中有匹配
              */
-            newKeyList = [...childrenKeyList, path ?? label ?? "", ...keyList];
+            newKeyList = [
+              ...childrenKeyList,
+              getKey(path ?? label) ?? "",
+              ...keyList,
+            ];
           }
-        } else if (
-          typeof path === "string" &&
-          location.pathname.includes(path)
-        ) {
+        } else if (location.pathname.includes(getKey(path) ?? "")) {
           /**
            * 无子类
            */
-          newKeyList.push(path ?? label ?? "");
+          newKeyList.push(getKey(path ?? label) ?? "");
         }
         return newKeyList;
       }, [] as string[]);
     },
-    [location.pathname]
+    [getKey, location.pathname]
   );
 
   useEffect(() => {
@@ -77,17 +85,16 @@ const Navbar: FC<Props> = (props) => {
       className={`${className} ${styles.antdMenu}`}
       style={style}
       mode={mode || "horizontal"}
-      selectedKeys={selectedKeys}
+      selectedKeys={matchRouterKey(menus)}
       triggerSubMenuAction="click"
     >
       {menus.map((menu) => {
         const { path, label, image, icon, routers, isMenu } = menu;
         if (isMenu === false) return null; // 非菜单
-        if (Array.isArray(path)) return null;
         if (routers) {
           return (
             <SubMenuComp
-              key={path ?? label}
+              key={getKey(path ?? label)}
               title={label}
               icon={
                 <>
@@ -96,7 +103,9 @@ const Navbar: FC<Props> = (props) => {
                 </>
               }
               className={`${subMenuClassName} ${
-                selectedKeys.includes(path ?? label ?? "") ? styles.active : ""
+                selectedKeys.includes(getKey(path ?? label) ?? "")
+                  ? styles.active
+                  : ""
               }`}
             >
               {routers.map((child) => {
@@ -120,7 +129,7 @@ const Navbar: FC<Props> = (props) => {
         }
         return (
           <MenuItem
-            key={path}
+            key={getKey(path)}
             path={path}
             label={label}
             image={image}

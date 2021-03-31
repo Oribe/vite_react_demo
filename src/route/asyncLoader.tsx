@@ -1,6 +1,7 @@
 import Loading from "component/Loading";
 import React, {
   ComponentType,
+  FC,
   lazy,
   Suspense,
   useCallback,
@@ -13,12 +14,12 @@ import { routerAction, RouterAction, routerInterceptors } from "./guard";
 const asyncLoader = <T extends ComponentType<unknown>>(
   loader: () => Promise<{ default: T }>
 ) => {
-  const LazyComponent = (props: any) => {
+  const LazyComponent: FC = (props) => {
     const history = useHistory();
     /**
      * 加载组件
      */
-    const Component = useMemo(() => lazy(loader), []);
+    const Component = useMemo<any>(() => lazy(loader), []);
 
     /**
      * 路由拦截拦截

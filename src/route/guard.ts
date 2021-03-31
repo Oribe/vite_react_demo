@@ -1,4 +1,4 @@
-import { History, State } from "history";
+import { History, LocationState } from "history";
 
 export const routerAction: Record<RouterAction, RouterAction> = {
   before: "before",
@@ -12,7 +12,7 @@ class RouterGuard {
   /**
    * 路由跳转进入下一个页面前
    */
-  static beforeEnter(interceptor: Interceptor) {
+  static beforeEnter<T>(interceptor: Interceptor) {
     const beforeInterceptors =
       routerInterceptors.get(routerAction.before) ?? [];
     routerInterceptors.set("before", [...beforeInterceptors, interceptor]);
@@ -31,4 +31,4 @@ export const beforeRouterEnter = RouterGuard.beforeEnter;
 export const beforeRouterLeave = RouterGuard.beforeLeave;
 
 export type RouterAction = "before" | "leave" | "update";
-export type Interceptor = (history: History<State>) => void;
+export type Interceptor = <T = LocationState>(history: History<T>) => void;
