@@ -7,17 +7,28 @@ import {
   addToOrderList,
   deleteUncompletedOrders,
   getHistoryOrder,
+  getHistoryOrderDetail,
   getUncompletedOrders,
   orderListSubmit,
   saveUncompletedOrders,
 } from "./actions";
 import { Cutter } from "./interface";
-import orderState from "./state";
+import orderState, { ORDER_LIST_CACHE } from "./state";
 
 const orderSlice = createSlice({
   name: "order",
   initialState: orderState,
   reducers: {
+    [createActions(ACTION_TYPES.UNCOMPLETED_TABLE_STATUS).type](state, action) {
+      const { uncompleted } = state;
+      uncompleted.loading = action.payload;
+    },
+    [createActions(ACTION_TYPES.ORDER_TABLE_STATUS).type](state, action) {
+      return {
+        ...state,
+        orderListLoading: action.payload,
+      };
+    },
     deletedOrderAction(state, action: PayloadAction<Key[]>) {
       const orderNumberList = action.payload;
       if (!orderNumberList) {
@@ -51,9 +62,30 @@ const orderSlice = createSlice({
       newState.orderList = [];
       return newState;
     },
-    [createActions(ACTION_TYPES.UNCOMPLETED_TABLE_STATUS).type](state, action) {
-      const { uncompleted } = state;
-      uncompleted.loading = action.payload;
+    /**
+     * 订单列表保存到缓存
+     */
+    saveOrderListToCache(state) {
+      const dataString = JSON.stringify(state.orderList);
+      sessionStorage.setItem(ORDER_LIST_CACHE, dataString);
+      return {
+        ...state,
+        orderList: [],
+      };
+    },
+    /**
+     * 从缓存中取出订单列表
+     */
+    getOrderListFromCache(state) {
+      const newState = state;
+      const dataString = sessionStorage.getItem(ORDER_LIST_CACHE);
+      let data: Cutter[] = [];
+      if (dataString) {
+        data = JSON.parse(dataString);
+      }
+      newState.orderList = data;
+      sessionStorage.removeItem(ORDER_LIST_CACHE);
+      return newState;
     },
   },
   extraReducers: ({ addCase }) => {
@@ -156,6 +188,13 @@ const orderSlice = createSlice({
         const { uncompleted } = state;
         uncompleted.loading = true;
       });
+    addCase(getHistoryOrderDetail.fulfilled, (state, action) => {
+      return {
+        ...state,
+        orderList: action.payload,
+        orderListLoading: false,
+      };
+    });
   },
 });
 
@@ -166,4 +205,6 @@ export const {
   deletedOrderAction,
   quantityChangeSave,
   clearOrderList,
+  getOrderListFromCache,
+  saveOrderListToCache,
 } = orderSlice.actions;

@@ -8,6 +8,7 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { routerAction, RouterAction, routerInterceptors } from "./guard";
 
@@ -16,29 +17,29 @@ const asyncLoader = <T extends ComponentType<unknown>>(
 ) => {
   const LazyComponent: FC = (props) => {
     const history = useHistory();
+    const dispatch = useDispatch();
     /**
      * 加载组件
      */
     const Component = useMemo<any>(() => lazy(loader), []);
-
     /**
      * 路由拦截拦截
      */
     const handleRouterInterceptors = useCallback(
-      (routerActionType: RouterAction) => {
+      async (routerActionType: RouterAction) => {
         const interceptors = routerInterceptors.get(routerActionType) || [];
         for (let i = 0; i < interceptors?.length; i += 1) {
-          interceptors[i](history);
+          interceptors[i]({ history }, dispatch);
         }
       },
-      [history]
+      [dispatch, history]
     );
 
     useEffect(() => {
-      handleRouterInterceptors(routerAction.before);
+      handleRouterInterceptors(routerAction.beforeMounted);
       // console.log("组件加载中");
       return () => {
-        handleRouterInterceptors(routerAction.leave);
+        handleRouterInterceptors(routerAction.beforeUnmounted);
         // console.log("组件卸载");
       };
     }, [handleRouterInterceptors]);

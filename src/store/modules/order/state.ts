@@ -14,3 +14,5 @@ const orderState: OrderState = {
 };
 
 export default orderState;
+
+export const ORDER_LIST_CACHE = "order_list_cache";

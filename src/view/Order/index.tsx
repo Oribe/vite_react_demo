@@ -10,7 +10,15 @@ import { TableRowSelection } from "antd/lib/table/interface";
 import ButtonGroups, { ButtonTypes } from "component/ButtonGroup";
 import produce from "immer";
 import { isEmpty } from "lodash-es";
-import React, { FC, Key, useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  FC,
+  Key,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { errorMsg, successMsg } from "store/modules/global";
@@ -19,6 +27,7 @@ import {
   collection,
   Cutter,
   deletedOrderAction,
+  getHistoryOrderDetail,
   orderListSubmit,
   quantityChangeSave,
   saveUncompletedOrders,
@@ -37,8 +46,14 @@ const Order: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const cellFormRef = useRef<Map<string, FormInstance>>(new Map());
-
   const params = useParams<{ orderNo?: string }>();
+
+  useEffect(() => {
+    const { orderNo } = params;
+    if (orderNo) {
+      dispatch(getHistoryOrderDetail(orderNo));
+    }
+  }, [dispatch, params]);
 
   /**
    * 修改熟练保存
@@ -118,10 +133,13 @@ const Order: FC = () => {
         title: "操作",
         align: "center",
         render(_, record) {
+          const { orderNo } = params;
           return (
             <Link
               to={{
-                pathname: `/order/edit/${record.subCategory}`,
+                pathname: `/${orderNo ? "uncompleted" : "add"}/edit/${
+                  record.subCategory
+                }`,
                 state: { orderNumber: record.orderNumber },
               }}
             >
@@ -132,7 +150,12 @@ const Order: FC = () => {
       },
     ];
     return cols.map((item) => ({ ...item, ...publicColumnsType }));
-  }, [handleTableChangeSave, orderState.cutterCategory, saveCellFormInstance]);
+  }, [
+    handleTableChangeSave,
+    orderState.cutterCategory,
+    params,
+    saveCellFormInstance,
+  ]);
 
   /**
    * 删除

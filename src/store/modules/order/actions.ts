@@ -1,4 +1,9 @@
-import { createAsyncThunk, isFulfilled, isRejected } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  Dispatch,
+  isFulfilled,
+  isRejected,
+} from "@reduxjs/toolkit";
 import { Modal } from "antd";
 import { produce } from "immer";
 import { Key } from "react";
@@ -32,6 +37,18 @@ export const ACTION_TYPES = {
   HISTORY_ORDER_DETAIL: "HISTORY_ORDER_DETAIL",
   HISTORY_ORDER_RECREATE: "HISTORY_ORDER_RECREATE",
   UNCOMPLETED_TABLE_STATUS: "UNCOMPLETED_TABLE_STATUS",
+  ORDER_TABLE_STATUS: "ORDER_TABLE_STATUS",
+};
+
+const changeTableStatus = (
+  dispatch: Dispatch,
+  actionType: string,
+  status: boolean
+) => {
+  dispatch({
+    type: createActions(actionType, ACTION_PREFIX_ORDER).type,
+    payload: status,
+  });
 };
 
 interface SearchOrderNumberQuery {
@@ -336,6 +353,26 @@ export const getHistoryOrder = createAsyncThunk<
 );
 
 /**
+ * 获取缓存订单详情
+ */
+export const getHistoryOrderDetail = createAsyncThunk(
+  "order/getHistoryOrderDetail",
+  async (orderNo: string, { dispatch }) => {
+    changeTableStatus(dispatch, ACTION_TYPES.ORDER_TABLE_STATUS, true);
+    const interceptors: Interceptors = {
+      responseCatchHook() {
+        changeTableStatus(dispatch, ACTION_TYPES.ORDER_TABLE_STATUS, false);
+      },
+    };
+    const response = await orderApi.cacheDetail<Cutter[]>(
+      { orderNo },
+      { interceptors }
+    );
+    return response;
+  }
+);
+
+/**
  * 查询未完成订单
  */
 export const getUncompletedOrders = createAsyncThunk<
@@ -377,24 +414,20 @@ export const submitUncompletedOrder = createAsyncThunk(
       dispatch(warningMsg("请先选择一条订单"));
       return Promise.reject();
     }
-    const changeTableStatus = (status: boolean) =>
-      dispatch({
-        type: createActions(
-          ACTION_TYPES.UNCOMPLETED_TABLE_STATUS,
-          ACTION_PREFIX_ORDER
-        ).type,
-        payload: status,
-      });
-    changeTableStatus(true);
+    changeTableStatus(dispatch, ACTION_TYPES.UNCOMPLETED_TABLE_STATUS, true);
     const interceptors: Interceptors = {
       responseCatchHook() {
         dispatch(errorMsg("提交失败"));
-        changeTableStatus(false);
+        changeTableStatus(
+          dispatch,
+          ACTION_TYPES.UNCOMPLETED_TABLE_STATUS,
+          false
+        );
       },
     };
     await orderApi.cacheSubmit({ ids }, { interceptors });
     dispatch(successMsg("提交成功"));
-    changeTableStatus(false);
+    changeTableStatus(dispatch, ACTION_TYPES.UNCOMPLETED_TABLE_STATUS, true);
     return ids;
   }
 );

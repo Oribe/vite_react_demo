@@ -1,6 +1,12 @@
 import { ImgHTMLAttributes } from "react";
 import { RedirectProps, RouteProps } from "react-router-dom";
 import asyncLoader from "./asyncLoader";
+import {
+  beforeMounted,
+  beforeRouteEnter,
+  beforeRouteLeave,
+  beforeUnmounted,
+} from "./guard";
 
 export const basename = "/tool";
 
@@ -47,7 +53,7 @@ export const redirctRouter: RedirectProps[] = [
   },
 ];
 
-export { beforeRouterEnter, beforeRouterLeave } from "./guard";
+export { beforeMounted, beforeRouteEnter, beforeRouteLeave, beforeUnmounted };
 
 export const navRouter: NavRouter[] = [
   {
@@ -72,7 +78,12 @@ export const navRouter: NavRouter[] = [
   },
   {
     label: "表单",
-    path: ["/order/edit/:subCategory", "/order/add/:subCategory"],
+    path: [
+      "/order/add/:subCategory",
+      "/order/edit/:subCategory",
+      "/uncompleted/add/:subCategory",
+      "/uncompleted/edit/:subCategory",
+    ],
     component: asyncLoader(() => import("view/Form")),
     isMenu: false,
   },
@@ -83,6 +94,28 @@ export const navRouter: NavRouter[] = [
     isMenu: false,
   },
 ];
+
+beforeRouteEnter(({ history, from }, dispatch) => {
+  if (
+    history.location.pathname.includes("/uncompleted/") &&
+    from &&
+    !from.location.pathname.includes("/uncompleted/")
+  ) {
+    // 进入前缓存
+    dispatch({ type: "order/saveOrderListToCache" });
+  }
+});
+
+beforeRouteLeave(({ history, from }, dispatch) => {
+  if (
+    from &&
+    from.location.pathname.includes("/uncompleted/") &&
+    !history.location.pathname.includes("/uncompleted/")
+  ) {
+    // 离开后取出缓存
+    dispatch({ type: "order/getOrderListFromCache" });
+  }
+});
 
 export type NavRouter = {
   label?: string;
