@@ -41,7 +41,7 @@ export const router: NavRouter[] = [
  * 动画黑名单
  * 添加后当切换到匹配的路由时将不会产生过度动画
  */
-export const animateBlackList = [/\/(\w)+\/add\/(\d)+/];
+export const animateBlackList = [/\/(\w)+\/(add|edit)\/(\d)+/];
 
 /**
  * 重定向

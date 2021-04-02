@@ -50,7 +50,8 @@ const formSlice = createSlice({
           /**
            * 不存在子类
            */
-          router.path = `/order/add/${subCategory}`;
+          // router.path = `/order/add/${subCategory}`;
+          router.path = `/${subCategory}`;
           routers.push(router);
 
           return routers;

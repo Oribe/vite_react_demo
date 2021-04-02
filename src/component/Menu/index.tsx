@@ -18,6 +18,7 @@ const { SubMenu: SubMenuComp } = Menu;
 
 const Navbar: FC<Props> = (props) => {
   const location = useLocation();
+
   const [selectedKeys, setSelecteKeys] = useState<string[]>([]);
   const {
     menus,

@@ -8,31 +8,18 @@ import { isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { Col, message, Row } from "antd";
 import Form from "component/Form";
 import Menu from "component/Menu";
-import { debounce } from "lodash";
 import React, { FC, useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
-import { createSelector } from "reselect";
-import { RootReducer } from "store/index";
-import { FormState, getFormConfig } from "store/modules/form";
+import { getFormConfig } from "store/modules/form";
 import {
   addToOrderList,
   collection,
   Cutter,
-  OrderState,
   searchOrderNumber,
 } from "store/modules/order";
 import styles from "./index.module.scss";
-
-const formProps = createSelector<RootReducer, FormState, FormState>(
-  (states) => states.form,
-  (formState) => formState
-);
-
-const orderProps = createSelector<RootReducer, OrderState, OrderState>(
-  (states) => states.order,
-  (orderState) => orderState
-);
+import { formProps, orderProps } from "./model";
 
 const CutterForm: FC = () => {
   const formStore = useSelector(formProps);
