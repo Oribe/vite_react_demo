@@ -19,7 +19,7 @@ import {
   searchOrderNumber,
 } from "store/modules/order";
 import styles from "./index.module.scss";
-import { formProps, orderProps } from "./model";
+import { formProps, orderProps, useCreateMenu } from "./model";
 
 const CutterForm: FC = () => {
   const formStore = useSelector(formProps);
@@ -27,6 +27,7 @@ const CutterForm: FC = () => {
   const dispatch = useDispatch();
   const params = useParams<UrlParam>();
   const location = useLocation<UrlState>();
+  const menus = useCreateMenu(formStore.routers);
 
   /**
    * 获取form配置
@@ -107,7 +108,7 @@ const CutterForm: FC = () => {
         <Col xs={0} md={6}>
           <Menu
             mode="vertical"
-            menus={formStore.routers}
+            menus={menus}
             className={styles.formMenu}
             subMenuClassName={styles.formMenuSub}
             itemClassName={styles.formMenuItem}

@@ -21,7 +21,7 @@ const config: UserConfig = {
   ],
   server: {
     port: 4000,
-    open: false,
+    open: true,
     proxy: {
       "/api": {
         target: "http://localhost:3030",

@@ -1,6 +1,6 @@
 import { Menu } from "antd";
-import React, { CSSProperties, FC, useCallback, useMemo } from "react";
-import { NavLink, useRouteMatch } from "react-router-dom";
+import React, { CSSProperties, FC, useMemo } from "react";
+import { NavLink } from "react-router-dom";
 import { ImageProps } from "route/index";
 import MenuImage from "../MenuImage";
 import styles from "./index.module.scss";
@@ -18,15 +18,6 @@ const MenuItem: FC<MenuItemProps> = ({
   activeStyle,
   ...props
 }) => {
-  const match = useRouteMatch();
-  const genRoutePath = useCallback(
-    (param?: string) => {
-      console.log(match);
-      return match.path.replace(/\/:(\w)*$/, param ?? "");
-    },
-    [match]
-  );
-
   const navbarLabel = useMemo(
     () => (label ? <span className={styles.navbarLabel}>{label}</span> : null),
     [label]
@@ -51,7 +42,7 @@ const MenuItem: FC<MenuItemProps> = ({
           activeStyle={activeStyle}
           activeClassName={activeClassName}
           strict
-          to={Array.isArray(path) ? genRoutePath(path[0]) : genRoutePath(path)}
+          to={Array.isArray(path) ? path[0] : path}
         >
           {navbarLabel}
         </NavLink>
