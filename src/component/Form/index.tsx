@@ -4,7 +4,7 @@
 
 import { Button, Col, Empty, Form as AForm, message, Row } from "antd";
 import Loading from "component/Loading";
-import { DebouncedFunc, isEmpty } from "lodash-es";
+import { isEmpty } from "lodash-es";
 import React, { FC, memo, useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { FormConfig } from "store/modules/form";

@@ -137,7 +137,7 @@ const Order: FC = () => {
           return (
             <Link
               to={{
-                pathname: `/${orderNo ? "uncompleted" : "add"}${
+                pathname: `/${orderNo ? "uncompleted" : "order"}${
                   orderNo ? `/${orderNo}` : ""
                 }/edit/${record.subCategory}`,
                 state: {

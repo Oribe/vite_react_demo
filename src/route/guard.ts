@@ -27,8 +27,6 @@ class RouterGuard {
 
   /**
    * 页面加载前，
-   * 页面已进入
-   * 组件未装载
    */
   static beforeMounted(interceptor: Interceptor) {
     const beforeInterceptors =
