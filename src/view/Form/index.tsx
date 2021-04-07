@@ -19,7 +19,7 @@ import {
   searchOrderNumber,
 } from "store/modules/order";
 import styles from "./index.module.scss";
-import { formProps, orderProps, useCreateMenu } from "./model";
+import { formProps, orderProps, useCreateMenu, useListUrl } from "./model";
 
 const CutterForm: FC = () => {
   const formStore = useSelector(formProps);
@@ -28,6 +28,7 @@ const CutterForm: FC = () => {
   const params = useParams<UrlParam>();
   const location = useLocation<UrlState>();
   const menus = useCreateMenu(formStore.routers);
+  const listUrl = useListUrl();
 
   /**
    * 获取form配置
@@ -123,6 +124,7 @@ const CutterForm: FC = () => {
             onCollection={onCollection}
             onSearchOrderNumber={onSearchOrderNumber}
             initialValue={getOneInfoOfOrderList}
+            listUrl={listUrl}
           />
         </Col>
       </Row>

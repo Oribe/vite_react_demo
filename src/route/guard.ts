@@ -1,6 +1,5 @@
 import { Dispatch } from "@reduxjs/toolkit";
-import { History, LocationState } from "history";
-import { match } from "react-router-dom";
+import { History } from "history";
 
 export const routerAction: Record<RouterAction, RouterAction> = {
   beforeRouteEnter: "beforeRouteEnter",

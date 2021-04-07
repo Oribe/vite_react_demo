@@ -31,6 +31,8 @@ export const router: NavRouter[] = [
       "/:model/add/:subCategory",
       "/:model/edit/:subCategory",
       "/:model/:orderNo",
+      "/:model/:orderNo/add/:subCategory",
+      "/:model/:orderNo/edit/:subCategory",
     ],
     component: asyncLoader(() => import("view/Navigation")),
     exact: true,
@@ -41,7 +43,7 @@ export const router: NavRouter[] = [
  * 动画黑名单
  * 添加后当切换到匹配的路由时将不会产生过度动画
  */
-export const animateBlackList = [/\/(\w)+\/(add|edit)\/(\d)+/];
+export const animateBlackList = [/(\/(\w|-)*)+\/(add|edit)\/(\d)*/];
 
 /**
  * 重定向
@@ -81,8 +83,8 @@ export const navRouter: NavRouter[] = [
     path: [
       "/order/add/:subCategory",
       "/order/edit/:subCategory",
-      "/uncompleted/add/:subCategory",
-      "/uncompleted/edit/:subCategory",
+      "/uncompleted/:orderNo/add/:subCategory",
+      "/uncompleted/:orderNo/edit/:subCategory",
     ],
     component: asyncLoader(() => import("view/Form")),
     isMenu: false,

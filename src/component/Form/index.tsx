@@ -21,6 +21,7 @@ const Form: FC<Props> = (props) => {
     onCollection,
     loading,
     initialValue,
+    listUrl,
   } = props;
   const [form] = AForm.useForm<Cutter>();
   const history = useHistory();
@@ -135,7 +136,9 @@ const Form: FC<Props> = (props) => {
    * 返回列表
    */
   const gobackToOrderList = () => {
-    history.push("/order");
+    if (listUrl) {
+      history.push(listUrl);
+    }
   };
 
   /**
@@ -216,4 +219,5 @@ interface Props {
   onSearchOrderNumber?: (orderNumber?: string) => Promise<unknown>;
   loading?: boolean;
   initialValue?: Cutter;
+  listUrl?: string;
 }

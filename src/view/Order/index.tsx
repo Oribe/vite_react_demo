@@ -137,10 +137,12 @@ const Order: FC = () => {
           return (
             <Link
               to={{
-                pathname: `/${orderNo ? "uncompleted" : "add"}/edit/${
-                  record.subCategory
-                }`,
-                state: { orderNumber: record.orderNumber },
+                pathname: `/${orderNo ? "uncompleted" : "add"}${
+                  orderNo ? `/${orderNo}` : ""
+                }/edit/${record.subCategory}`,
+                state: {
+                  orderNumber: record.orderNumber,
+                },
               }}
             >
               编辑
