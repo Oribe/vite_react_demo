@@ -34,9 +34,9 @@ h4 {
 
 a {
   &.active {
-    color: $primary-color !important;
+    color: $primary-color;
   }
   &:hover {
-    color: $primary-color !important;
+    color: $primary-color;
   }
 }

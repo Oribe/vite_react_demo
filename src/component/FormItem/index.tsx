@@ -61,9 +61,7 @@ const FormItem: FC<Props> = (props) => {
               /**
                * 关联字段值发生改变
                */
-              // setTimeout(() => {
               setAssociatedValue(newAssociatedValue);
-              // });
               setIsFirstRender(false);
               if (!isFirstRender) {
                 resetFields([otherFormItemProps.name]);

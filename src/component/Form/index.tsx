@@ -39,7 +39,7 @@ const Form: FC<Props> = (props) => {
           form.setFieldsValue(valueObj);
         } catch (e) {
           // throw e;
-          console.error(e);
+          // console.error(e);
         }
       }
     },
@@ -50,10 +50,10 @@ const Form: FC<Props> = (props) => {
    * 设置默认值
    */
   useEffect(() => {
-    if (initialValue) {
+    if (initialValue && !loading && !isEmpty(config)) {
       form.setFieldsValue(initialValue);
     }
-  }, [form, initialValue]);
+  }, [config, form, initialValue, loading]);
 
   if (loading) {
     /**

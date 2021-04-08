@@ -44,16 +44,15 @@
       }
     }
   }
+}
 
-  .formMenuItem {
-    font-size: 16px;
-    padding: 0 10px;
-  }
+.activeClassName {
+  color: $primary-color !important;
+}
 
-  // .activeClassName {
-  //   // background-color: $primary-color;
-  //   // color: #fff;
-  // }
+.formMenuItem {
+  font-size: 14px;
+  padding: 0 10px;
 }
 
 .fromWrapper {

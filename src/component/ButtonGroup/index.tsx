@@ -29,7 +29,13 @@ const ButtonGroups: FC<Props> = ({
               }, 500)}
               {...props}
             >
-              {href ? <Link to={href}>{label}</Link> : label}
+              {href ? (
+                <Link to={href} className={style.link}>
+                  {label}
+                </Link>
+              ) : (
+                label
+              )}
             </Button>
           );
         }
