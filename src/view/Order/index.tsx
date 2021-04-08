@@ -278,7 +278,7 @@ const Order: FC = () => {
     () => [
       {
         label: "添加",
-        href: "/order/add/257",
+        href: `${history.location.pathname}/add/257`,
       },
       {
         label: "收藏夹导入",
@@ -319,6 +319,7 @@ const Order: FC = () => {
       handleOrderListCollection,
       handleSave,
       handleSubmit,
+      history.location.pathname,
       orderState.orderList.length,
       selectedRows.length,
     ]
