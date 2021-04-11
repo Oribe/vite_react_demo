@@ -1,0 +1,18 @@
+@import "../../style/var.scss";
+
+.title {
+  margin: 14px 0;
+  color: $primary-color;
+  font-size: 16px;
+}
+
+.btnSubmit {
+  display: block;
+  width: 100%;
+}
+
+.btnBack {
+  position: absolute;
+  right: -22%;
+  top: 0;
+}
