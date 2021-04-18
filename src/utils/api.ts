@@ -6,6 +6,7 @@ import { createAxiosGroup } from "./axios";
 
 export const userApi = createAxiosGroup({
   login: { url: "/login", method: "POST" },
+  logout: { url: "/logout", method: "POST" },
   update: { url: "/user", method: "PUT" },
 });
 

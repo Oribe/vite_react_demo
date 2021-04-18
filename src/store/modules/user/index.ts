@@ -1,22 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { userInfoUpdate, userLogin } from "./actions";
-import initialState from "./state";
+import * as actions from "./actions";
+import initialState, { userInfo } from "./state";
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {},
   extraReducers: ({ addCase }) => {
-    addCase(userLogin.fulfilled, (state, action) => {
+    addCase(actions.userLogin.fulfilled, (state, action) => {
       const newState = state;
       newState.userInfo = action.payload?.userInfo;
       newState.uuid = action.payload?.uuid;
       newState.isLogin = true;
       return newState;
     });
-    addCase(userInfoUpdate.fulfilled, (state, action) => {
+    addCase(actions.userInfoUpdate.fulfilled, (state, action) => {
       const newState = state;
       newState.userInfo = action.payload;
+      return newState;
+    });
+    addCase(actions.userLogout.fulfilled, (state) => {
+      const newState = state;
+      newState.isLogin = false;
+      newState.uuid = "";
+      newState.userInfo = userInfo;
       return newState;
     });
   },

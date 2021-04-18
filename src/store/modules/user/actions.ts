@@ -19,9 +19,10 @@ export const userLogin = createAsyncThunk(
 /**
  * @description 登出
  */
-export const userLogout = () => {
-  //
-};
+export const userLogout = createAsyncThunk("user/logout", async () => {
+  const response = await userApi.logout();
+  return response;
+});
 
 /**
  * 用户信息更新
