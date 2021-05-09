@@ -1,3 +1,7 @@
+/**
+ * 补全rules
+ */
+
 import { Rule } from "antd/lib/form";
 import { isFunction } from "lodash-es";
 import { useCallback, useMemo } from "react";
@@ -13,7 +17,7 @@ import {
   switchTypeToMessage,
 } from "utils/index";
 
-const useFormItemProps = (param: Param) => {
+const useRules = (param: Param) => {
   const {
     label,
     type,
@@ -114,10 +118,10 @@ const useFormItemProps = (param: Param) => {
     type,
   ]);
 
-  return [assembleFormItemProps];
+  return assembleFormItemProps;
 };
 
-export default useFormItemProps;
+export default useRules;
 
 type Param = {
   label?: string;

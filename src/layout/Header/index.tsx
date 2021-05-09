@@ -30,7 +30,9 @@ const Header: FC = () => {
        * 登陆直接跳转
        */
       // window.location.href = "http://localhost:4000/tool/order";
-      history.push("/");
+      if (history.location.pathname === "/login") {
+        history.push("/");
+      }
     } else {
       /**
        * 未登录跳转到登陆页面

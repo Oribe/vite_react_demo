@@ -47,6 +47,9 @@ export interface FormItem {
 export interface Component {
   type: string;
   props?: {
+    placeHolder?: string;
+    disable?: boolean | (string | number)[];
+    readOnly?: boolean | (string | number)[];
     options?: SelectProps;
   };
   func?: ComponentFunc | ComponentFuncConfig;

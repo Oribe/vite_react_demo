@@ -4,13 +4,26 @@
 
 import { Form, FormItemProps } from "antd";
 import ImageHint from "component/ImageHint";
-import React, { FC, memo, useRef, useState } from "react";
+import React, { FC, memo } from "react";
 import { Component, FormItem as FormItemConfig } from "store/modules/form";
-import useFormItemProps from "./hooks/formItemProps";
-import RenderComponent from "./hooks/renderComp";
+import CompoentWithAssociate from "./components/CompoentWithAssociate";
+import SwitchComponent from "./components/RenderComponent";
+import useFunc from "./hooks/useFunc";
+import useName from "./hooks/useName";
+import useRules from "./hooks/useRules";
 import styles from "./index.module.scss";
 
 const { Item } = Form;
+
+type Props = {
+  label?: string;
+  name?: string;
+  dataIndex?: string;
+  hintImgUrl?: string;
+  associatedDataIndex?: string[];
+  component?: Component;
+  complexConfig?: FormItemConfig[];
+} & FormItemProps;
 
 const FormItem: FC<Props> = (props) => {
   const {
@@ -22,86 +35,37 @@ const FormItem: FC<Props> = (props) => {
     complexConfig,
     ...formItemProps
   } = props;
-  /**
-   * 记录被关联字段的值
-   */
-  const [associatedValue, setAssociatedValue] = useState();
-  /**
-   * 记录是否第一次渲染
-   * 防止当表单有初始值时，关联字段的值会被重置
-   */
-  const [isFirstRender, setIsFirstRender] = useState(true);
-  const timerRef = useRef<NodeJS.Timeout | number>();
-  const [newFormItemProps] = useFormItemProps({
-    label,
+
+  const itemPropsWithNewRules = useRules(label, component?.type, formItemProps);
+  const itemPropsWithName = useName(
     dataIndex,
-    type: component?.type,
-    formItemProps,
-  });
+    component?.type,
+    itemPropsWithNewRules
+  );
+  const newFormItemProps = useFunc(itemPropsWithName);
 
   if (associatedDataIndex) {
     /**
      * 当有关联字段时
      */
-    const { style, ...otherFormItemProps } = newFormItemProps;
+
     return (
-      <Item noStyle style={style} dependencies={associatedDataIndex}>
-        {({ getFieldValue, resetFields }) => {
-          timerRef.current = setTimeout(() => {
-            /**
-             * 获取当前被关联字段的值
-             */
-            const newAssociatedValue = getFieldValue(
-              associatedDataIndex[associatedDataIndex.length - 1]
-            );
-            if (
-              otherFormItemProps?.name &&
-              associatedValue !== newAssociatedValue
-            ) {
-              /**
-               * 关联字段值发生改变
-               */
-              setAssociatedValue(newAssociatedValue);
-              setIsFirstRender(false);
-              if (!isFirstRender) {
-                resetFields([otherFormItemProps.name]);
-              }
-            }
-            clearTimeout(
-              typeof timerRef.current === "number"
-                ? timerRef.current
-                : undefined
-            );
-          });
-          let associatedValues: (string | number)[] | undefined;
-          if (associatedDataIndex) {
-            associatedValues = associatedDataIndex.map((field) =>
-              getFieldValue(field)
-            );
-          }
-          return (
-            <Item label={label} required {...otherFormItemProps}>
-              <RenderComponent
-                comp={component}
-                other={{
-                  complexConfig,
-                  associatedValues,
-                }}
-              />
-            </Item>
-          );
-        }}
-      </Item>
+      <CompoentWithAssociate
+        label={label}
+        associatedDataIndex={associatedDataIndex}
+        itemProps={newFormItemProps}
+        component={component}
+        complexConfig={complexConfig}
+      />
     );
   }
-
   /**
    * 无关联字段
    */
   return (
     <>
       <Item label={label} required {...newFormItemProps}>
-        <RenderComponent comp={component} other={{ complexConfig }} />
+        <SwitchComponent comp={component} other={{ complexConfig }} />
       </Item>
       {hintImgUrl ? (
         <ImageHint className={styles.hintImage} url={hintImgUrl} />
@@ -113,13 +77,3 @@ const FormItem: FC<Props> = (props) => {
 };
 
 export default memo(FormItem);
-
-type Props = {
-  label?: string;
-  name?: string;
-  dataIndex?: string;
-  hintImgUrl?: string;
-  associatedDataIndex?: string[];
-  component?: Component;
-  complexConfig?: FormItemConfig[];
-} & FormItemProps;

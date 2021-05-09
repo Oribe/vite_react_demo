@@ -1,6 +1,5 @@
 import Loading from "component/Loading";
 import React, {
-  ComponentType,
   FC,
   lazy,
   Suspense,
@@ -12,16 +11,14 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { routerAction, RouterAction, routerInterceptors } from "./guard";
 
-const asyncLoader = <T extends ComponentType<unknown>>(
-  loader: () => Promise<{ default: T }>
-) => {
+export default function asyncLoader(loader: () => Promise<{ default: any }>) {
   const LazyComponent: FC = (props) => {
     const history = useHistory();
     const dispatch = useDispatch();
     /**
      * 加载组件
      */
-    const Component = useMemo<any>(() => lazy(loader), []);
+    const Component = useMemo(() => lazy(loader), []);
     /**
      * 路由拦截拦截
      */
@@ -51,6 +48,4 @@ const asyncLoader = <T extends ComponentType<unknown>>(
     );
   };
   return LazyComponent;
-};
-
-export default asyncLoader;
+}
